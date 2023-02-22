@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo, memo } from 'react'
 import { Button } from '@material-ui/core'
 import { isMobile } from 'react-device-detect'
 
@@ -45,7 +45,14 @@ const rewards = [
   // }
 ]
 
-const colors = ['#F15D21', '#54CD05', '#D9C502']
+const rearangedRewards = [...rewards].reverse()
+rearangedRewards.unshift(rewards[0])
+rearangedRewards.pop()
+const mappedRewards = rearangedRewards.map((reward, index) => ({
+  ...reward,
+  moreThan: index === 0 ? rewards.length - 0.5 : index - 0.5,
+  lessThan: index === 0 ? 0.5 : index + 0.5
+}))
 
 const spinDuration = 5
 const diameter = isMobile ? 280 : 340
@@ -60,8 +67,16 @@ const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
+const randomNumber = generateRandomNumber(10, 10 + rewards.length)
+
 const Wheel = () => {
-  const rotation = generateRandomNumber(10, 15) * 360
+  const rotation = useMemo(() => randomNumber * 360, [randomNumber])
+
+  const calculatedRotation = (rotation / rotateRadius) % rewards.length
+  const selectedReward = mappedRewards.find(
+    (item) => item.lessThan > calculatedRotation && item.moreThan < calculatedRotation
+  )
+
   const classes = useStyles({
     spinDuration,
     diameter,
@@ -73,13 +88,13 @@ const Wheel = () => {
     setIsSpinning(true)
   }
 
-  // useEffect(() => {
-  //   if (isSpinning) {
-  //     setTimeout(() => {
-  //       setIsSpinning(false)
-  //     }, spinDuration * 1000)
-  //   }
-  // }, [isSpinning])
+  useEffect(() => {
+    if (isSpinning) {
+      setTimeout(() => {
+        alert(`Hadiah terpilih ${selectedReward?.name}`)
+      }, spinDuration * 1000)
+    }
+  }, [isSpinning])
 
   return (
     <div className={classes.app}>
@@ -115,4 +130,4 @@ const Wheel = () => {
   )
 }
 
-export default Wheel
+export default memo(Wheel)
