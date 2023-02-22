@@ -12,7 +12,7 @@ const App = () => {
   const type = getUrlParams('type')
   return (
     <>
-      {!type || (type === '1' && <Wheel />)}
+      {(!type || type === '1') && <Wheel />}
       {type === '2' && <Wheel />}
     </>
   )
