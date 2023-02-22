@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Wheel from './Wheel'
+import Wheel from './components/Wheel'
 
 const App = () => {
   return (
