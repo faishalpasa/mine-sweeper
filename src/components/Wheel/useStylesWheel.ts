@@ -5,8 +5,7 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
     return {
       app: {
         textAlign: 'center',
-        background:
-          'linear-gradient(90deg, rgba(58,180,154,1) 0%, rgba(0,71,102,1) 50%, rgba(58,180,154,1) 100%)',
+        background: 'linear-gradient(0deg, rgba(58,180,154,1) 0%, rgba(0,71,102,1) 50%)',
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
@@ -49,7 +48,7 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         animationTimingFunction: 'linear',
         '&.spin': {
           animationDuration: `${spinDuration}s`,
-          animationTimingFunction: 'cubic-bezier(0.440, -0.205, 0.000, 1.030)',
+          animationTimingFunction: 'cubic-bezier(0.440, -0.080, 0.000, 1.030)',
           animationName: '$spinning'
         },
         '&:after': {
@@ -130,6 +129,14 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         '&:active': {
           background: '#980000',
           color: '#8e8e8e'
+        },
+        '&:disabled': {
+          background: '#980000',
+          color: '#8e8e8e',
+          cursor: 'auto',
+          '&:hover': {
+            boxShadow: 'none'
+          }
         }
       },
       '@keyframes spinning': {

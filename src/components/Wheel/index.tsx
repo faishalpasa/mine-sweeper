@@ -56,7 +56,7 @@ const circumfrance = 6.283185307 * radius
 const sliceHeight = circumfrance / numberOfSlices
 const sliceOffeset = sliceHeight / 2
 
-function generateRandomNumber(min: number, max: number) {
+const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
@@ -103,7 +103,12 @@ const Wheel = () => {
         </div>
       </div>
 
-      <button type="button" onClick={handleSetSpinning} className={classes.button}>
+      <button
+        type="button"
+        onClick={handleSetSpinning}
+        className={classes.button}
+        disabled={isSpinning}
+      >
         Putar
       </button>
     </div>
