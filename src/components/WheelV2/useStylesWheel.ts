@@ -26,8 +26,8 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         transform: 'translate(-50%, -50%)',
         background: '#0356E4',
         border: '8px solid #0FF7FF',
-        // boxShadow: '0px 0px 60px 0px rgba(255,255,46,0.82)',
         boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
+        zIndex: 1,
         '&:after': {
           content: '""',
           position: 'absolute',
@@ -83,7 +83,7 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           zIndex: 200
         }
       },
-      marker: {
+      markerIcon: {
         color: '#11f7ff',
         top: '50%',
         right: 0,
@@ -105,26 +105,25 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         transform: 'translate(-50%, -50%) rotate(90deg)'
       },
       button: {
-        all: 'unset',
-        background: '#c80000',
-        width: '100px',
-        height: '100px',
-        borderRadius: '100%',
+        width: 100,
+        border: '8px solid #730000',
         cursor: 'pointer',
+        height: 100,
         zIndex: 1,
         position: 'relative',
-        border: '8px solid #730000',
-        fontSize: '24px',
+        fontSize: 24,
+        background: '#c80000',
         fontFamily: 'Play, sans-serif',
         fontWeight: 600,
+        borderRadius: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
         '&:hover': {
           boxShadow: '0px 0px 60px 0px rgba(255,46,46,0.82)'
         },
-        '&:active': {
-          background: '#980000',
-          color: '#8e8e8e'
-        },
-        '&:disabled': {
+        '&.disabled': {
           background: '#980000',
           color: '#8e8e8e',
           cursor: 'auto',
@@ -132,6 +131,18 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
             boxShadow: 'none'
           }
         }
+      },
+      wheelLeg: {
+        clipPath: 'polygon(50% 0%, 100% 38%, 100% 100%, 0 100%, 0% 38%)',
+        width: `${diameter}px`,
+        height: `${diameter}px`,
+        background: 'linear-gradient(45deg, rgba(0,108,163,1) 45%, rgba(0,150,214,1) 50%)',
+        position: 'absolute',
+        top: '50%',
+        left: '-12%',
+        transform: 'rotate(90deg)',
+        transformOrigin: 'top center',
+        boxShadow: '0px 0px 4px 4px rgba(0,0,0,0.22)'
       },
       '@keyframes spinning': {
         from: {

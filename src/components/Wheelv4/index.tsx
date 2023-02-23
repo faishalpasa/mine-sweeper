@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, memo } from 'react'
 
-import { PlayArrow as MarkerIcon, Star as StarIcon } from '@material-ui/icons'
+import { PlayArrow as MarkerIcon } from '@material-ui/icons'
 import { isMobile } from 'react-device-detect'
 
 import WheelSlice from 'components/WheelSlice'
@@ -57,14 +57,14 @@ const mappedRewards = rearangedRewards.map((reward, index) => ({
 }))
 
 const spinDuration = 5
-const diameter = isMobile ? 280 : 340
+const diameter = isMobile ? 280 : 400
 const numberOfSlices = rewards.length
 const rotateRadius = 360 / numberOfSlices
 const radius = diameter / 2
 const circumfrance = 6.283185307 * radius
 const sliceHeight = circumfrance / numberOfSlices
 const sliceOffeset = sliceHeight / 2
-const colors = ['#F5F5F7', '#EE2B65', '#00ACE2', '#FDC202']
+const colors = ['#fff', '#ffcd23']
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
@@ -122,16 +122,13 @@ const Wheel = () => {
             ))}
           </div>
         </div>
-        <StarIcon className={classes.starIcon}></StarIcon>
-        <div className={classes.wheelLeg}></div>
+        <Box
+          onClick={handleSetSpinning}
+          className={`${classes.button} ${isSpinning ? 'disabled' : ''}`}
+        >
+          Main
+        </Box>
       </div>
-
-      <Box
-        onClick={handleSetSpinning}
-        className={`${classes.button} ${isSpinning ? 'disabled' : ''}`}
-      >
-        Putar
-      </Box>
     </>
   )
 }

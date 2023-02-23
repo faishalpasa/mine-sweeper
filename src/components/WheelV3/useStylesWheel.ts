@@ -14,22 +14,31 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         borderRadius: '100%',
         overflow: 'hidden',
         zIndex: 1,
-        border: '2px solid #00000038'
+        border: '4px solid #000'
       },
       wheelBackground: {
         borderRadius: '100%',
-        height: `${diameter + 32}px`,
-        width: `${diameter + 32}px`,
+        height: `${diameter + 64}px`,
+        width: `${diameter + 64}px`,
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background:
-          'linear-gradient(90deg, rgba(171,180,58,1) 0%, rgba(253,119,29,1) 50%, rgba(208,252,69,1) 100%)',
-        '-webkit-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        '-moz-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        boxShadow: '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        zIndex: 1
+        background: 'linear-gradient(0deg, rgba(182,131,0,1) 0%, rgba(254,255,0,1) 100%)',
+        boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
+        zIndex: 1,
+        '&:after': {
+          content: '""',
+          position: 'absolute',
+          height: `${diameter + 4}px`,
+          width: `${diameter + 4}px`,
+          border: '16px solid #B51111',
+          boxShadow: '0px 0px 4px 4px rgba(0,0,0,0.42)',
+          borderRadius: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }
       },
       wheel: {
         height: '100%',
@@ -40,6 +49,22 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           animationDuration: `${spinDuration}s`,
           animationTimingFunction: 'cubic-bezier(0.440, -0.080, 0.000, 1.030)',
           animationName: '$spinning'
+        },
+        '&:before': {
+          content: '""',
+          textAlign: 'center',
+          display: 'block',
+          lineHeight: 60,
+          position: 'absolute',
+          height: 48,
+          width: 48,
+          background: 'linear-gradient(0deg, rgba(182,131,0,1) 0%, rgba(254,255,0,1) 100%)',
+          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .1)',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '100%',
+          zIndex: 200
         },
         '&:after': {
           boxShadow: 'inset 0px 0px 6px 6px rgba(0,0,0,0.42)',
@@ -55,40 +80,22 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           transform: 'translate(-50%, -50%)',
           borderRadius: '100%',
           zIndex: 200
-        },
-        '&:before': {
-          content: '""',
-          textAlign: 'center',
-          display: 'block',
-          lineHeight: 60,
-          position: 'absolute',
-          height: 40,
-          width: 40,
-          background: 'gold',
-          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .22)',
-          top: '50%',
-          left: '50%',
-          marginTop: '-20px',
-          marginLeft: '-20px',
-          borderRadius: '100%',
-          zIndex: 200
         }
       },
       markerIcon: {
-        color: '#7d0000',
         top: '50%',
-        right: 0,
-        width: '40px',
-        height: '60px',
+        color: '#b51111',
+        left: '50%',
+        width: 60,
+        height: 60,
         zIndex: 2,
         position: 'absolute',
-        clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
-        transform: 'translate(50%, -50%) rotate(90deg)'
+        transform: 'translate(-4%, -50%)'
       },
       starIcon: {
         top: '50%',
         left: '50%',
-        color: '#7d0000',
+        color: '#b51111',
         right: 0,
         width: 40,
         height: 60,
@@ -128,7 +135,7 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         clipPath: 'polygon(50% 0%, 100% 38%, 100% 100%, 0 100%, 0% 38%)',
         width: `${diameter}px`,
         height: `${diameter}px`,
-        background: 'linear-gradient(45deg, rgba(231, 125, 39, 1) 45%, rgba(255,205,35,1) 50%)',
+        background: 'linear-gradient(45deg, rgb(28 0 0) 45%, rgb(39 39 39) 50%);',
         position: 'absolute',
         top: '50%',
         left: '-12%',

@@ -14,22 +14,32 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         borderRadius: '100%',
         overflow: 'hidden',
         zIndex: 1,
-        border: '2px solid #00000038'
+        border: '4px solid #242424'
       },
       wheelBackground: {
         borderRadius: '100%',
-        height: `${diameter + 32}px`,
-        width: `${diameter + 32}px`,
+        height: `${diameter + 40}px`,
+        width: `${diameter + 40}px`,
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background:
-          'linear-gradient(90deg, rgba(171,180,58,1) 0%, rgba(253,119,29,1) 50%, rgba(208,252,69,1) 100%)',
-        '-webkit-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        '-moz-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        boxShadow: '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        zIndex: 1
+        background: '#242424',
+        border: '8px solid #242424',
+        boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
+        zIndex: 1,
+        '&:after': {
+          content: '""',
+          position: 'absolute',
+          height: `${diameter + 12}px`,
+          width: `${diameter + 12}px`,
+          border: '8px dotted #fff',
+          boxShadow: '0px 0px 4px 4px rgba(0,0,0,0.42)',
+          borderRadius: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }
       },
       wheel: {
         height: '100%',
@@ -40,6 +50,22 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           animationDuration: `${spinDuration}s`,
           animationTimingFunction: 'cubic-bezier(0.440, -0.080, 0.000, 1.030)',
           animationName: '$spinning'
+        },
+        '&:before': {
+          content: '""',
+          textAlign: 'center',
+          display: 'block',
+          lineHeight: 60,
+          position: 'absolute',
+          height: 48,
+          width: 48,
+          background: '#023FAE',
+          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .1)',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '100%',
+          zIndex: 200
         },
         '&:after': {
           boxShadow: 'inset 0px 0px 6px 6px rgba(0,0,0,0.42)',
@@ -55,40 +81,22 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           transform: 'translate(-50%, -50%)',
           borderRadius: '100%',
           zIndex: 200
-        },
-        '&:before': {
-          content: '""',
-          textAlign: 'center',
-          display: 'block',
-          lineHeight: 60,
-          position: 'absolute',
-          height: 40,
-          width: 40,
-          background: 'gold',
-          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .22)',
-          top: '50%',
-          left: '50%',
-          marginTop: '-20px',
-          marginLeft: '-20px',
-          borderRadius: '100%',
-          zIndex: 200
         }
       },
       markerIcon: {
-        color: '#7d0000',
+        color: '#242424',
         top: '50%',
         right: 0,
         width: '40px',
         height: '60px',
         zIndex: 2,
         position: 'absolute',
-        clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
-        transform: 'translate(50%, -50%) rotate(90deg)'
+        transform: 'translate(25%, -50%) rotate(180deg)'
       },
       starIcon: {
         top: '50%',
         left: '50%',
-        color: '#7d0000',
+        color: 'gold',
         right: 0,
         width: 40,
         height: 60,
@@ -97,14 +105,16 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         transform: 'translate(-50%, -50%) rotate(90deg)'
       },
       button: {
-        width: 100,
+        left: '50%',
+        top: '50%',
+        width: 60,
         border: '8px solid #730000',
         cursor: 'pointer',
-        height: 100,
+        height: 60,
         zIndex: 1,
-        position: 'relative',
-        fontSize: 24,
-        background: '#c80000',
+        position: 'absolute',
+        fontSize: 16,
+        background: 'linear-gradient(45deg, rgba(108,0,0,1) 0%, rgba(255,48,48,1) 100%)',
         fontFamily: 'Play, sans-serif',
         fontWeight: 600,
         borderRadius: '100%',
@@ -112,6 +122,7 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        transform: 'translate(-50%, -50%) rotate(90deg)',
         '&:hover': {
           boxShadow: '0px 0px 60px 0px rgba(255,46,46,0.82)'
         },
@@ -123,17 +134,6 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
             boxShadow: 'none'
           }
         }
-      },
-      wheelLeg: {
-        clipPath: 'polygon(50% 0%, 100% 38%, 100% 100%, 0 100%, 0% 38%)',
-        width: `${diameter}px`,
-        height: `${diameter}px`,
-        background: 'linear-gradient(45deg, rgba(231, 125, 39, 1) 45%, rgba(255,205,35,1) 50%)',
-        position: 'absolute',
-        top: '50%',
-        left: '-12%',
-        transform: 'rotate(90deg)',
-        transformOrigin: 'top center'
       },
       '@keyframes spinning': {
         from: {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, memo } from 'react'
 
-import { PlayArrow as MarkerIcon, Star as StarIcon } from '@material-ui/icons'
+import { PlayArrow as MarkerIcon, FiberManualRecord as StarIcon } from '@material-ui/icons'
 import { isMobile } from 'react-device-detect'
 
 import WheelSlice from 'components/WheelSlice'
@@ -64,7 +64,7 @@ const radius = diameter / 2
 const circumfrance = 6.283185307 * radius
 const sliceHeight = circumfrance / numberOfSlices
 const sliceOffeset = sliceHeight / 2
-const colors = ['#F5F5F7', '#EE2B65', '#00ACE2', '#FDC202']
+const colors = ['#000', '#ffcd23']
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
@@ -117,7 +117,7 @@ const Wheel = () => {
                 sliceOffeset={sliceOffeset}
                 name={item.name}
                 backgroundColor={colors[index % colors.length]}
-                color={'#000D28'}
+                color={index % 2 ? '#B51111' : '#FFCD00'}
               />
             ))}
           </div>

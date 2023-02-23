@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, memo } from 'react'
 
-import { Room as MarkerIcon } from '@material-ui/icons'
+import { Box } from '@material-ui/core'
+import { Room as MarkerIcon, BrightnessLow as StarIcon } from '@material-ui/icons'
 import { isMobile } from 'react-device-detect'
 
 import WheelSlice from 'components/WheelSlice'
@@ -31,19 +32,19 @@ const rewards = [
   },
   {
     name: 'Reward 8'
+  },
+  {
+    name: 'Reward 9'
+  },
+  {
+    name: 'Reward 10'
+  },
+  {
+    name: 'Reward 11'
+  },
+  {
+    name: 'Reward 12'
   }
-  // {
-  //   name: 'Reward 9'
-  // },
-  // {
-  //   name: 'Reward 10'
-  // },
-  // {
-  //   name: 'Reward 11'
-  // },
-  // {
-  //   name: 'Reward 12'
-  // }
 ]
 
 const rearangedRewards = [...rewards].reverse()
@@ -63,7 +64,7 @@ const radius = diameter / 2
 const circumfrance = 6.283185307 * radius
 const sliceHeight = circumfrance / numberOfSlices
 const sliceOffeset = sliceHeight / 2
-const colors = ['#F15D21', '#54CD05', '#D9C502']
+const colors = ['#F15D21', '#54CD05']
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
@@ -101,8 +102,7 @@ const Wheel = () => {
   return (
     <>
       <div className={classes.wheelWrapper}>
-        {/* <div className={classes.triangle}></div> */}
-        <MarkerIcon className={classes.marker}></MarkerIcon>
+        <MarkerIcon className={classes.markerIcon}></MarkerIcon>
         <div className={classes.wheelBackground}></div>
         <div className={classes.wheelBoard}>
           <div className={`${classes.wheel} ${isSpinning ? 'spin' : ''}`}>
@@ -119,16 +119,16 @@ const Wheel = () => {
             ))}
           </div>
         </div>
+        <StarIcon className={classes.starIcon}></StarIcon>
+        <div className={classes.wheelLeg}></div>
       </div>
 
-      <button
-        type="button"
+      <Box
         onClick={handleSetSpinning}
-        className={classes.button}
-        disabled={isSpinning}
+        className={`${classes.button} ${isSpinning ? 'disabled' : ''}`}
       >
         Putar
-      </button>
+      </Box>
     </>
   )
 }
