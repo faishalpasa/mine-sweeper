@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core'
 // const sliceColor = '#095B8D'
 // const darkenSliceColor = '#063c5d'
 
-const useStyles = ({ radius, sliceHeight, sliceOffeset, background }: any) =>
+const useStyles = ({ radius, sliceHeight, sliceOffeset, background, color = '#fff' }: any) =>
   makeStyles(() => {
     return {
       wheelSlice: {
@@ -13,7 +13,7 @@ const useStyles = ({ radius, sliceHeight, sliceOffeset, background }: any) =>
         height: `${sliceHeight}px)`,
         left: '50%',
         width: '50%',
-        color: 'white',
+        color: color,
         textAlign: 'right',
         paddingRight: '10px',
         display: 'block',

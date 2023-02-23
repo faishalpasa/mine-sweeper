@@ -2,31 +2,31 @@ import React from 'react'
 
 import useStyles from './useStylesWheelSlice'
 
-const colors = ['#F15D21', '#54CD05', '#D9C502']
-
 interface WheelSliceProps {
-  index: number
   name: string
   radius: number
   sliceHeight: number
   sliceOffeset: number
   rotate: number
+  backgroundColor: string
+  color?: string
 }
 
 const WheelSlice = ({
-  index,
   name,
   radius,
   sliceHeight,
   sliceOffeset,
-  rotate
+  rotate,
+  backgroundColor,
+  color
 }: WheelSliceProps) => {
-  const background = colors[index % 3]
   const classes = useStyles({
     radius,
     sliceHeight,
     sliceOffeset,
-    background
+    background: backgroundColor,
+    color
   })()
 
   return (

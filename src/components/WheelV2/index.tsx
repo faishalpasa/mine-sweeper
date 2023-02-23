@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, memo } from 'react'
 
-import { Room as MarkerIcon } from '@material-ui/icons'
+import { PlayArrow as MarkerIcon, Star as StarIcon } from '@material-ui/icons'
 import { isMobile } from 'react-device-detect'
 
 import WheelSlice from 'components/WheelSlice'
@@ -63,7 +63,7 @@ const radius = diameter / 2
 const circumfrance = 6.283185307 * radius
 const sliceHeight = circumfrance / numberOfSlices
 const sliceOffeset = sliceHeight / 2
-const colors = ['#F15D21', '#54CD05', '#D9C502']
+const colors = ['#F5F5F7', '#EE2B65', '#00ACE2', '#FDC202']
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
@@ -98,6 +98,8 @@ const Wheel = () => {
     }
   }, [isSpinning])
 
+  console.log(4 % colors.length)
+
   return (
     <>
       <div className={classes.wheelWrapper}>
@@ -115,10 +117,12 @@ const Wheel = () => {
                 sliceOffeset={sliceOffeset}
                 name={item.name}
                 backgroundColor={colors[index % colors.length]}
+                color={'#000D28'}
               />
             ))}
           </div>
         </div>
+        <StarIcon className={classes.starIcon}></StarIcon>
       </div>
 
       <button
