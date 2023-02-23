@@ -57,7 +57,7 @@ const mappedRewards = rearangedRewards.map((reward, index) => ({
 }))
 
 const spinDuration = 5
-const diameter = isMobile ? 280 : 340
+const diameter = isMobile ? 280 : 400
 const numberOfSlices = rewards.length
 const rotateRadius = 360 / numberOfSlices
 const radius = diameter / 2
@@ -120,7 +120,6 @@ const Wheel = () => {
           </div>
         </div>
         <StarIcon className={classes.starIcon}></StarIcon>
-        <div className={classes.wheelLeg}></div>
       </div>
 
       <Box

@@ -5,7 +5,12 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
     return {
       wheelWrapper: {
         position: 'relative',
-        transform: 'rotate(-90deg)'
+        transform: 'rotate(-90deg)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        marginTop: '33%'
       },
       wheelBoard: {
         height: `${diameter - 2}px`,
@@ -25,7 +30,6 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         left: '50%',
         transform: 'translate(-50%, -50%)',
         background: '#242424',
-        border: '8px solid #242424',
         boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
         zIndex: 1,
         '&:after': {
@@ -57,9 +61,9 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           display: 'block',
           lineHeight: 60,
           position: 'absolute',
-          height: 48,
-          width: 48,
-          background: '#023FAE',
+          height: '16px',
+          width: '16px',
+          background: '#242424',
           boxShadow: '0 0 5px 5px rgba(0, 0, 0, .1)',
           top: '50%',
           left: '50%',
@@ -105,16 +109,14 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         transform: 'translate(-50%, -50%) rotate(90deg)'
       },
       button: {
-        left: '50%',
-        top: '50%',
-        width: 60,
+        width: 100,
         border: '8px solid #730000',
         cursor: 'pointer',
-        height: 60,
+        height: 100,
         zIndex: 1,
-        position: 'absolute',
-        fontSize: 16,
-        background: 'linear-gradient(45deg, rgba(108,0,0,1) 0%, rgba(255,48,48,1) 100%)',
+        position: 'relative',
+        fontSize: 24,
+        background: '#c80000',
         fontFamily: 'Play, sans-serif',
         fontWeight: 600,
         borderRadius: '100%',
@@ -122,7 +124,6 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        transform: 'translate(-50%, -50%) rotate(90deg)',
         '&:hover': {
           boxShadow: '0px 0px 60px 0px rgba(255,46,46,0.82)'
         },

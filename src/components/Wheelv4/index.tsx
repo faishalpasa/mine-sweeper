@@ -1,50 +1,25 @@
-import React, { useEffect, useState, useMemo, memo } from 'react'
+import React, { useEffect, useMemo, memo, useState } from 'react'
 
 import { PlayArrow as MarkerIcon } from '@material-ui/icons'
-import { isMobile } from 'react-device-detect'
 
 import WheelSlice from 'components/WheelSlice'
+import useWindowSize from 'hooks/useWindowSize'
 
 import useStyles from './useStylesWheel'
-import { Box } from '@material-ui/core'
 
 const rewards = [
-  {
-    name: 'Reward 1'
-  },
-  {
-    name: 'Reward 2'
-  },
-  {
-    name: 'Reward 3'
-  },
-  {
-    name: 'Reward 4'
-  },
-  {
-    name: 'Reward 5'
-  },
-  {
-    name: 'Reward 6'
-  },
-  {
-    name: 'Reward 7'
-  },
-  {
-    name: 'Reward 8'
-  },
-  {
-    name: 'Reward 9'
-  },
-  {
-    name: 'Reward 10'
-  },
-  {
-    name: 'Reward 11'
-  },
-  {
-    name: 'Reward 12'
-  }
+  { id: 1, name: 'HADIAH' },
+  { id: 2, name: 'Zonk' },
+  { id: 3, name: 'Zonk' },
+  { id: 4, name: 'HADIAH' },
+  { id: 5, name: 'Zonk' },
+  { id: 6, name: 'Zonk' },
+  { id: 7, name: 'HADIAH' },
+  { id: 8, name: 'Zonk' },
+  { id: 9, name: 'Zonk' },
+  { id: 10, name: 'HADIAH' },
+  { id: 11, name: 'Zonk' },
+  { id: 12, name: 'Zonk' }
 ]
 
 const rearangedRewards = [...rewards].reverse()
@@ -56,25 +31,31 @@ const mappedRewards = rearangedRewards.map((reward, index) => ({
   lessThan: index === 0 ? 0.5 : index + 0.5
 }))
 
-const spinDuration = 5
-const diameter = isMobile ? 280 : 400
-const numberOfSlices = rewards.length
-const rotateRadius = 360 / numberOfSlices
-const radius = diameter / 2
-const circumfrance = 6.283185307 * radius
-const sliceHeight = circumfrance / numberOfSlices
-const sliceOffeset = sliceHeight / 2
+const spinDuration = 8
 const colors = ['#fff', '#ffcd23']
 
 const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
-const randomNumber = generateRandomNumber(10, 10 + rewards.length)
+const randomNumber = generateRandomNumber(20, 20 + rewards.length)
 
-const Wheel = () => {
+interface WheelProps {
+  isSpinning: boolean
+}
+
+const Wheel = ({ isSpinning }: WheelProps) => {
+  const windowSize = useWindowSize()
   const rotation = useMemo(() => randomNumber * 360, [randomNumber])
 
+  const diameter = windowSize.width - 64
+
+  const numberOfSlices = rewards.length
+  const rotateRadius = 360 / numberOfSlices
+  const radius = diameter / 2
+  const circumfrance = 6.283185307 * radius
+  const sliceHeight = circumfrance / numberOfSlices
+  const sliceOffeset = sliceHeight / 2
   const calculatedRotation = (rotation / rotateRadius) % rewards.length
   const selectedReward = mappedRewards.find(
     (item) => item.lessThan > calculatedRotation && item.moreThan < calculatedRotation
@@ -85,21 +66,16 @@ const Wheel = () => {
     diameter,
     rotation
   })()
-  const [isSpinning, setIsSpinning] = useState(false)
-
-  const handleSetSpinning = () => {
-    setIsSpinning(true)
-  }
 
   useEffect(() => {
     if (isSpinning) {
       setTimeout(() => {
-        alert(`Hadiah terpilih ${selectedReward?.name}`)
-      }, spinDuration * 1000 + 500)
+        console.log(`Hadiah terpilih ${selectedReward?.name}`)
+      }, spinDuration * 1000)
     }
   }, [isSpinning])
 
-  console.log(4 % colors.length)
+  console.count('isSpinning')
 
   return (
     <>
@@ -110,7 +86,7 @@ const Wheel = () => {
           <div className={`${classes.wheel} ${isSpinning ? 'spin' : ''}`}>
             {rewards.map((item, index) => (
               <WheelSlice
-                key={item.name}
+                key={item.id}
                 radius={radius}
                 rotate={rotateRadius * index}
                 sliceHeight={sliceHeight}
@@ -122,12 +98,6 @@ const Wheel = () => {
             ))}
           </div>
         </div>
-        <Box
-          onClick={handleSetSpinning}
-          className={`${classes.button} ${isSpinning ? 'disabled' : ''}`}
-        >
-          Main
-        </Box>
       </div>
     </>
   )
