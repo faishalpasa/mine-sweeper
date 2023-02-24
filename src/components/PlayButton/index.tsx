@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Box } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 
 import useStyles from './useStylesPlayButton'
 
@@ -10,20 +10,21 @@ interface PlayButtonProps {
   onClick?: () => void
 }
 
-const PlayButton = ({ isSpinning, isActive, onClick }: PlayButtonProps) => {
+const PlayButton = ({ isSpinning, isActive, onClick, disabled }: PlayButtonProps) => {
   const classes = useStyles()
 
   return (
     <div className={classes.playButtonWrapper}>
       <div className={classes.buttonPlatform}>
-        <Box
+        <Button
           onClick={onClick}
+          disabled={disabled}
           className={`${classes.buttonPlay} ${isSpinning ? 'disabled' : ''} ${
-            !isSpinning && isActive ? 'glow' : ''
+            !isSpinning && isActive && !disabled ? 'glow' : ''
           }`}
         >
           {isActive ? 'Putar' : 'Mulai'}
-        </Box>
+        </Button>
       </div>
     </div>
   )

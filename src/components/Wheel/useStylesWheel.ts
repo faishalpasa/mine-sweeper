@@ -1,10 +1,21 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+
+const colors = ['#fbc616', '#ef6519', '#6bbd42', '#44a1df', '#862a97', '#4054a3']
 
 const useStyles = ({ spinDuration, diameter, rotation }: any) =>
-  makeStyles(() => {
+  makeStyles((theme) => {
     return {
       wheelWrapper: {
         position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        minHeight: '50vh'
+      },
+      wheelPosition: {
+        position: 'absolute',
+        top: '25%',
         transform: 'rotate(-90deg)'
       },
       wheelBoard: {
@@ -13,33 +24,66 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         position: 'relative',
         borderRadius: '100%',
         overflow: 'hidden',
-        zIndex: 1,
-        border: '2px solid #00000038'
+        zIndex: 1
       },
       wheelBackground: {
         borderRadius: '100%',
-        height: `${diameter + 32}px`,
-        width: `${diameter + 32}px`,
+        height: `${diameter + 40}px`,
+        width: `${diameter + 40}px`,
         position: 'absolute',
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        background:
-          'linear-gradient(90deg, rgba(171,180,58,1) 0%, rgba(253,119,29,1) 50%, rgba(208,252,69,1) 100%)',
-        '-webkit-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        '-moz-box-shadow': '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        boxShadow: '0px 0px 60px 0px rgba(255,255,46,0.82)',
-        zIndex: 1
+        background: theme.palette.primary.main,
+        boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
+        transition: 'all 1s ease-in',
+        zIndex: 1,
+        '&.spin': {
+          animation: '$glowing 2s infinite'
+        },
+        '&:after': {
+          content: '""',
+          position: 'absolute',
+          height: `${diameter + 12}px`,
+          width: `${diameter + 12}px`,
+          border: '8px dotted #ffe452',
+          borderRadius: '100%',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        }
       },
       wheel: {
         height: '100%',
         transition: 'all 5s ease-out',
         animationFillMode: 'forwards',
         animationTimingFunction: 'linear',
+        '&.stop': {
+          transition: 'unset',
+          animationFillMode: 'unset',
+          animationTimingFunction: 'unset',
+          transform: `rotate(${rotation}deg)`
+        },
         '&.spin': {
           animationDuration: `${spinDuration}s`,
           animationTimingFunction: 'cubic-bezier(0.440, -0.080, 0.000, 1.030)',
           animationName: '$spinning'
+        },
+        '&:before': {
+          content: '""',
+          textAlign: 'center',
+          display: 'block',
+          lineHeight: 60,
+          position: 'absolute',
+          height: '48px',
+          width: '48px',
+          background: theme.palette.primary.main,
+          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .22)',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          borderRadius: '100%',
+          zIndex: 200
         },
         '&:after': {
           boxShadow: 'inset 0px 0px 6px 6px rgba(0,0,0,0.42)',
@@ -55,43 +99,25 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           transform: 'translate(-50%, -50%)',
           borderRadius: '100%',
           zIndex: 200
-        },
-        '&:before': {
-          content: '""',
-          textAlign: 'center',
-          display: 'block',
-          lineHeight: 60,
-          position: 'absolute',
-          height: 40,
-          width: 40,
-          background: 'gold',
-          boxShadow: '0 0 5px 5px rgba(0, 0, 0, .22)',
-          top: '50%',
-          left: '50%',
-          marginTop: '-20px',
-          marginLeft: '-20px',
-          borderRadius: '100%',
-          zIndex: 200
         }
       },
       markerIcon: {
-        color: '#7d0000',
+        color: '#da0000',
         top: '50%',
         right: 0,
-        width: '40px',
-        height: '60px',
+        width: '50px',
+        height: '50px',
         zIndex: 2,
         position: 'absolute',
-        clipPath: 'polygon(50% 100%, 0 0, 100% 0)',
         transform: 'translate(50%, -50%) rotate(90deg)'
       },
       starIcon: {
         top: '50%',
         left: '50%',
-        color: '#7d0000',
+        color: '#ffe452',
         right: 0,
         width: 40,
-        height: 60,
+        height: 40,
         zIndex: 2,
         position: 'absolute',
         transform: 'translate(-50%, -50%) rotate(90deg)'
@@ -124,23 +150,32 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           }
         }
       },
-      wheelLeg: {
-        clipPath: 'polygon(50% 0%, 100% 38%, 100% 100%, 0 100%, 0% 38%)',
-        width: `${diameter}px`,
-        height: `${diameter}px`,
-        background: 'linear-gradient(45deg, rgba(231, 125, 39, 1) 45%, rgba(255,205,35,1) 50%)',
-        position: 'absolute',
-        top: '50%',
-        left: '-12%',
-        transform: 'rotate(90deg)',
-        transformOrigin: 'top center'
-      },
       '@keyframes spinning': {
         from: {
           transform: 'rotate(0)'
         },
         to: {
           transform: `rotate(${rotation}deg)`
+        }
+      },
+      '@keyframes glowing': {
+        [`${(100 / colors.length) * 1}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[1]}`
+        },
+        [`${(100 / colors.length) * 2}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[2]}`
+        },
+        [`${(100 / colors.length) * 3}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[3]}`
+        },
+        [`${(100 / colors.length) * 4}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[4]}`
+        },
+        [`${(100 / colors.length) * 5}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[5]}`
+        },
+        [`${(100 / colors.length) * 6}%`]: {
+          boxShadow: `0px 0px 88px 44px ${colors[0]}`
         }
       }
     }

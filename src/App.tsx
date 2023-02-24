@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   makeStyles,
   createTheme,
@@ -10,13 +10,19 @@ import {
   TextField,
   CircularProgress
 } from '@material-ui/core'
+import { isMobile } from 'react-device-detect'
 import Confetti from 'react-confetti'
 
-import Wheel from 'components/Wheelv4'
+import Wheel from 'components/Wheel'
 import PlayButton from 'components/PlayButton'
 import useWindowSize from 'hooks/useWindowSize'
 
 const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#ffa300'
+    }
+  },
   typography: {
     fontFamily: 'Open Sans, sans-serif'
   },
@@ -24,6 +30,9 @@ const theme = createTheme({
     MuiButton: {
       root: {
         textTransform: 'none'
+      },
+      containedPrimary: {
+        color: '#fff'
       }
     }
   }
@@ -31,18 +40,13 @@ const theme = createTheme({
 
 const useStyles = makeStyles(() => ({
   app: {
-    textAlign: 'center',
     background: '#fff',
     minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    fontSize: 'calc(10px + 2vmin)',
-    color: 'white',
-    gap: '64px',
-    '@media (max-width:500px)': {
-      gap: '40px'
-    }
+    flexDirection: 'column',
+    maxWidth: '500px',
+    margin: 'auto',
+    position: 'relative'
   },
   dialogBlockContent: {
     padding: '16px',
@@ -50,12 +54,14 @@ const useStyles = makeStyles(() => ({
   },
   dialogRegister: {
     '& .MuiPaper-root': {
-      borderRadius: '8px'
+      borderRadius: '8px',
+      overflow: 'unset'
     }
   },
   dialogRegisterContent: {
-    padding: '16px',
-    minHeight: '100px'
+    padding: '80px 16px 16px',
+    position: 'relative',
+    minHeight: '80px'
   },
   dialogRegisterActions: {
     padding: '16px',
@@ -64,6 +70,20 @@ const useStyles = makeStyles(() => ({
   },
   formField: {
     margin: '8px 0px'
+  },
+  dialogImage: {
+    left: 0,
+    right: 0,
+    top: 0,
+    transform: 'translate(0, -50%)',
+    marginBottom: '16px',
+    display: 'flex',
+    justifyContent: 'center',
+    position: 'absolute'
+  },
+  imageFortuneWheel: {
+    width: 'auto',
+    height: '128px'
   }
 }))
 
@@ -73,10 +93,12 @@ const App = () => {
   const [isSpinning, setIsSpinning] = useState(false)
   const [isRegisterPhoneDialogOpen, setIsRegisterPhoneDialogOpen] = useState(false)
   const [isRegisterServiceDialogOpen, setIsRegisterServiceDialogOpen] = useState(false)
+  const [isPrizeDialogOpen, setIsPrizeDialogOpen] = useState(false)
   const [isServiceRegistered, setIsServiceRegistered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isPhoneNoValid, setIsPhoneNoValid] = useState(false)
   const [isConfettiOpen, setIsConfettiOpen] = useState(false)
+  const [prize, setPrize] = useState('')
   const [phoneNo, setPhoneNo] = useState('')
 
   const postRegisterPhoneNo = () => {
@@ -98,6 +120,10 @@ const App = () => {
     setIsSpinning(value)
   }
 
+  const handleConfettiToggle = (value: boolean) => {
+    setIsConfettiOpen(value)
+  }
+
   const handleClickPlayButton = () => {
     isServiceRegistered ? handleSpinningToggle(true) : handleRegisterPhoneDialogToggle(true)
   }
@@ -108,6 +134,10 @@ const App = () => {
 
   const handleRegisterServiceDialogToggle = (value: boolean) => {
     setIsRegisterServiceDialogOpen(value)
+  }
+
+  const handlePrizeDialogToggle = (value: boolean) => {
+    setIsPrizeDialogOpen(value)
   }
 
   const handleChangeInput = (value: string) => {
@@ -127,38 +157,59 @@ const App = () => {
     postRegisterService()
   }
 
-  useEffect(() => {
-    if (isSpinning) {
-      setTimeout(() => {
-        setIsConfettiOpen(true)
-      }, 8 * 1000)
-    }
-  }, [isSpinning])
+  const handleSpinningEnd = (value: string) => {
+    setPrize(value)
+    handleSpinningToggle(false)
+    handlePrizeDialogToggle(true)
+    handleConfettiToggle(true)
+  }
+
+  const isPrizeNotZonk = !prize.includes('Zonk')
+  const isWheelIdle =
+    (isServiceRegistered && !isRegisterServiceDialogOpen) ||
+    (!isSpinning &&
+      !isRegisterPhoneDialogOpen &&
+      !isRegisterServiceDialogOpen &&
+      !isPrizeDialogOpen &&
+      !isServiceRegistered)
 
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
-        <Wheel isSpinning={isSpinning} />
+        <Wheel isIdle={isWheelIdle} isSpinning={isSpinning} onSpinningEnd={handleSpinningEnd} />
         <PlayButton
+          disabled={!!prize || isSpinning}
           isSpinning={isSpinning}
           isActive={isServiceRegistered}
           onClick={handleClickPlayButton}
         />
 
-        {/* <Dialog open={!isMobile} maxWidth="xs">
+        <Dialog open={!isMobile} maxWidth="xs">
           <div className={classes.dialogBlockContent}>
             <Typography>
               Maaf, device yang kamu pakai belum bisa memainkan permainan ini. Silakan buka kembali
               link permainan melalui handphone mu.
             </Typography>
           </div>
-        </Dialog> */}
+        </Dialog>
 
         <Drawer open={isRegisterPhoneDialogOpen} anchor="bottom" className={classes.dialogRegister}>
           <div className={classes.dialogRegisterContent}>
+            <div className={classes.dialogImage}>
+              <img
+                src="/images/fortune-wheel.png"
+                alt="fortune-wheel"
+                className={classes.imageFortuneWheel}
+              />
+            </div>
             <Typography>Silakan masukan nomor handphone Anda untuk memulai permainan.</Typography>
             <div className={classes.formField}>
-              <TextField onChange={(e) => handleChangeInput(e.target.value)} value={phoneNo} />
+              <TextField
+                onChange={(e) => handleChangeInput(e.target.value)}
+                value={phoneNo}
+                placeholder="08123456789"
+                type="tel"
+              />
             </div>
           </div>
           <div className={classes.dialogRegisterActions}>
@@ -180,6 +231,13 @@ const App = () => {
           className={classes.dialogRegister}
         >
           <div className={classes.dialogRegisterContent}>
+            <div className={classes.dialogImage}>
+              <img
+                src="/images/fortune-wheel.png"
+                alt="fortune-wheel"
+                className={classes.imageFortuneWheel}
+              />
+            </div>
             {isServiceRegistered ? (
               <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
             ) : (
@@ -213,14 +271,45 @@ const App = () => {
           </div>
         </Drawer>
 
-        <Drawer open={isConfettiOpen} anchor="bottom" className={classes.dialogRegister}>
+        <Drawer open={isPrizeDialogOpen} anchor="bottom" className={classes.dialogRegister}>
           <div className={classes.dialogRegisterContent}>
-            <Typography>Selamat kamu mendapatkan hadiah Lorem Ipsum.</Typography>
-            <Typography>Kuota akan dikirim ke nomor handphone kamu maksimal 2x24 jam.</Typography>
+            <div className={classes.dialogImage}>
+              <img
+                src={`/images/${isPrizeNotZonk ? 'prize' : 'zonk'}.png`}
+                alt="fortune-wheel"
+                className={classes.imageFortuneWheel}
+              />
+            </div>
+            {isPrizeNotZonk ? (
+              <>
+                <Typography>
+                  Selamat kamu mendapatkan hadiah <b>{prize}</b>.
+                </Typography>
+                <Typography>
+                  Kuota akan dikirim ke nomor handphone kamu maksimal 2x24 jam.
+                </Typography>
+              </>
+            ) : (
+              <Typography>
+                Kamu mendapatkan kotak kosong, semoga kamu beruntung di kesempatan berikutnya.
+              </Typography>
+            )}
+          </div>
+          <div className={classes.dialogRegisterActions}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handlePrizeDialogToggle(false)}
+              endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
+            >
+              Tutup
+            </Button>
           </div>
         </Drawer>
 
-        {isConfettiOpen && <Confetti width={windowSize.width} height={windowSize.height} />}
+        {isPrizeNotZonk && isConfettiOpen && (
+          <Confetti width={windowSize.width} height={windowSize.height} />
+        )}
       </div>
     </ThemeProvider>
   )

@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
     position: 'relative'
   },
   buttonPlay: {
+    color: '#fff',
     width: '100px',
     height: '100px',
     border: '8px solid #730000',
@@ -32,7 +33,7 @@ const useStyles = makeStyles(() => ({
     zIndex: 99,
     position: 'absolute',
     fontSize: '24px',
-    background: 'linear-gradient(45deg, rgba(108,0,0,1) 0%, rgba(255,93,93,1) 100%)',
+    background: '#da0000',
     fontWeight: 600,
     borderRadius: '100%',
     display: 'flex',
@@ -45,22 +46,23 @@ const useStyles = makeStyles(() => ({
     '&:hover': {
       boxShadow: '0px 0px 60px 0px rgba(255,46,46,0.82)'
     },
-    '&.disabled': {
+    '&:disabled': {
       background: '#980000',
       color: '#8e8e8e',
       cursor: 'auto',
       '&:hover': {
+        background: '#980000',
         boxShadow: 'none'
       }
     },
     '&.glow': {
-      animation: '$glowing 1s infinite',
-      boxShadow: '0px 0px 30px 0px red'
+      animation: '$glowing .5s infinite',
+      boxShadow: '0px 0px 30px 0px #da0000'
     }
   },
   '@keyframes glowing': {
     '50%': {
-      boxShadow: '0px 0px 60px 0px red'
+      boxShadow: '0px 0px 75px 0px #da0000'
     }
   }
 }))
