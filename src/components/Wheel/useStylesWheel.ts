@@ -1,21 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles'
 
-const colors = ['#fbc616', '#ef6519', '#6bbd42', '#44a1df', '#862a97', '#4054a3']
-
-const useStyles = ({ spinDuration, diameter, rotation }: any) =>
+const useStyles = ({ spinDuration, diameter, rotation, sliceHeight, sliceOffeset }: any) =>
   makeStyles((theme) => {
     return {
-      wheelWrapper: {
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        minHeight: '50vh'
-      },
       wheelPosition: {
-        position: 'absolute',
-        top: '25%',
         transform: 'rotate(-90deg)'
       },
       wheelBoard: {
@@ -35,23 +23,8 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
         left: '50%',
         transform: 'translate(-50%, -50%)',
         background: theme.palette.primary.main,
-        boxShadow: '0px 0px 49px 36px rgba(0,0,0,0.22)',
         transition: 'all 1s ease-in',
-        zIndex: 1,
-        '&.spin': {
-          animation: '$glowing 2s infinite'
-        },
-        '&:after': {
-          content: '""',
-          position: 'absolute',
-          height: `${diameter + 12}px`,
-          width: `${diameter + 12}px`,
-          border: '8px dotted #ffe452',
-          borderRadius: '100%',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        }
+        zIndex: 1
       },
       wheel: {
         height: '100%',
@@ -101,15 +74,46 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           zIndex: 200
         }
       },
+      wheelBulbWrapper: {
+        position: 'absolute',
+        width: `${diameter + 34}px`,
+        height: `${diameter + 34}px`,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: 2
+      },
+      wheelBulbs: {
+        position: 'relative',
+        width: `${diameter + 34}px`,
+        height: `${diameter + 34}px`
+      },
+      wheelBulbPlace: {
+        position: 'absolute',
+        width: '50%',
+        height: `${sliceHeight / 4}px`,
+        transformOrigin: 'left center',
+        top: `calc(50% - ${sliceHeight / 4 / 2}px)`,
+        left: '50%'
+      },
+      wheelBulb: {
+        width: `${sliceHeight / 5}px`,
+        height: `${sliceHeight / 5}px`,
+        background: '#fff4bd',
+        borderRadius: '100%',
+        position: 'absolute',
+        right: 0,
+        animation: '$bulbLight 1s infinite linear'
+      },
       markerIcon: {
         color: '#da0000',
         top: '50%',
         right: 0,
-        width: '50px',
-        height: '50px',
-        zIndex: 2,
+        width: '40px',
+        height: '40px',
+        zIndex: 3,
         position: 'absolute',
-        transform: 'translate(50%, -50%) rotate(90deg)'
+        transform: 'translate(62%, -50%) rotate(90deg)'
       },
       starIcon: {
         top: '50%',
@@ -158,24 +162,9 @@ const useStyles = ({ spinDuration, diameter, rotation }: any) =>
           transform: `rotate(${rotation}deg)`
         }
       },
-      '@keyframes glowing': {
-        [`${(100 / colors.length) * 1}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[1]}`
-        },
-        [`${(100 / colors.length) * 2}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[2]}`
-        },
-        [`${(100 / colors.length) * 3}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[3]}`
-        },
-        [`${(100 / colors.length) * 4}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[4]}`
-        },
-        [`${(100 / colors.length) * 5}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[5]}`
-        },
-        [`${(100 / colors.length) * 6}%`]: {
-          boxShadow: `0px 0px 88px 44px ${colors[0]}`
+      '@keyframes bulbLight': {
+        '50%': {
+          background: '#ff6300'
         }
       }
     }

@@ -4,12 +4,14 @@ import {
   createTheme,
   ThemeProvider,
   Dialog,
-  Drawer,
+  IconButton,
   Typography,
   Button,
   TextField,
-  CircularProgress
+  CircularProgress,
+  Slide
 } from '@material-ui/core'
+import { Close as CloseIcon } from '@material-ui/icons'
 import { isMobile } from 'react-device-detect'
 import Confetti from 'react-confetti'
 
@@ -38,19 +40,37 @@ const theme = createTheme({
   }
 })
 
+import { TransitionProps } from '@material-ui/core/transitions'
+import { Close } from '@material-ui/icons'
+
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & { children?: React.ReactElement<any, any> },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="up" ref={ref} {...props} />
+})
+
 const useStyles = makeStyles(() => ({
   app: {
     background: '#fff',
-    minHeight: '100vh',
-    alignItems: 'center',
-    flexDirection: 'column',
     maxWidth: '500px',
     margin: 'auto',
-    position: 'relative'
+    position: 'relative',
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '64px'
   },
   dialogBlockContent: {
     padding: '16px',
     textAlign: 'left'
+  },
+  dialogHeader: {
+    padding: '0px',
+    display: 'flex',
+    justifyContent: 'flex-end'
   },
   dialogRegister: {
     '& .MuiPaper-root': {
@@ -59,7 +79,7 @@ const useStyles = makeStyles(() => ({
     }
   },
   dialogRegisterContent: {
-    padding: '80px 16px 16px',
+    padding: '24px 16px 16px',
     position: 'relative',
     minHeight: '80px'
   },
@@ -84,6 +104,10 @@ const useStyles = makeStyles(() => ({
   imageFortuneWheel: {
     width: 'auto',
     height: '128px'
+  },
+  imagePrize: {
+    width: 'auto',
+    height: '180px'
   }
 }))
 
@@ -98,7 +122,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [isPhoneNoValid, setIsPhoneNoValid] = useState(false)
   const [isConfettiOpen, setIsConfettiOpen] = useState(false)
-  const [prize, setPrize] = useState('')
+  const [prize, setPrize] = useState<Record<string, any>>({ id: 0, name: '', value: 0 })
   const [phoneNo, setPhoneNo] = useState('')
 
   const postRegisterPhoneNo = () => {
@@ -157,14 +181,15 @@ const App = () => {
     postRegisterService()
   }
 
-  const handleSpinningEnd = (value: string) => {
+  const handleSpinningEnd = (value: Record<string, any>) => {
     setPrize(value)
     handleSpinningToggle(false)
     handlePrizeDialogToggle(true)
     handleConfettiToggle(true)
   }
 
-  const isPrizeNotZonk = !prize.includes('Zonk')
+  const isPrizeNotZonk = !!prize.value
+  console.log(prize, isPrizeNotZonk)
   const isWheelIdle =
     (isServiceRegistered && !isRegisterServiceDialogOpen) ||
     (!isSpinning &&
@@ -179,9 +204,8 @@ const App = () => {
         <Wheel isIdle={isWheelIdle} isSpinning={isSpinning} onSpinningEnd={handleSpinningEnd} />
         {isMobile && (
           <PlayButton
-            disabled={!!prize || isSpinning}
+            disabled={!!prize.name || isSpinning}
             isSpinning={isSpinning}
-            isActive={isServiceRegistered}
             onClick={handleClickPlayButton}
           />
         )}
@@ -195,15 +219,25 @@ const App = () => {
           </div>
         </Dialog>
 
-        <Drawer open={isRegisterPhoneDialogOpen} anchor="bottom" className={classes.dialogRegister}>
+        <Dialog
+          TransitionComponent={Transition}
+          className={classes.dialogRegister}
+          open={isRegisterPhoneDialogOpen}
+          onClose={() => handleRegisterPhoneDialogToggle(false)}
+        >
+          <div className={classes.dialogImage}>
+            <img
+              src="/images/fortune-wheel.png"
+              alt="fortune-wheel"
+              className={classes.imageFortuneWheel}
+            />
+          </div>
+          <div className={classes.dialogHeader}>
+            <IconButton onClick={() => handleRegisterPhoneDialogToggle(false)}>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          </div>
           <div className={classes.dialogRegisterContent}>
-            <div className={classes.dialogImage}>
-              <img
-                src="/images/fortune-wheel.png"
-                alt="fortune-wheel"
-                className={classes.imageFortuneWheel}
-              />
-            </div>
             <Typography>Silakan masukan nomor handphone Anda untuk memulai permainan.</Typography>
             <div className={classes.formField}>
               <TextField
@@ -225,21 +259,27 @@ const App = () => {
               {isLoading ? 'Mengirim data' : 'Lanjutkan'}
             </Button>
           </div>
-        </Drawer>
+        </Dialog>
 
-        <Drawer
+        <Dialog
+          TransitionComponent={Transition}
           open={isRegisterServiceDialogOpen}
-          anchor="bottom"
           className={classes.dialogRegister}
+          onClose={() => handleRegisterPhoneDialogToggle(false)}
         >
+          <div className={classes.dialogImage}>
+            <img
+              src="/images/fortune-wheel.png"
+              alt="fortune-wheel"
+              className={classes.imageFortuneWheel}
+            />
+          </div>
+          <div className={classes.dialogHeader}>
+            <IconButton onClick={() => handleRegisterServiceDialogToggle(false)}>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          </div>
           <div className={classes.dialogRegisterContent}>
-            <div className={classes.dialogImage}>
-              <img
-                src="/images/fortune-wheel.png"
-                alt="fortune-wheel"
-                className={classes.imageFortuneWheel}
-              />
-            </div>
             {isServiceRegistered ? (
               <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
             ) : (
@@ -271,21 +311,31 @@ const App = () => {
               </Button>
             )}
           </div>
-        </Drawer>
+        </Dialog>
 
-        <Drawer open={isPrizeDialogOpen} anchor="bottom" className={classes.dialogRegister}>
+        <Dialog
+          TransitionComponent={Transition}
+          open={isPrizeDialogOpen}
+          className={classes.dialogRegister}
+          onClose={() => handleRegisterPhoneDialogToggle(false)}
+        >
+          <div className={classes.dialogImage}>
+            <img
+              src={`/images/${isPrizeNotZonk ? prize.value : 'zonk'}.png`}
+              alt="fortune-wheel"
+              className={classes.imagePrize}
+            />
+          </div>
+          <div className={classes.dialogHeader}>
+            <IconButton onClick={() => handlePrizeDialogToggle(false)}>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          </div>
           <div className={classes.dialogRegisterContent}>
-            <div className={classes.dialogImage}>
-              <img
-                src={`/images/${isPrizeNotZonk ? 'prize' : 'zonk'}.png`}
-                alt="fortune-wheel"
-                className={classes.imageFortuneWheel}
-              />
-            </div>
             {isPrizeNotZonk ? (
               <>
                 <Typography>
-                  Selamat kamu mendapatkan hadiah <b>{prize}</b>.
+                  Selamat kamu mendapatkan hadiah <b>{prize.name}</b>.
                 </Typography>
                 <Typography>
                   Kuota akan dikirim ke nomor handphone kamu maksimal 2x24 jam.
@@ -293,24 +343,31 @@ const App = () => {
               </>
             ) : (
               <Typography>
-                Kamu mendapatkan kotak kosong, semoga kamu beruntung di kesempatan berikutnya.
+                Maaf kamu belum mendapatkan hadiah, semoga kamu beruntung di kesempatan berikutnya.
               </Typography>
             )}
           </div>
-          <div className={classes.dialogRegisterActions}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handlePrizeDialogToggle(false)}
-              endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
-            >
-              Tutup
-            </Button>
-          </div>
-        </Drawer>
+        </Dialog>
 
         {isPrizeNotZonk && isConfettiOpen && (
           <Confetti width={windowSize.width} height={windowSize.height} />
+        )}
+        {!isPrizeNotZonk && isConfettiOpen && (
+          <Confetti
+            drawShape={(ctx) => {
+              ctx.beginPath()
+              for (let i = 0; i < 22; i++) {
+                const angle = 0.35 * i
+                const x = (0.2 + 1.5 * angle) * Math.cos(angle)
+                const y = (0.2 + 1.5 * angle) * Math.sin(angle)
+                ctx.lineTo(x, y)
+              }
+              ctx.stroke()
+              ctx.closePath()
+            }}
+            colors={['#696969', '#696969', '#383838', '#000000']}
+            numberOfPieces={100}
+          />
         )}
       </div>
     </ThemeProvider>

@@ -1,9 +1,8 @@
 import { makeStyles } from '@material-ui/core'
 
-const imageSize = 40
-const lColor = 50
+const imageSize = 60
 
-const useStyles = ({ index, radius, sliceHeight, sliceOffeset, hColor, color = '#fff' }: any) =>
+const useStyles = ({ radius, sliceHeight, sliceOffeset, backgroundColor, color = '#fff' }: any) =>
   makeStyles(() => {
     return {
       wheelSlice: {
@@ -29,29 +28,19 @@ const useStyles = ({ index, radius, sliceHeight, sliceOffeset, hColor, color = '
           marginBottom: '-1px',
           marginTop: '-2px',
           borderWidth: `0 0 ${sliceHeight / 2 + 4}px ${radius}px`,
-          borderColor: `transparent transparent hsl(${hColor} 100% ${lColor}%) transparent`
+          borderColor: `transparent transparent ${backgroundColor} transparent`
         },
         '&:after': {
           marginTop: '-1px',
           marginBottom: '-2px',
           borderWidth: `0 ${radius}px ${sliceHeight / 2 + 4}px 0px`,
-          borderColor: `transparent hsl(${hColor} 100% ${lColor}%) transparent  transparent`
-        },
-        '&.glowing': {
-          '&:before': {
-            animation: '$glowBefore 2s infinite',
-            animationDelay: `${index % 2 === 0 ? 0 : 1}s`
-          },
-          '&:after': {
-            animation: '$glowAfter 2s infinite',
-            animationDelay: `${index % 2 === 0 ? 0 : 1}s`
-          }
+          borderColor: `transparent ${backgroundColor} transparent  transparent`
         }
       },
       label: {
         position: 'absolute',
         bottom: 0,
-        width: '85%',
+        width: '90%',
         top: `${sliceHeight / 2}px`,
         marginTop: `-${imageSize / 2}px`
       },
@@ -59,16 +48,6 @@ const useStyles = ({ index, radius, sliceHeight, sliceOffeset, hColor, color = '
         width: 'auto',
         height: `${imageSize}px`,
         transform: 'rotate(90deg)'
-      },
-      '@keyframes glowBefore': {
-        '50%': {
-          borderColor: `transparent transparent hsl(${hColor} 100% ${lColor - 25}%) transparent`
-        }
-      },
-      '@keyframes glowAfter': {
-        '50%': {
-          borderColor: `transparent hsl(${hColor} 100% ${lColor - 25}%) transparent transparent`
-        }
       }
     }
   })

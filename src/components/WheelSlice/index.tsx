@@ -2,7 +2,7 @@ import React from 'react'
 
 import useStyles from './useStylesWheelSlice'
 
-const hColors = ['21', '46', '248', '289', '96', '1'] // for hsl colors: hsl(1 100% 50%)
+const colors = ['#545454', '#EF6517', '#545454', '#545454', '#545454', '#545454']
 
 interface WheelSliceProps {
   index: number
@@ -12,8 +12,9 @@ interface WheelSliceProps {
   sliceHeight: number
   sliceOffeset: number
   rotate: number
-  isIdle: boolean
+  isIdle?: boolean
   color?: string
+  backgroundColor?: string
 }
 
 const WheelSlice = ({
@@ -23,24 +24,21 @@ const WheelSlice = ({
   sliceHeight,
   sliceOffeset,
   rotate,
-  isIdle,
-  color
+  color,
+  backgroundColor
 }: WheelSliceProps) => {
-  const hColor = hColors[index % hColors.length]
+  const bgColor = backgroundColor || colors[index % colors.length]
   const classes = useStyles({
     index,
     radius,
     sliceHeight,
     sliceOffeset,
-    hColor,
+    backgroundColor: bgColor,
     color
   })()
 
   return (
-    <div
-      className={`${classes.wheelSlice} ${isIdle ? 'glowing' : ''}`}
-      style={{ transform: `rotate(${rotate}deg)` }}
-    >
+    <div className={classes.wheelSlice} style={{ transform: `rotate(${rotate}deg)` }}>
       <div className={classes.label}>
         <img src={imageSrc} alt="prize" className={classes.itemPrize}></img>
       </div>
