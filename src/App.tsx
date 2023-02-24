@@ -321,7 +321,7 @@ const App = () => {
         >
           <div className={classes.dialogImage}>
             <img
-              src={`/images/${isPrizeNotZonk ? prize.value : 'zonk'}.png`}
+              src={`/images/${isPrizeNotZonk ? `prize-${prize.value}-large` : 'zonk'}.png`}
               alt="fortune-wheel"
               className={classes.imagePrize}
             />

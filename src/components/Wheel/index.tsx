@@ -33,7 +33,7 @@ const rewards = [
     id: 4,
     name: 'Kuota 6GB',
     imageSrc: '/images/prize-2.png',
-    vaue: 2,
+    value: 2,
     backgroundColor: '#545454'
   },
   {

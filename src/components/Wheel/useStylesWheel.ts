@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles = ({ spinDuration, diameter, rotation, sliceHeight, sliceOffeset }: any) =>
+const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
   makeStyles((theme) => {
     return {
       wheelPosition: {
