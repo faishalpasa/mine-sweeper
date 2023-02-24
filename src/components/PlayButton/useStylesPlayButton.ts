@@ -5,9 +5,8 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    // background: '#242424',
     background: 'transparent',
-    height: '80px',
+    height: '120px',
     '&:after': {
       content: '""',
       width: '128px',
@@ -16,7 +15,6 @@ const useStyles = makeStyles(() => ({
       left: '50%',
       top: '0',
       transform: 'translate(-50%, -50%)',
-      // background: '#fff',
       background: 'transparent',
       borderRadius: '100%'
     }
