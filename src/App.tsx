@@ -177,12 +177,14 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
         <Wheel isIdle={isWheelIdle} isSpinning={isSpinning} onSpinningEnd={handleSpinningEnd} />
-        <PlayButton
-          disabled={!!prize || isSpinning}
-          isSpinning={isSpinning}
-          isActive={isServiceRegistered}
-          onClick={handleClickPlayButton}
-        />
+        {isMobile && (
+          <PlayButton
+            disabled={!!prize || isSpinning}
+            isSpinning={isSpinning}
+            isActive={isServiceRegistered}
+            onClick={handleClickPlayButton}
+          />
+        )}
 
         <Dialog open={!isMobile} maxWidth="xs">
           <div className={classes.dialogBlockContent}>
