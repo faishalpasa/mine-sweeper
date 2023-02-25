@@ -90,7 +90,7 @@ const useStyles = makeStyles(() => ({
   dialogRegisterContent: {
     padding: '16px 16px',
     position: 'relative',
-    minHeight: '80px'
+    minHeight: '120px'
   },
   dialogRegisterActions: {
     padding: '16px',
@@ -256,6 +256,7 @@ const App = () => {
           open={isRegisterPhoneDialogOpen}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
           maxWidth="xs"
+          fullWidth
         >
           <div className={classes.dialogHeader}>
             <div style={{ width: '48px' }}></div>
@@ -293,6 +294,7 @@ const App = () => {
           className={classes.dialogRegister}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
           maxWidth="xs"
+          fullWidth
         >
           <div className={classes.dialogHeader}>
             <div style={{ width: '48px' }}></div>
@@ -302,20 +304,23 @@ const App = () => {
           </div>
           <div className={classes.dialogRegisterContent}>
             <Typography>
-              Untuk melanjutkan, silakan daftar konten premium gratis terlebih dahulu melalui SMS.
-              Stop kapan saja.
+              Untuk melanjutkan, silakan daftar konten premium gratis terlebih dahulu melalui{' '}
+              <b>SMS</b>. Stop kapan saja:
             </Typography>
-          </div>
-          <div className={classes.dialogRegisterActions}>
             <Button
               variant="contained"
               color="primary"
               disabled={!isPhoneNoValid || isLoading}
               onClick={handleContinueRegisterService}
               endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
+              fullWidth
+              style={{ margin: '16px 0px' }}
             >
-              {isLoading ? 'Mengirim data' : 'Lanjutkan'}
+              Klik disini
             </Button>
+            <Typography>
+              Lalu tekan <b>Kirim</b>.
+            </Typography>
           </div>
         </Dialog>
 
@@ -325,34 +330,39 @@ const App = () => {
           className={classes.dialogRegister}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
           maxWidth="xs"
+          fullWidth
         >
-          <div className={classes.dialogRegisterContent}>
-            {isServiceRegistered ? (
-              <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
-            ) : (
+          {isServiceRegistered ? (
+            <>
+              <div className={classes.dialogRegisterContent}>
+                <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
+              </div>
+              <div className={classes.dialogRegisterActions}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={isLoading}
+                  onClick={() => handleWaitingResponseDialogToggle(false)}
+                >
+                  Ok
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className={classes.dialogRegisterContent}>
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '16px',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  minHeight: '180px',
+                  justifyContent: 'center'
                 }}
               >
                 <Typography>Permintaan sedang di proses</Typography>
                 <CircularProgress />
               </div>
-            )}
-          </div>
-          {isServiceRegistered && (
-            <div className={classes.dialogRegisterActions}>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isLoading}
-                onClick={() => handleWaitingResponseDialogToggle(false)}
-              >
-                Ok
-              </Button>
             </div>
           )}
         </Dialog>
@@ -363,6 +373,7 @@ const App = () => {
           className={classes.dialogRegister}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
           maxWidth="xs"
+          fullWidth
         >
           <div className={classes.dialogHeader}>
             <div style={{ width: '48px' }}></div>
@@ -399,11 +410,11 @@ const App = () => {
           </div>
         </Dialog>
 
-        {isPrizeNotZonk && isConfettiOpen && (
-          <Confetti width={windowSize.width} height={windowSize.height} />
-        )}
+        {isPrizeNotZonk && isConfettiOpen && <Confetti width={windowSize.width} height={1000} />}
         {!isPrizeNotZonk && isConfettiOpen && (
           <Confetti
+            width={windowSize.width}
+            height={1000}
             drawShape={(ctx) => {
               ctx.beginPath()
               for (let i = 0; i < 22; i++) {
