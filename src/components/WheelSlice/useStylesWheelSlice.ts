@@ -2,7 +2,14 @@ import { makeStyles } from '@material-ui/core'
 
 const imageSize = 60
 
-const useStyles = ({ radius, sliceHeight, sliceOffeset, backgroundColor, color = '#fff' }: any) =>
+const useStyles = ({
+  radius,
+  sliceHeight,
+  sliceOffeset,
+  backgroundColor,
+  color = '#fff',
+  value
+}: any) =>
   makeStyles(() => {
     return {
       wheelSlice: {
@@ -35,6 +42,14 @@ const useStyles = ({ radius, sliceHeight, sliceOffeset, backgroundColor, color =
           marginBottom: '-2px',
           borderWidth: `0 ${radius}px ${sliceHeight / 2 + 4}px 0px`,
           borderColor: `transparent ${backgroundColor} transparent  transparent`
+        },
+        '&.glowing': {
+          '&:before': {
+            animation: '$glowBefore 2s infinite'
+          },
+          '&:after': {
+            animation: '$glowAfter 2s infinite'
+          }
         }
       },
       label: {
@@ -48,6 +63,16 @@ const useStyles = ({ radius, sliceHeight, sliceOffeset, backgroundColor, color =
         width: 'auto',
         height: `${imageSize}px`,
         transform: 'rotate(90deg)'
+      },
+      '@keyframes glowBefore': {
+        '50%': {
+          borderColor: `transparent transparent #8396ff transparent`
+        }
+      },
+      '@keyframes glowAfter': {
+        '50%': {
+          borderColor: `transparent #8396ff transparent transparent`
+        }
       }
     }
   })

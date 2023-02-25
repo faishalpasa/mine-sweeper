@@ -9,18 +9,39 @@ import useStyles from './useStylesWheel'
 
 const rewards = [
   {
+    id: 10,
+    name: 'Kuota 12GB',
+    imageSrc: '/images/prize-4.png',
+    value: 4,
+    backgroundColor: '#3f51b5'
+  },
+  {
+    id: 11,
+    name: 'Zonk',
+    imageSrc: '/images/zonk.png',
+    value: 0,
+    backgroundColor: '#39c8b8'
+  },
+  {
+    id: 12,
+    name: 'Zonk',
+    imageSrc: '/images/zonk.png',
+    value: 0,
+    backgroundColor: '#9ec839'
+  },
+  {
     id: 1,
     name: 'Kuota 4GB',
     imageSrc: '/images/prize-1.png',
     value: 1,
-    backgroundColor: '#545454'
+    backgroundColor: '#3f51b5'
   },
   {
     id: 2,
     name: 'Zonk',
     imageSrc: '/images/zonk.png',
     value: 0,
-    backgroundColor: '#9b0000'
+    backgroundColor: '#9e9e9e'
   },
   {
     id: 3,
@@ -34,63 +55,42 @@ const rewards = [
     name: 'Kuota 6GB',
     imageSrc: '/images/prize-2.png',
     value: 2,
-    backgroundColor: '#545454'
+    backgroundColor: '#3f51b5'
   },
   {
     id: 5,
     name: 'Zonk',
     imageSrc: '/images/zonk.png',
     value: 0,
-    backgroundColor: '#6DBD42'
+    backgroundColor: '#29c196'
   },
   {
     id: 6,
     name: 'Zonk',
     imageSrc: '/images/zonk.png',
     value: 0,
-    backgroundColor: '#EF6517'
+    backgroundColor: '#b35db4'
   },
   {
     id: 7,
     name: 'Kuota 8GB',
     imageSrc: '/images/prize-3.png',
     value: 3,
-    backgroundColor: '#545454'
+    backgroundColor: '#3f51b5'
   },
   {
     id: 8,
     name: 'Zonk',
     imageSrc: '/images/zonk.png',
     value: 0,
-    backgroundColor: '#9b0000'
+    backgroundColor: '#b7df6f'
   },
   {
     id: 9,
     name: 'Zonk',
     imageSrc: '/images/zonk.png',
     value: 0,
-    backgroundColor: '#FBC617'
-  },
-  {
-    id: 10,
-    name: 'Kuota 12GB',
-    imageSrc: '/images/prize-4.png',
-    value: 4,
-    backgroundColor: '#545454'
-  },
-  {
-    id: 11,
-    name: 'Zonk',
-    imageSrc: '/images/zonk.png',
-    value: 0,
-    backgroundColor: '#6DBD42'
-  },
-  {
-    id: 12,
-    name: 'Zonk',
-    imageSrc: '/images/zonk.png',
-    value: 0,
-    backgroundColor: '#EF6517'
+    backgroundColor: '#dfa46f'
   }
 ]
 
@@ -163,7 +163,12 @@ const Wheel = ({ isSpinning, onSpinningEnd }: WheelProps) => {
   return (
     <div className={classes.wheelPosition}>
       <MarkerIcon className={classes.markerIcon}></MarkerIcon>
-      <StarIcon className={classes.starIcon}></StarIcon>
+      <StarIcon
+        className={classes.starIcon}
+        style={{
+          animationDuration: `${isSpinning ? '0.25s' : '1.5s'}`
+        }}
+      ></StarIcon>
       <div className={classes.wheelBackground}></div>
       <div className={classes.wheelBulbWrapper}>
         <div className={classes.wheelBulbs}>
@@ -196,6 +201,7 @@ const Wheel = ({ isSpinning, onSpinningEnd }: WheelProps) => {
               sliceHeight={sliceHeight}
               sliceOffeset={sliceOffeset}
               name={item.name}
+              value={item.value}
               imageSrc={item.imageSrc || `/images/box-${(index % 4) + 1}.png`}
               backgroundColor={item.backgroundColor}
             />

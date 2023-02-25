@@ -12,7 +12,7 @@ import {
   Slide
 } from '@material-ui/core'
 import { Close as CloseIcon } from '@material-ui/icons'
-import { isMobile } from 'react-device-detect'
+import { isMobile, isIOS } from 'react-device-detect'
 import Confetti from 'react-confetti'
 
 import Wheel from 'components/Wheel'
@@ -22,7 +22,7 @@ import useWindowSize from 'hooks/useWindowSize'
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ffa300'
+      main: '#00bfff'
     }
   },
   typography: {
@@ -41,7 +41,6 @@ const theme = createTheme({
 })
 
 import { TransitionProps } from '@material-ui/core/transitions'
-import { Close } from '@material-ui/icons'
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -49,6 +48,14 @@ const Transition = React.forwardRef(function Transition(
 ) {
   return <Slide direction="up" ref={ref} {...props} />
 })
+
+const composeSMS = () => {
+  let url = `sms:?body=${encodeURIComponent('Saya ingin berlangganan')}`
+  if (isIOS) {
+    url = `sms:;body=${encodeURIComponent('Saya ingin berlangganan')}`
+  }
+  location.href = url
+}
 
 const useStyles = makeStyles(() => ({
   app: {
@@ -70,7 +77,8 @@ const useStyles = makeStyles(() => ({
   dialogHeader: {
     padding: '0px',
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   dialogRegister: {
     '& .MuiPaper-root': {
@@ -79,17 +87,23 @@ const useStyles = makeStyles(() => ({
     }
   },
   dialogRegisterContent: {
-    padding: '24px 16px 16px',
+    padding: '16px 16px',
     position: 'relative',
     minHeight: '80px'
   },
   dialogRegisterActions: {
     padding: '16px',
     display: 'flex',
-    justifyContent: 'flex-end'
+    gap: '8px',
+    flexDirection: 'column'
   },
   formField: {
-    margin: '8px 0px'
+    margin: '8px auto',
+    display: 'flex',
+    justifyContent: 'center',
+    '& input': {
+      textAlign: 'center'
+    }
   },
   dialogImage: {
     left: 0,
@@ -117,6 +131,7 @@ const App = () => {
   const [isSpinning, setIsSpinning] = useState(false)
   const [isRegisterPhoneDialogOpen, setIsRegisterPhoneDialogOpen] = useState(false)
   const [isRegisterServiceDialogOpen, setIsRegisterServiceDialogOpen] = useState(false)
+  const [isWaitingResponseDialogOpen, setIsWaitingResponseOpen] = useState(false)
   const [isPrizeDialogOpen, setIsPrizeDialogOpen] = useState(false)
   const [isServiceRegistered, setIsServiceRegistered] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -133,10 +148,21 @@ const App = () => {
     }, 1000)
   }
 
+  const postSendingSms = () => {
+    composeSMS()
+    setTimeout(() => {
+      setIsLoading(false)
+      handleRegisterPhoneDialogToggle(false)
+      setIsServiceRegistered(true)
+    }, 5000)
+  }
+
   const postRegisterService = () => {
     setTimeout(() => {
       setIsLoading(false)
-      setIsServiceRegistered(true)
+      handleWaitingResponseDialogToggle(true)
+      handleRegisterServiceDialogToggle(false)
+      postSendingSms()
     }, 1000)
   }
 
@@ -158,6 +184,10 @@ const App = () => {
 
   const handleRegisterServiceDialogToggle = (value: boolean) => {
     setIsRegisterServiceDialogOpen(value)
+  }
+
+  const handleWaitingResponseDialogToggle = (value: boolean) => {
+    setIsWaitingResponseOpen(value)
   }
 
   const handlePrizeDialogToggle = (value: boolean) => {
@@ -224,15 +254,10 @@ const App = () => {
           className={classes.dialogRegister}
           open={isRegisterPhoneDialogOpen}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
+          maxWidth="xs"
         >
-          <div className={classes.dialogImage}>
-            <img
-              src="/images/fortune-wheel.png"
-              alt="fortune-wheel"
-              className={classes.imageFortuneWheel}
-            />
-          </div>
           <div className={classes.dialogHeader}>
+            <div style={{ width: '48px' }}></div>
             <IconButton onClick={() => handleRegisterPhoneDialogToggle(false)}>
               <CloseIcon></CloseIcon>
             </IconButton>
@@ -266,51 +291,69 @@ const App = () => {
           open={isRegisterServiceDialogOpen}
           className={classes.dialogRegister}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
+          maxWidth="xs"
         >
-          <div className={classes.dialogImage}>
-            <img
-              src="/images/fortune-wheel.png"
-              alt="fortune-wheel"
-              className={classes.imageFortuneWheel}
-            />
-          </div>
           <div className={classes.dialogHeader}>
+            <div style={{ width: '48px' }}></div>
             <IconButton onClick={() => handleRegisterServiceDialogToggle(false)}>
               <CloseIcon></CloseIcon>
             </IconButton>
           </div>
           <div className={classes.dialogRegisterContent}>
+            <Typography>
+              Untuk melanjutkan, silakan daftar konten premium gratis terlebih dahulu melalui SMS.
+              Stop kapan saja.
+            </Typography>
+          </div>
+          <div className={classes.dialogRegisterActions}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={!isPhoneNoValid || isLoading}
+              onClick={handleContinueRegisterService}
+              endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
+            >
+              {isLoading ? 'Mengirim data' : 'Lanjutkan'}
+            </Button>
+          </div>
+        </Dialog>
+
+        <Dialog
+          TransitionComponent={Transition}
+          open={isWaitingResponseDialogOpen}
+          className={classes.dialogRegister}
+          onClose={() => handleRegisterPhoneDialogToggle(false)}
+          maxWidth="xs"
+        >
+          <div className={classes.dialogRegisterContent}>
             {isServiceRegistered ? (
               <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
             ) : (
-              <Typography>
-                Untuk melanjutkan, silakan daftar konten premium gratis terlebih dahulu melalui SMS.
-                Stop kapan saja.
-              </Typography>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px',
+                  alignItems: 'center'
+                }}
+              >
+                <Typography>Permintaan sedang di proses</Typography>
+                <CircularProgress />
+              </div>
             )}
           </div>
-          <div className={classes.dialogRegisterActions}>
-            {isServiceRegistered ? (
+          {isServiceRegistered && (
+            <div className={classes.dialogRegisterActions}>
               <Button
                 variant="contained"
                 color="primary"
                 disabled={isLoading}
-                onClick={() => handleRegisterServiceDialogToggle(false)}
+                onClick={() => handleWaitingResponseDialogToggle(false)}
               >
-                Tutup
+                Ok
               </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isLoading}
-                onClick={handleContinueRegisterService}
-                endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
-              >
-                {isLoading ? 'Mengirim data' : 'Lanjutkan'}
-              </Button>
-            )}
-          </div>
+            </div>
+          )}
         </Dialog>
 
         <Dialog
@@ -318,15 +361,11 @@ const App = () => {
           open={isPrizeDialogOpen}
           className={classes.dialogRegister}
           onClose={() => handleRegisterPhoneDialogToggle(false)}
+          maxWidth="xs"
         >
-          <div className={classes.dialogImage}>
-            <img
-              src={`/images/${isPrizeNotZonk ? `prize-${prize.value}-large` : 'zonk'}.png`}
-              alt="fortune-wheel"
-              className={classes.imagePrize}
-            />
-          </div>
           <div className={classes.dialogHeader}>
+            <div style={{ width: '48px' }}></div>
+            <Typography variant="h6">{isPrizeNotZonk ? 'Selamat!' : 'Zonk!'}</Typography>
             <IconButton onClick={() => handlePrizeDialogToggle(false)}>
               <CloseIcon></CloseIcon>
             </IconButton>
@@ -346,6 +385,16 @@ const App = () => {
                 Maaf kamu belum mendapatkan hadiah, semoga kamu beruntung di kesempatan berikutnya.
               </Typography>
             )}
+          </div>
+          <div className={classes.dialogRegisterActions}>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={isLoading}
+              onClick={() => handlePrizeDialogToggle(false)}
+            >
+              Tutup
+            </Button>
           </div>
         </Dialog>
 

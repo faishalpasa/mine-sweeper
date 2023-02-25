@@ -15,6 +15,7 @@ interface WheelSliceProps {
   isIdle?: boolean
   color?: string
   backgroundColor?: string
+  value?: number
 }
 
 const WheelSlice = ({
@@ -25,7 +26,8 @@ const WheelSlice = ({
   sliceOffeset,
   rotate,
   color,
-  backgroundColor
+  backgroundColor,
+  value
 }: WheelSliceProps) => {
   const bgColor = backgroundColor || colors[index % colors.length]
   const classes = useStyles({
@@ -38,7 +40,10 @@ const WheelSlice = ({
   })()
 
   return (
-    <div className={classes.wheelSlice} style={{ transform: `rotate(${rotate}deg)` }}>
+    <div
+      className={`${classes.wheelSlice} ${value ? 'glowing' : ''}`}
+      style={{ transform: `rotate(${rotate}deg)` }}
+    >
       <div className={classes.label}>
         <img src={imageSrc} alt="prize" className={classes.itemPrize}></img>
       </div>

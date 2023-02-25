@@ -76,8 +76,8 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
       },
       wheelBulbWrapper: {
         position: 'absolute',
-        width: `${diameter + 34}px`,
-        height: `${diameter + 34}px`,
+        width: `${diameter + 36}px`,
+        height: `${diameter + 36}px`,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -85,8 +85,8 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
       },
       wheelBulbs: {
         position: 'relative',
-        width: `${diameter + 34}px`,
-        height: `${diameter + 34}px`
+        width: `${diameter + 36}px`,
+        height: `${diameter + 36}px`
       },
       wheelBulbPlace: {
         position: 'absolute',
@@ -102,8 +102,8 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
         borderRadius: '100%',
         position: 'absolute',
         right: 0,
-        background: '#fff4bd',
-        border: '1px solid #6d6d6d',
+        // background: '#fff4bd',
+        border: '1px solid #ff6300',
         '&.even': {
           background: '#fff4bd',
           animation: '$bulbLightEven 2s infinite linear'
@@ -132,7 +132,9 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
         height: 40,
         zIndex: 2,
         position: 'absolute',
-        transform: 'translate(-50%, -50%) rotate(90deg)'
+        transform: 'translate(-50%, -50%) rotate(90deg)',
+        animation: '$starLight 2s infinite linear',
+        strokeWidth: 1
       },
       button: {
         width: 100,
@@ -171,13 +173,36 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
         }
       },
       '@keyframes bulbLightEven': {
+        '0%': {
+          background: '#fff4bd'
+        },
         '50%': {
           background: '#ff6300'
+        },
+        '100%': {
+          background: '#fff4bd'
         }
       },
       '@keyframes bulbLightOdd': {
+        '0%': {
+          background: '#ff6300'
+        },
         '50%': {
           background: '#fff4bd'
+        },
+        '100%': {
+          background: '#ff6300'
+        }
+      },
+      '@keyframes starLight': {
+        '0%': {
+          color: '#ff6300'
+        },
+        '50%': {
+          color: '#fff4bd'
+        },
+        '100%': {
+          color: '#ff6300'
         }
       }
     }
