@@ -99,11 +99,19 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
       wheelBulb: {
         width: `${sliceHeight / 5}px`,
         height: `${sliceHeight / 5}px`,
-        background: '#fff4bd',
         borderRadius: '100%',
         position: 'absolute',
         right: 0,
-        animation: '$bulbLight 1s infinite linear'
+        background: '#fff4bd',
+        border: '1px solid #6d6d6d',
+        '&.even': {
+          background: '#fff4bd',
+          animation: '$bulbLightEven 2s infinite linear'
+        },
+        '&.odd': {
+          background: '#ff6300',
+          animation: '$bulbLightOdd 2s infinite linear'
+        }
       },
       markerIcon: {
         color: '#da0000',
@@ -162,9 +170,14 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
           transform: `rotate(${rotation}deg)`
         }
       },
-      '@keyframes bulbLight': {
+      '@keyframes bulbLightEven': {
         '50%': {
           background: '#ff6300'
+        }
+      },
+      '@keyframes bulbLightOdd': {
+        '50%': {
+          background: '#fff4bd'
         }
       }
     }

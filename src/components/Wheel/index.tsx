@@ -176,10 +176,9 @@ const Wheel = ({ isSpinning, onSpinningEnd }: WheelProps) => {
               }}
             >
               <div
-                className={classes.wheelBulb}
+                className={`${classes.wheelBulb} ${index % 2 === 0 ? 'even' : 'odd'}`}
                 style={{
-                  animationDelay: `${index * 0.1}s`,
-                  animationDuration: `${isSpinning ? '0.25s' : '1s'}`
+                  animationDuration: `${isSpinning ? '0.25s' : '1.5s'}`
                 }}
               ></div>
             </div>
