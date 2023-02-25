@@ -50,9 +50,10 @@ const Transition = React.forwardRef(function Transition(
 })
 
 const composeSMS = () => {
-  let url = `sms:?body=${encodeURIComponent('Saya ingin berlangganan')}`
+  const phoneNo = '+62111'
+  let url = `sms:${phoneNo}?body=${encodeURIComponent('Saya ingin berlangganan')}`
   if (isIOS) {
-    url = `sms:;body=${encodeURIComponent('Saya ingin berlangganan')}`
+    url = `sms:${phoneNo};body=${encodeURIComponent('Saya ingin berlangganan')}`
   }
   location.href = url
 }
