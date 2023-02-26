@@ -153,7 +153,6 @@ const Wheel = ({ isSpinning, onSpinningEnd }: WheelProps) => {
   useEffect(() => {
     if (isSpinning) {
       setTimeout(() => {
-        console.log(`Hadiah terpilih ${selectedReward?.name}`)
         onSpinningEnd(selectedReward || {})
         setIsStopped(true)
       }, spinDuration * 1000)

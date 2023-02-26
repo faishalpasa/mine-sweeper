@@ -221,7 +221,6 @@ const App = () => {
   }
 
   const isPrizeNotZonk = !!prize.value
-  console.log(prize, isPrizeNotZonk)
   const isWheelIdle =
     (isServiceRegistered && !isRegisterServiceDialogOpen) ||
     (!isSpinning &&
@@ -322,7 +321,7 @@ const App = () => {
                 Klik disini
               </Button>
             </div>
-            <Typography>
+            <Typography style={{ textAlign: 'center' }}>
               Lalu tekan <b>Kirim</b>.
             </Typography>
           </div>
