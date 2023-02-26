@@ -76,8 +76,8 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
       },
       wheelBulbWrapper: {
         position: 'absolute',
-        width: `${diameter + 36}px`,
-        height: `${diameter + 36}px`,
+        width: `${diameter + 38}px`,
+        height: `${diameter + 38}px`,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -85,8 +85,8 @@ const useStyles = ({ spinDuration, diameter, rotation, sliceHeight }: any) =>
       },
       wheelBulbs: {
         position: 'relative',
-        width: `${diameter + 36}px`,
-        height: `${diameter + 36}px`
+        width: `${diameter + 38}px`,
+        height: `${diameter + 38}px`
       },
       wheelBulbPlace: {
         position: 'absolute',

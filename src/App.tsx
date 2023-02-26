@@ -90,10 +90,11 @@ const useStyles = makeStyles(() => ({
   dialogRegisterContent: {
     padding: '16px 16px',
     position: 'relative',
-    minHeight: '120px'
+    height: '180px',
+    display: 'flex',
+    flexDirection: 'column'
   },
-  dialogRegisterActions: {
-    padding: '16px',
+  buttonActions: {
     display: 'flex',
     gap: '8px',
     flexDirection: 'column'
@@ -265,26 +266,28 @@ const App = () => {
             </IconButton>
           </div>
           <div className={classes.dialogRegisterContent}>
-            <Typography>Silakan masukan nomor handphone Anda untuk memulai permainan.</Typography>
-            <div className={classes.formField}>
-              <TextField
-                onChange={(e) => handleChangeInput(e.target.value)}
-                value={phoneNo}
-                placeholder="08123456789"
-                type="tel"
-              />
+            <div style={{ flex: 1 }}>
+              <Typography>Silakan masukan nomor handphone Anda untuk memulai permainan.</Typography>
+              <div className={classes.formField}>
+                <TextField
+                  onChange={(e) => handleChangeInput(e.target.value)}
+                  value={phoneNo}
+                  placeholder="08123456789"
+                  type="tel"
+                />
+              </div>
             </div>
-          </div>
-          <div className={classes.dialogRegisterActions}>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!isPhoneNoValid || isLoading}
-              onClick={handleContinueRegisterPhone}
-              endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
-            >
-              {isLoading ? 'Mengirim data' : 'Lanjutkan'}
-            </Button>
+            <div className={classes.buttonActions}>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={!isPhoneNoValid || isLoading}
+                onClick={handleContinueRegisterPhone}
+                endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
+              >
+                {isLoading ? 'Mengirim data' : 'Lanjutkan'}
+              </Button>
+            </div>
           </div>
         </Dialog>
 
@@ -307,17 +310,18 @@ const App = () => {
               Untuk melanjutkan, silakan daftar konten premium gratis terlebih dahulu melalui{' '}
               <b>SMS</b>. Stop kapan saja:
             </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              disabled={!isPhoneNoValid || isLoading}
-              onClick={handleContinueRegisterService}
-              endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
-              fullWidth
-              style={{ margin: '16px 0px' }}
-            >
-              Klik disini
-            </Button>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={!isPhoneNoValid || isLoading}
+                onClick={handleContinueRegisterService}
+                endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
+                fullWidth
+              >
+                Klik disini
+              </Button>
+            </div>
             <Typography>
               Lalu tekan <b>Kirim</b>.
             </Typography>
@@ -332,20 +336,28 @@ const App = () => {
           maxWidth="xs"
           fullWidth
         >
+          <div className={classes.dialogHeader}>
+            <div style={{ width: '48px' }}></div>
+            <IconButton onClick={() => handleRegisterServiceDialogToggle(false)}>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          </div>
           {isServiceRegistered ? (
             <>
               <div className={classes.dialogRegisterContent}>
-                <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
-              </div>
-              <div className={classes.dialogRegisterActions}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  disabled={isLoading}
-                  onClick={() => handleWaitingResponseDialogToggle(false)}
-                >
-                  Ok
-                </Button>
+                <div style={{ flex: 1 }}>
+                  <Typography>Verifikasi selesai. Silakan putar roda keberuntunganmu.</Typography>
+                </div>
+                <div className={classes.buttonActions}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    disabled={isLoading}
+                    onClick={() => handleWaitingResponseDialogToggle(false)}
+                  >
+                    Ok
+                  </Button>
+                </div>
               </div>
             </>
           ) : (
@@ -354,10 +366,9 @@ const App = () => {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '16px',
+                  gap: '32px',
                   alignItems: 'center',
-                  minHeight: '180px',
-                  justifyContent: 'center'
+                  minHeight: '180px'
                 }}
               >
                 <Typography>Permintaan sedang di proses</Typography>
@@ -383,30 +394,33 @@ const App = () => {
             </IconButton>
           </div>
           <div className={classes.dialogRegisterContent}>
-            {isPrizeNotZonk ? (
-              <>
+            <div style={{ flex: 1 }}>
+              {isPrizeNotZonk ? (
+                <>
+                  <Typography>
+                    Selamat kamu mendapatkan hadiah <b>{prize.name}</b>.
+                  </Typography>
+                  <Typography>
+                    Kuota akan dikirim ke nomor handphone kamu maksimal 2x24 jam.
+                  </Typography>
+                </>
+              ) : (
                 <Typography>
-                  Selamat kamu mendapatkan hadiah <b>{prize.name}</b>.
+                  Maaf kamu belum mendapatkan hadiah, semoga kamu beruntung di kesempatan
+                  berikutnya.
                 </Typography>
-                <Typography>
-                  Kuota akan dikirim ke nomor handphone kamu maksimal 2x24 jam.
-                </Typography>
-              </>
-            ) : (
-              <Typography>
-                Maaf kamu belum mendapatkan hadiah, semoga kamu beruntung di kesempatan berikutnya.
-              </Typography>
-            )}
-          </div>
-          <div className={classes.dialogRegisterActions}>
-            <Button
-              color="primary"
-              variant="contained"
-              disabled={isLoading}
-              onClick={() => handlePrizeDialogToggle(false)}
-            >
-              Tutup
-            </Button>
+              )}
+            </div>
+            <div className={classes.buttonActions}>
+              <Button
+                color="primary"
+                variant="contained"
+                disabled={isLoading}
+                onClick={() => handlePrizeDialogToggle(false)}
+              >
+                Tutup
+              </Button>
+            </div>
           </div>
         </Dialog>
 
