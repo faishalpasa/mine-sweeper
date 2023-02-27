@@ -179,12 +179,20 @@ const App = () => {
         return response.json()
       })
       .then((response) => {
-        if (response.status === 'ok') {
+        if (response.status === 'ok' && response.reason === 'user active') {
+          setResponseRegister(response)
+          setIsLoading(false)
+          setIsServiceRegistered(true)
+          handleRegisterPhoneDialogToggle(false)
+          handleWaitingResponseDialogToggle(true)
+        } else if (response.status === 'ok') {
           setResponseRegister(response)
           setIsLoading(false)
           handleRegisterPhoneDialogToggle(false)
           handleRegisterServiceDialogToggle(true)
         } else {
+          setIsLoading(false)
+          handleRegisterPhoneDialogToggle(false)
           setError({
             isOpen: true,
             message: 'Kesempatan memutar roda keberuntungan anda telah habis, coba lagi besok'
@@ -537,12 +545,7 @@ const App = () => {
               <Typography>{error.message}</Typography>
             </div>
             <div className={classes.buttonActions}>
-              <Button
-                color="primary"
-                variant="contained"
-                disabled={isLoading}
-                onClick={handleCloseErrorDialog}
-              >
+              <Button color="primary" variant="contained" onClick={handleCloseErrorDialog}>
                 Tutup
               </Button>
             </div>
