@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, memo, useState } from 'react'
+import React, { useEffect, memo, useState } from 'react'
 
 import { Star as StarIcon, Room as MarkerIcon } from '@material-ui/icons'
 
@@ -11,88 +11,91 @@ const rewards = [
   {
     id: 10,
     name: 'Kuota 12GB',
-    imageSrc: '/images/prize-4.png',
-    value: 4,
+    imageSrc: `${process.env.REACT_APP_URL}/images/prize-4.png`,
+    value: 12,
     backgroundColor: '#3f51b5'
   },
   {
     id: 11,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#39c8b8'
   },
   {
     id: 12,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#9ec839'
   },
   {
     id: 1,
     name: 'Kuota 4GB',
-    imageSrc: '/images/prize-1.png',
-    value: 1,
+    imageSrc: `${process.env.REACT_APP_URL}/images/prize-1.png`,
+    value: 3,
     backgroundColor: '#3f51b5'
   },
   {
     id: 2,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#9e9e9e'
   },
   {
     id: 3,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#FBC617'
   },
   {
     id: 4,
     name: 'Kuota 6GB',
-    imageSrc: '/images/prize-2.png',
-    value: 2,
+    imageSrc: `${process.env.REACT_APP_URL}/images/prize-2.png`,
+    value: 6,
     backgroundColor: '#3f51b5'
   },
   {
     id: 5,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#29c196'
   },
   {
     id: 6,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#b35db4'
   },
   {
     id: 7,
     name: 'Kuota 8GB',
-    imageSrc: '/images/prize-3.png',
-    value: 3,
+    imageSrc: `${process.env.REACT_APP_URL}/images/prize-3.png`,
+    value: 9,
     backgroundColor: '#3f51b5'
   },
   {
     id: 8,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#b7df6f'
   },
   {
     id: 9,
     name: 'Zonk',
-    imageSrc: '/images/zonk.png',
+    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#dfa46f'
   }
 ]
+const zonkRewards = rewards.filter((item) => item.value === 0)
+
+// console.log(zonkRewards)
 
 const rearangedRewards = [...rewards].reverse()
 rearangedRewards.unshift(rewards[0])
@@ -109,36 +112,45 @@ const generateRandomNumber = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
-const randomNumber = generateRandomNumber(20, 20 + rewards.length)
+const numberOfSlices = rewards.length
+const numberOfBulbs = numberOfSlices * 2
+const rotateRadius = 360 / numberOfSlices
+const rotateRadiusBulb = 360 / numberOfBulbs
+
+const randomRotation =
+  generateRandomNumber(0, rotateRadius / 2) - generateRandomNumber(0, rotateRadius / 2)
+const randomSelectedZonkPrize = zonkRewards[Math.floor(Math.random() * zonkRewards.length)]
 
 interface WheelProps {
   isIdle: boolean
   isSpinning: boolean
   onSpinningEnd: (value: Record<string, any>) => void
+  prize: number
 }
 
-const Wheel = ({ isSpinning, onSpinningEnd }: WheelProps) => {
+const Wheel = ({ isSpinning, onSpinningEnd, prize }: WheelProps) => {
   const windowSize = useWindowSize()
-  const rotation = useMemo(() => randomNumber * 360, [randomNumber])
   const [isStopped, setIsStopped] = useState(false)
 
   let diameter = 500 - 64
   if (windowSize.width < 500) {
     diameter = windowSize.width - 64
   }
-
-  const numberOfSlices = rewards.length
-  const numberOfBulbs = numberOfSlices * 2
-  const rotateRadius = 360 / numberOfSlices
-  const rotateRadiusBulb = 360 / numberOfBulbs
   const radius = diameter / 2
   const circumfrance = 6.283185307 * radius
   const sliceHeight = circumfrance / numberOfSlices
   const sliceOffeset = sliceHeight / 2
-  const calculatedRotation = (rotation / rotateRadius) % rewards.length
-  const selectedReward = mappedRewards.find(
-    (item) => item.lessThan > calculatedRotation && item.moreThan < calculatedRotation
-  )
+
+  let findPrizeIndex = 0
+  if (prize) {
+    findPrizeIndex = mappedRewards.findIndex((item) => item.value === prize)
+  } else {
+    findPrizeIndex = rewards.findIndex((item) => item.value === randomSelectedZonkPrize.value)
+  }
+
+  const rotation = 20 * 360 + rotateRadius * findPrizeIndex + randomRotation
+
+  const selectedReward = rewards.find((item) => item.value === prize)
 
   const bulbs = Array.from(Array(numberOfBulbs).keys())
 
