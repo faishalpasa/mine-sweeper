@@ -18,6 +18,9 @@ import Confetti from 'react-confetti'
 import Wheel from 'components/Wheel'
 import PlayButton from 'components/PlayButton'
 import useWindowSize from 'hooks/useWindowSize'
+import { getMsisdnProvider } from 'utils/msisdn'
+
+// 081200000002
 
 const theme = createTheme({
   palette: {
@@ -49,12 +52,18 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />
 })
 
-const composeSMS = () => {
-  const phoneNo = '+62111'
-  let url = `sms:${phoneNo}?body=${encodeURIComponent('Saya ingin berlangganan')}`
-  if (isIOS) {
-    url = `sms:${phoneNo};body=${encodeURIComponent('Saya ingin berlangganan')}`
+const trxId = new URLSearchParams(window.location.search).get('trx_id') || ''
+
+const composeSMS = (phoneNo: string, body: string, trxId: string) => {
+  let sms = body
+  if (body.includes('{trx_id}')) {
+    sms = body.replace('{trx_id}', trxId)
   }
+  let url = `sms:${phoneNo}?body=${encodeURIComponent(sms)}`
+  if (isIOS) {
+    url = `sms:${phoneNo};body=${encodeURIComponent(sms)}`
+  }
+  // console.log(url)
   location.href = url
 }
 
@@ -141,22 +150,70 @@ const App = () => {
   const [isConfettiOpen, setIsConfettiOpen] = useState(false)
   const [prize, setPrize] = useState<Record<string, any>>({ id: 0, name: '', value: 0 })
   const [phoneNo, setPhoneNo] = useState('')
+  const [responseRegister, setResponseRegister] = useState({
+    status: '',
+    sms: '',
+    to: ''
+  })
+  const [responsePrize, setResponsePrize] = useState({
+    status: '',
+    prize: 0
+  })
+  const [error, setError] = useState({
+    isOpen: false,
+    message: ''
+  })
 
   const postRegisterPhoneNo = () => {
-    setTimeout(() => {
-      setIsLoading(false)
-      handleRegisterPhoneDialogToggle(false)
-      handleRegisterServiceDialogToggle(true)
-    }, 1000)
+    const msisdn = phoneNo.replace(/0(\d+)/, '62$1')
+    const telco = getMsisdnProvider(phoneNo)
+    fetch(`${process.env.REACT_APP_API_URL}/api/reg`, {
+      method: 'post',
+      body: JSON.stringify({
+        trx_id: trxId,
+        msisdn,
+        telco
+      })
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        if (response.status === 'ok') {
+          setResponseRegister(response)
+          setIsLoading(false)
+          handleRegisterPhoneDialogToggle(false)
+          handleRegisterServiceDialogToggle(true)
+        } else {
+          setError({
+            isOpen: true,
+            message: 'Kesempatan memutar roda keberuntungan anda telah habis, coba lagi besok'
+          })
+        }
+      })
   }
 
   const postSendingSms = () => {
-    composeSMS()
-    setTimeout(() => {
-      setIsLoading(false)
-      handleRegisterPhoneDialogToggle(false)
-      setIsServiceRegistered(true)
-    }, 5000)
+    const msisdn = phoneNo.replace(/0(\d+)/, '62$1')
+    fetch(`${process.env.REACT_APP_API_URL}/api/get_status`, {
+      method: 'post',
+      body: JSON.stringify({
+        trx_id: trxId,
+        msisdn
+      })
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        if (response.status === 'ok') {
+          setIsLoading(false)
+          handleRegisterPhoneDialogToggle(false)
+          setIsServiceRegistered(true)
+        } else {
+          setTimeout(postSendingSms, 2000)
+        }
+      })
   }
 
   const postRegisterService = () => {
@@ -164,8 +221,28 @@ const App = () => {
       setIsLoading(false)
       handleWaitingResponseDialogToggle(true)
       handleRegisterServiceDialogToggle(false)
+      composeSMS(responseRegister.to, responseRegister.sms, trxId)
       postSendingSms()
     }, 1000)
+  }
+
+  const postGetPrize = () => {
+    const msisdn = phoneNo.replace(/0(\d+)/, '62$1')
+    fetch(`${process.env.REACT_APP_API_URL}/api/get_prize`, {
+      method: 'post',
+      body: JSON.stringify({
+        trx_id: trxId,
+        msisdn
+      })
+    })
+      .then((response) => {
+        return response.json()
+      })
+      .then((response) => {
+        setResponsePrize(response)
+        setIsLoading(false)
+        handleWaitingResponseDialogToggle(false)
+      })
   }
 
   const handleSpinningToggle = (value: boolean) => {
@@ -196,6 +273,13 @@ const App = () => {
     setIsPrizeDialogOpen(value)
   }
 
+  const handleCloseErrorDialog = () => {
+    setError((prev) => ({
+      ...prev,
+      isOpen: false
+    }))
+  }
+
   const handleChangeInput = (value: string) => {
     if (/^\d*$/.test(value) || value === '') {
       setPhoneNo(value)
@@ -211,6 +295,10 @@ const App = () => {
   const handleContinueRegisterService = () => {
     setIsLoading(true)
     postRegisterService()
+  }
+  const handleGetPrize = () => {
+    setIsLoading(true)
+    postGetPrize()
   }
 
   const handleSpinningEnd = (value: Record<string, any>) => {
@@ -232,7 +320,12 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
-        <Wheel isIdle={isWheelIdle} isSpinning={isSpinning} onSpinningEnd={handleSpinningEnd} />
+        <Wheel
+          prize={responsePrize.prize}
+          isIdle={isWheelIdle}
+          isSpinning={isSpinning}
+          onSpinningEnd={handleSpinningEnd}
+        />
         {isMobile && (
           <PlayButton
             disabled={!!prize.name || isSpinning}
@@ -352,7 +445,8 @@ const App = () => {
                     variant="contained"
                     color="primary"
                     disabled={isLoading}
-                    onClick={() => handleWaitingResponseDialogToggle(false)}
+                    onClick={handleGetPrize}
+                    endIcon={isLoading && <CircularProgress size={16} thickness={4} />}
                   >
                     Ok
                   </Button>
@@ -416,6 +510,38 @@ const App = () => {
                 variant="contained"
                 disabled={isLoading}
                 onClick={() => handlePrizeDialogToggle(false)}
+              >
+                Tutup
+              </Button>
+            </div>
+          </div>
+        </Dialog>
+
+        <Dialog
+          TransitionComponent={Transition}
+          open={error.isOpen}
+          className={classes.dialogRegister}
+          onClose={handleCloseErrorDialog}
+          maxWidth="xs"
+          fullWidth
+        >
+          <div className={classes.dialogHeader}>
+            <div style={{ width: '48px' }}></div>
+            <Typography variant="h6">Maaf</Typography>
+            <IconButton onClick={handleCloseErrorDialog}>
+              <CloseIcon></CloseIcon>
+            </IconButton>
+          </div>
+          <div className={classes.dialogRegisterContent}>
+            <div style={{ flex: 1 }}>
+              <Typography>{error.message}</Typography>
+            </div>
+            <div className={classes.buttonActions}>
+              <Button
+                color="primary"
+                variant="contained"
+                disabled={isLoading}
+                onClick={handleCloseErrorDialog}
               >
                 Tutup
               </Button>
