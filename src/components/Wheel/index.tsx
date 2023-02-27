@@ -11,84 +11,84 @@ const rewards = [
   {
     id: 10,
     name: 'Kuota 12GB',
-    imageSrc: `${process.env.REACT_APP_URL}/images/prize-4.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/prize-4.png`,
     value: 12,
     backgroundColor: '#3f51b5'
   },
   {
     id: 11,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#39c8b8'
   },
   {
     id: 12,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#9ec839'
   },
   {
     id: 1,
     name: 'Kuota 4GB',
-    imageSrc: `${process.env.REACT_APP_URL}/images/prize-1.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/prize-1.png`,
     value: 3,
     backgroundColor: '#3f51b5'
   },
   {
     id: 2,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#9e9e9e'
   },
   {
     id: 3,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#FBC617'
   },
   {
     id: 4,
     name: 'Kuota 6GB',
-    imageSrc: `${process.env.REACT_APP_URL}/images/prize-2.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/prize-2.png`,
     value: 6,
     backgroundColor: '#3f51b5'
   },
   {
     id: 5,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#29c196'
   },
   {
     id: 6,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#b35db4'
   },
   {
     id: 7,
     name: 'Kuota 8GB',
-    imageSrc: `${process.env.REACT_APP_URL}/images/prize-3.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/prize-3.png`,
     value: 9,
     backgroundColor: '#3f51b5'
   },
   {
     id: 8,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#b7df6f'
   },
   {
     id: 9,
     name: 'Zonk',
-    imageSrc: `${process.env.REACT_APP_URL}/images/zonk.png`,
+    imageSrc: `${process.env.REACT_APP_ASSETS_URL}/images/zonk.png`,
     value: 0,
     backgroundColor: '#dfa46f'
   }
