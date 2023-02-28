@@ -218,6 +218,14 @@ const App = () => {
           setIsLoading(false)
           handleRegisterPhoneDialogToggle(false)
           setIsServiceRegistered(true)
+        } else if (response.status === 'nok' && response.reason === 'timeout') {
+          setIsLoading(false)
+          handleWaitingResponseDialogToggle(false)
+          setIsServiceRegistered(false)
+          setError({
+            isOpen: true,
+            message: 'Verifikasi gagal, silahkan coba kembali.'
+          })
         } else {
           setTimeout(postSendingSms, 2000)
         }
@@ -267,18 +275,22 @@ const App = () => {
 
   const handleRegisterPhoneDialogToggle = (value: boolean) => {
     setIsRegisterPhoneDialogOpen(value)
+    setIsLoading(false)
   }
 
   const handleRegisterServiceDialogToggle = (value: boolean) => {
     setIsRegisterServiceDialogOpen(value)
+    setIsLoading(false)
   }
 
   const handleWaitingResponseDialogToggle = (value: boolean) => {
     setIsWaitingResponseOpen(value)
+    setIsLoading(false)
   }
 
   const handlePrizeDialogToggle = (value: boolean) => {
     setIsPrizeDialogOpen(value)
+    setIsLoading(false)
   }
 
   const handleCloseErrorDialog = () => {
@@ -395,7 +407,7 @@ const App = () => {
           TransitionComponent={Transition}
           open={isRegisterServiceDialogOpen}
           className={classes.dialogRegister}
-          onClose={() => handleRegisterPhoneDialogToggle(false)}
+          onClose={() => handleRegisterServiceDialogToggle(false)}
           maxWidth="xs"
           fullWidth
         >
@@ -432,13 +444,13 @@ const App = () => {
           TransitionComponent={Transition}
           open={isWaitingResponseDialogOpen}
           className={classes.dialogRegister}
-          onClose={() => handleRegisterPhoneDialogToggle(false)}
+          onClose={() => handleWaitingResponseDialogToggle(false)}
           maxWidth="xs"
           fullWidth
         >
           <div className={classes.dialogHeader}>
             <div style={{ width: '48px' }}></div>
-            <IconButton onClick={() => handleRegisterServiceDialogToggle(false)}>
+            <IconButton onClick={() => handleWaitingResponseDialogToggle(false)}>
               <CloseIcon></CloseIcon>
             </IconButton>
           </div>
