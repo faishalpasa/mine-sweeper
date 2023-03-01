@@ -133,6 +133,11 @@ const useStyles = makeStyles(() => ({
   imagePrize: {
     width: 'auto',
     height: '180px'
+  },
+  userText: {
+    position: 'fixed',
+    top: '16px',
+    left: '16px'
   }
 }))
 
@@ -340,9 +345,11 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
-        <div style={{ position: 'fixed', top: '16px', left: '16px' }}>
-          <Typography variant="body2">User:</Typography>
-          <Typography>
+        <div className={classes.userText}>
+          <Typography variant="body2" style={{ fontFamily: 'Dosis, sans-serif', fontSize: '16px' }}>
+            User:
+          </Typography>
+          <Typography color="primary" style={{ fontFamily: 'Dosis, sans-serif', fontSize: '20px' }}>
             <b>{isServiceRegistered ? phoneNo : '--'}</b>
           </Typography>
         </div>
