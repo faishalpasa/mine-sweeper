@@ -340,6 +340,12 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <div className={classes.app}>
+        <div style={{ position: 'fixed', top: '16px', left: '16px' }}>
+          <Typography variant="body2">User:</Typography>
+          <Typography>
+            <b>{isServiceRegistered ? phoneNo : '--'}</b>
+          </Typography>
+        </div>
         <Wheel
           prize={responsePrize.prize}
           isIdle={isWheelIdle}
