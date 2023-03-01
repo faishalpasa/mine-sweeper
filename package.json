@@ -1,6 +1,5 @@
 {
   "name": "wheel-of-fortune",
-  "homepage": "https://faishalpasa.github.io/project/wheel-of-fortune",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
