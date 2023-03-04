@@ -1,5 +1,9 @@
 import React from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core'
+import { Provider } from 'react-redux'
+
+import Board from 'components/Board'
+import { store } from 'redux/store'
 
 const theme = createTheme({
   palette: {
@@ -25,7 +29,9 @@ const theme = createTheme({
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <div>Mine Sweeper</div>
+      <Provider store={store}>
+        <Board />
+      </Provider>
     </ThemeProvider>
   )
 }

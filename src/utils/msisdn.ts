@@ -5,7 +5,7 @@ import {
   AXIS_PREFIXES,
   THREE_PREFIXES,
   SMARTFREN_PREFIXES
-} from 'constant/msisdn'
+} from 'constants/msisdn'
 
 export const getMsisdnProvider = (msisdn: string) => {
   const prefixNo = msisdn.slice(0, 4)
