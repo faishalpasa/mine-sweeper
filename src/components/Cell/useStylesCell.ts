@@ -1,6 +1,10 @@
 import { makeStyles } from '@material-ui/core'
 
-const useStyles = () =>
+interface StyleProps {
+  isGameOver?: boolean
+}
+
+const useStyles = ({ isGameOver }: StyleProps) =>
   makeStyles(() => {
     return {
       block: {
@@ -9,12 +13,19 @@ const useStyles = () =>
         background: 'silver',
         boxShadow: '3px 3px 1px #fff inset, -3px -3px 2px #8a8a8a inset',
         border: '0.5px solid #656565',
+        display: 'flex',
+        alignItems: 'center',
         '&:hover': {
-          boxShadow: 'unset'
+          boxShadow: !isGameOver && 'unset',
+          cursor: !isGameOver && 'pointer'
         },
         '&.active': {
           boxShadow: 'unset'
         }
+      },
+      label: {
+        flex: 1,
+        textAlign: 'center'
       }
     }
   })
