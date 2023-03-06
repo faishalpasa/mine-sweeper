@@ -2,6 +2,8 @@ import { makeStyles } from '@material-ui/core'
 
 interface StyleProps {
   isGameOver?: boolean
+  isFlagged?: boolean
+  isRevealed?: boolean
 }
 
 const useStyles = ({ isGameOver }: StyleProps) =>
@@ -20,12 +22,18 @@ const useStyles = ({ isGameOver }: StyleProps) =>
           cursor: !isGameOver && 'pointer'
         },
         '&.active': {
-          boxShadow: 'unset'
+          boxShadow: 'unset',
+          cursor: 'unset'
+        },
+        '&.flagged': {
+          boxShadow: 'unset',
+          cursor: 'pointer'
         }
       },
       label: {
         flex: 1,
-        textAlign: 'center'
+        textAlign: 'center',
+        cursor: 'inherit'
       }
     }
   })

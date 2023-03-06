@@ -3,6 +3,8 @@ import { createTheme, ThemeProvider } from '@material-ui/core'
 import { Provider } from 'react-redux'
 
 import Board from 'components/Board'
+import Footer from 'components/Footer'
+import Header from 'components/Header'
 import { store } from 'redux/store'
 
 const theme = createTheme({
@@ -30,7 +32,9 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
+        <Header />
         <Board />
+        <Footer />
       </Provider>
     </ThemeProvider>
   )

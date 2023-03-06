@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react'
+import { useSelector, shallowEqual } from 'react-redux'
 
+import type { RootState } from 'redux/rootReducer'
 import useStyles from './useStylesCell'
+
+const cellSelector = ({ app }: RootState) => ({
+  isToggleFlag: app.isToggleFlag
+})
 
 interface CellProps {
   isRevealed: boolean
+  isFlagged: boolean
   isGameOver?: boolean
   hasBomb: boolean
   positionX: number
@@ -14,6 +21,7 @@ interface CellProps {
 
 const Cell = ({
   isRevealed,
+  isFlagged,
   isGameOver,
   hasBomb,
   bombDetected,
@@ -21,7 +29,8 @@ const Cell = ({
   positionY,
   onClick
 }: CellProps) => {
-  const classes = useStyles({ isGameOver })()
+  const boardState = useSelector(cellSelector, shallowEqual)
+  const classes = useStyles({ isGameOver, isFlagged, isRevealed })()
   const [isActive, setIsActive] = useState(false)
 
   let color = ''
@@ -41,7 +50,7 @@ const Cell = ({
   }
 
   const handleClickBlock = () => {
-    if (!isActive && !isGameOver) {
+    if (!isGameOver) {
       onClick({ x: positionX, y: positionY })
     }
   }
@@ -52,11 +61,17 @@ const Cell = ({
 
   return (
     <div
-      className={`${classes.block} ${isActive ? 'active' : ''}`}
+      className={`${classes.block} ${isActive ? 'active' : ''} ${
+        isFlagged && boardState.isToggleFlag ? 'flagged' : ''
+      }`}
       onClick={handleClickBlock}
       style={{ color }}
     >
-      <label className={classes.label}>{label}</label>
+      {isFlagged ? (
+        <label className={classes.label}>🚩</label>
+      ) : (
+        <label className={classes.label}>{label}</label>
+      )}
     </div>
   )
 }

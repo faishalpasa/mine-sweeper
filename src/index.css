@@ -7,9 +7,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
   max-width: 425px;
   margin: auto;
+  position: relative;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+#game {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
