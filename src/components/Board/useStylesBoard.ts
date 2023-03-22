@@ -9,6 +9,9 @@ const useStyles = ({ columnsTotal }: StyleProps) =>
     const gridTemplateColumns = `repeat(${columnsTotal}, 1fr)`
 
     return {
+      loadingContent: {
+        flex: '1'
+      },
       boardContent: {
         display: 'flex',
         flexDirection: 'column',

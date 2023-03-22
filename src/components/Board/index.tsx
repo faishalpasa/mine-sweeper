@@ -102,9 +102,13 @@ const Board = () => {
       while (otherCells.length) {
         const otherCellRow = otherCells.shift()
 
-        if (otherCellRow && otherCellRow.isRevealed) {
+        if (otherCellRow && otherCellRow.isRevealed && otherCellRow.isFlagged) {
+          otherCellRow.isFlagged = false
+          setFlaggedCells((prevState) => prevState - 1)
+        } else if (otherCellRow && otherCellRow.isRevealed) {
           continue
         }
+
         if (otherCellRow && otherCellRow.bombDetected === 0 && !otherCellRow.isBomb) {
           otherCells.push(
             ...handleGetOtherCells(cells, { x: otherCellRow.positionX, y: otherCellRow.positionY })
@@ -190,7 +194,7 @@ const Board = () => {
   }, [boardState.board])
 
   if (boardState.isLoading) {
-    return null
+    return <div className={classes.loadingContent} />
   }
 
   return (
@@ -206,7 +210,7 @@ const Board = () => {
           <Button
             onClick={handleToggleFlag}
             variant="contained"
-            color={boardState.isToggleFlag ? 'primary' : 'secondary'}
+            color={boardState.isToggleFlag ? 'primary' : 'default'}
           >
             🚩
           </Button>
