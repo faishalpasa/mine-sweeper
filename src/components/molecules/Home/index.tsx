@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
-import Cell from 'components/Cell'
+import Cell from 'components/molecules/Cell'
 import {
   appBoardDataFetch,
   appGameOverSet,
   appToggleFlagSet,
   appDataPointSet
 } from 'redux/reducers/app'
-import { millisToMinutesAndSeconds } from 'utils/number'
+
 import type { RootState } from 'redux/rootReducer'
 
-import useStyles from './useStylesBoard'
+import useStyles from './useStylesHome'
 import { Button, Typography } from '@material-ui/core'
 import { isJsonStringValid } from 'utils/string'
 
@@ -27,7 +27,7 @@ interface CellPorps {
 
 let cellId = 1
 
-const boardSelector = ({ app }: RootState) => ({
+const homeSelector = ({ app }: RootState) => ({
   theme: app.theme,
   board: app.board,
   data: app.data,
@@ -49,9 +49,9 @@ const getRandomMines = (amount: number, columns: number, rows: number) => {
   return mines
 }
 
-const Board = () => {
+const Home = () => {
   const dispatch = useDispatch()
-  const boardState = useSelector(boardSelector, shallowEqual)
+  const boardState = useSelector(homeSelector, shallowEqual)
   const classes = useStyles({ columnsTotal: boardState.board.columns })()
   const [cells, setCells] = useState<CellPorps[][]>([])
   const [flaggedCells, setFlaggedCells] = useState(0)
@@ -301,4 +301,4 @@ const Board = () => {
   )
 }
 
-export default Board
+export default Home

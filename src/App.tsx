@@ -5,7 +5,7 @@ import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-de
 
 import { store } from 'redux/store'
 
-const Layout = lazy(() => import('./components/Layout'))
+const Layout = lazy(() => import('./components/organisms/Layout'))
 
 const theme = createTheme({
   palette: {
