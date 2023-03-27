@@ -6,6 +6,7 @@ export const APP_BOARD_DATA_FETCH_FAILURE = 'app/BOARD_DATA_FETCH_FAILURE'
 export const APP_THEME_SET = 'app/THEME_SET'
 export const APP_TOGGLE_FLAG_SET = 'app/TOGGLE_FLAG_SET'
 export const APP_GAME_OVER_SET = 'app/GAME_OVER_SET'
+export const APP_DATA_POINT_SET = 'app/DATA_POINT_SET'
 
 export interface AppInitialState {
   theme: 'dark' | 'light'
@@ -13,6 +14,10 @@ export interface AppInitialState {
     columns: number
     rows: number
     mines: number
+    state: string
+  }
+  data: {
+    points: number
   }
   error: {
     message: string
@@ -27,7 +32,11 @@ const INITIAL_STATE: AppInitialState = {
   board: {
     columns: 0,
     rows: 0,
-    mines: 0
+    mines: 0,
+    state: ''
+  },
+  data: {
+    points: 0
   },
   error: {
     message: ''
@@ -58,6 +67,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [APP_GAME_OVER_SET]: (state, action) => {
     state.isGameOver = action.payload
+  },
+  [APP_DATA_POINT_SET]: (state, action) => {
+    state.data.points = action.payload
   }
 })
 
@@ -87,5 +99,10 @@ export const appToggleFlagSet = (value: AppInitialState['isToggleFlag']) => ({
 
 export const appGameOverSet = (value: AppInitialState['isGameOver']) => ({
   type: APP_GAME_OVER_SET,
+  payload: value
+})
+
+export const appDataPointSet = (value: AppInitialState['data']['points']) => ({
+  type: APP_DATA_POINT_SET,
   payload: value
 })

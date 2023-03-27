@@ -2,12 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
 import Cell from 'components/Cell'
-import { appBoardDataFetch, appGameOverSet, appToggleFlagSet } from 'redux/reducers/app'
+import {
+  appBoardDataFetch,
+  appGameOverSet,
+  appToggleFlagSet,
+  appDataPointSet
+} from 'redux/reducers/app'
 import { millisToMinutesAndSeconds } from 'utils/number'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesBoard'
 import { Button, Typography } from '@material-ui/core'
+import { isJsonStringValid } from 'utils/string'
 
 interface CellPorps {
   id: number
@@ -24,6 +30,7 @@ let cellId = 1
 const boardSelector = ({ app }: RootState) => ({
   theme: app.theme,
   board: app.board,
+  data: app.data,
   isToggleFlag: app.isToggleFlag,
   isLoading: app.isLoading,
   isGameOver: app.isGameOver
@@ -47,11 +54,17 @@ const Board = () => {
   const boardState = useSelector(boardSelector, shallowEqual)
   const classes = useStyles({ columnsTotal: boardState.board.columns })()
   const [cells, setCells] = useState<CellPorps[][]>([])
-  const [durations, setDurations] = useState(0)
   const [flaggedCells, setFlaggedCells] = useState(0)
+  const [temporaryPoints, setTemporaryPoints] = useState(0)
+
+  const currentPoints = boardState.data.points
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
+  }
+
+  const handleSetPoints = (points: number) => {
+    dispatch(appDataPointSet(currentPoints + points))
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -79,14 +92,16 @@ const Board = () => {
       }
       if (!isBomb) {
         handleRevealOtherCells(newCells, { x: position.x, y: position.y })
+        handleSetPoints(1)
       } else {
-        newCells.forEach((cellRows, indexRow) => {
-          cellRows.forEach((cellColumn, indexColumn) => {
-            if (cellColumn.isBomb) {
-              newCells[indexRow][indexColumn].isRevealed = true
-            }
-          })
-        })
+        // Commented: disable reveal all bombs
+        // newCells.forEach((cellRows, indexRow) => {
+        //   cellRows.forEach((cellColumn, indexColumn) => {
+        //     if (cellColumn.isBomb) {
+        //       newCells[indexRow][indexColumn].isRevealed = true
+        //     }
+        //   })
+        // })
 
         setCells(newCells)
         dispatch(appGameOverSet(true))
@@ -97,6 +112,8 @@ const Board = () => {
   const handleRevealOtherCells = (cells: CellPorps[][], position: { x: number; y: number }) => {
     const otherCells = handleGetOtherCells(cells, position)
     const isOtherCellsHasBomb = otherCells.find((cell) => cell.isBomb)
+
+    let totalCellRevealed = 0
 
     if (!isOtherCellsHasBomb) {
       while (otherCells.length) {
@@ -118,10 +135,12 @@ const Board = () => {
         if (otherCellRow && !otherCellRow.isBomb) {
           otherCellRow.isFlagged = false
           otherCellRow.isRevealed = true
+          totalCellRevealed += 1
         }
       }
     }
 
+    setTemporaryPoints(totalCellRevealed)
     setCells(cells)
   }
 
@@ -149,49 +168,78 @@ const Board = () => {
 
   useEffect(() => {
     dispatch(appBoardDataFetch())
-
-    // const durationInterval = setInterval(() => {
-    //   setDurations((prevstate) => prevstate + 1000)
-    // }, 1000)
-
-    // return () => clearInterval(durationInterval)
   }, [])
 
   useEffect(() => {
-    const { rows, columns, mines } = boardState.board
+    if (temporaryPoints) {
+      handleSetPoints(temporaryPoints)
+    }
+  }, [temporaryPoints])
+
+  useEffect(() => {
+    const { rows, columns, mines, state } = boardState.board
     const initialCells: CellPorps[][] = []
     const initialMines = getRandomMines(mines, rows, columns)
 
-    for (let indexRow = 0; indexRow < rows; indexRow += 1) {
-      initialCells[indexRow] = []
-      for (let indexColumn = 0; indexColumn < columns; indexColumn += 1) {
-        const y = initialCells.length - 1
-        const x = initialCells[y].length
-        const columnCell = {
-          id: cellId,
-          isBomb: initialMines.includes(cellId - 1),
-          isRevealed: false,
-          isFlagged: false,
-          bombDetected: 0,
-          positionX: indexColumn,
-          positionY: indexRow
+    const isJsonValid = isJsonStringValid(state)
+
+    if (isJsonValid) {
+      const decodedState = JSON.parse(state)
+      setCells(decodedState)
+    } else {
+      for (let indexRow = 0; indexRow < rows; indexRow += 1) {
+        initialCells[indexRow] = []
+        for (let indexColumn = 0; indexColumn < columns; indexColumn += 1) {
+          const y = initialCells.length - 1
+          const x = initialCells[y].length
+          const columnCell = {
+            id: cellId,
+            isBomb: initialMines.includes(cellId - 1),
+            isRevealed: false,
+            isFlagged: false,
+            bombDetected: 0,
+            positionX: indexColumn,
+            positionY: indexRow
+          }
+          const otherCells = handleGetOtherCells(initialCells, { y, x })
+          for (const otherCell of otherCells) {
+            if (columnCell.isBomb) {
+              otherCell.bombDetected += 1
+            } else if (otherCell.isBomb) {
+              columnCell.bombDetected += 1
+            }
+          }
+
+          initialCells[indexRow][indexColumn] = columnCell
+          cellId += 1
         }
-        const otherCells = handleGetOtherCells(initialCells, { y, x })
-        for (const otherCell of otherCells) {
-          if (columnCell.isBomb) {
-            otherCell.bombDetected += 1
-          } else if (otherCell.isBomb) {
-            columnCell.bombDetected += 1
+      }
+
+      setCells(initialCells)
+    }
+  }, [boardState.board])
+
+  useEffect(() => {
+    if (boardState.board.rows && boardState.board.columns) {
+      const totalIsNotBombCells =
+        boardState.board.columns * boardState.board.rows - boardState.board.mines
+      let totalOpenedCells = 0
+
+      for (let indexRow = 0; indexRow < cells.length; indexRow += 1) {
+        for (let indexColumn = 0; indexColumn < cells[indexRow].length; indexColumn += 1) {
+          if (cells[indexRow][indexColumn].isRevealed) {
+            totalOpenedCells += 1
           }
         }
-
-        initialCells[indexRow][indexColumn] = columnCell
-        cellId += 1
       }
-    }
 
-    setCells(initialCells)
-  }, [boardState.board])
+      if (totalIsNotBombCells === totalOpenedCells) {
+        console.log('Win')
+      }
+
+      console.log({ totalIsNotBombCells, totalOpenedCells })
+    }
+  }, [cells, boardState.board])
 
   if (boardState.isLoading) {
     return <div className={classes.loadingContent} />
@@ -201,7 +249,7 @@ const Board = () => {
     <div className={classes.boardContent}>
       <div className={classes.tools}>
         <div className={classes.toolItem}>
-          <Typography>{millisToMinutesAndSeconds(durations)}</Typography>
+          <Typography>{boardState.data.points}</Typography>
         </div>
         <div className={classes.toolItem}>
           <Typography>{boardState.board.mines - flaggedCells}</Typography>

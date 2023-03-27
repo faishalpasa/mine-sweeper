@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { lazy, Suspense, memo } from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core'
 import { Provider } from 'react-redux'
+import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
 
-import Board from 'components/Board'
-import Footer from 'components/Footer'
-import Header from 'components/Header'
 import { store } from 'redux/store'
+
+const Layout = lazy(() => import('./components/Layout'))
 
 const theme = createTheme({
   palette: {
@@ -29,15 +29,17 @@ const theme = createTheme({
 })
 
 const App = () => {
+  const isMobile = isAndroid || isIOS || isWinPhone
+  console.log({ isMobile, isAndroid, isIOS, deviceType, getUA })
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <Header />
-        <Board />
-        <Footer />
+        <Suspense fallback={<div />}>
+          <Layout />
+        </Suspense>
       </Provider>
     </ThemeProvider>
   )
 }
 
-export default App
+export default memo(App)
