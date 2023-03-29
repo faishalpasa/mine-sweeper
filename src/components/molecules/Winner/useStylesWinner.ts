@@ -12,7 +12,14 @@ const useStyles = () =>
         display: 'flex',
         flexDirection: 'column',
         flex: '1',
-        justifyContent: 'center'
+        marginTop: '16px',
+        padding: '16px'
+      },
+      contentTitle: {
+        fontWeight: 500
+      },
+      tableContainer: {
+        marginTop: '16px'
       }
     }
   })

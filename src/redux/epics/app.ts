@@ -29,9 +29,9 @@ export const appBoardDataFetchEpic: Epic = (action$, _, { api }: EpicDependencie
       }).pipe(
         mergeMap(({ response }: any) => {
           const data = {
-            columns: 5,
-            rows: 5,
-            mines: 2,
+            columns: 12,
+            rows: 12,
+            mines: 5,
             state: ''
           }
           return of(appBoardDataFetchSuccess(data))

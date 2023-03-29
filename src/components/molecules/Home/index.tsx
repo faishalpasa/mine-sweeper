@@ -6,7 +6,8 @@ import {
   appBoardDataFetch,
   appGameOverSet,
   appToggleFlagSet,
-  appDataPointSet
+  appDataPointSet,
+  appGameWinSet
 } from 'redux/reducers/app'
 
 import type { RootState } from 'redux/rootReducer'
@@ -25,15 +26,14 @@ interface CellPorps {
   positionY: number
 }
 
-let cellId = 1
-
 const homeSelector = ({ app }: RootState) => ({
   theme: app.theme,
   board: app.board,
   data: app.data,
   isToggleFlag: app.isToggleFlag,
   isLoading: app.isLoading,
-  isGameOver: app.isGameOver
+  isGameOver: app.isGameOver,
+  isGameWin: app.isGameWin
 })
 
 const getRandomMines = (amount: number, columns: number, rows: number) => {
@@ -180,6 +180,7 @@ const Home = () => {
     const { rows, columns, mines, state } = boardState.board
     const initialCells: CellPorps[][] = []
     const initialMines = getRandomMines(mines, rows, columns)
+    let cellId = 1
 
     const isJsonValid = isJsonStringValid(state)
 
@@ -214,7 +215,7 @@ const Home = () => {
           cellId += 1
         }
       }
-
+      console.log({ initialCells, initialMines, cellId })
       setCells(initialCells)
     }
   }, [boardState.board])
@@ -227,14 +228,18 @@ const Home = () => {
 
       for (let indexRow = 0; indexRow < cells.length; indexRow += 1) {
         for (let indexColumn = 0; indexColumn < cells[indexRow].length; indexColumn += 1) {
-          if (cells[indexRow][indexColumn].isRevealed) {
+          if (
+            cells[indexRow][indexColumn].isRevealed &&
+            !cells[indexRow][indexColumn].isFlagged &&
+            !cells[indexRow][indexColumn].isBomb
+          ) {
             totalOpenedCells += 1
           }
         }
       }
 
       if (totalIsNotBombCells === totalOpenedCells) {
-        console.log('Win')
+        dispatch(appGameWinSet(true))
       }
 
       console.log({ totalIsNotBombCells, totalOpenedCells })
@@ -273,7 +278,7 @@ const Home = () => {
                 isRevealed={row.isRevealed}
                 isFlagged={row.isFlagged}
                 hasBomb={row.isBomb}
-                isGameOver={boardState.isGameOver}
+                isGameOver={boardState.isGameOver || boardState.isGameWin}
                 onClick={handleClickCell}
                 positionX={row.positionX}
                 positionY={row.positionY}
@@ -283,17 +288,60 @@ const Home = () => {
           )}
         </div>
       </div>
-      <div>
-        <Typography>Hadiah periode ini 01 Jan 2023 - 31 Maret 2023</Typography>
-        <div className={classes.prizes}>
-          <div className={classes.prizeItem}>
-            <img className={classes.prizeImage} src="/images/motor.png" alt="prize" />
-          </div>
-          <div className={classes.prizeItem}>
-            <img className={classes.prizeImage} src="/images/handphone.png" alt="prize" />
-          </div>
-          <div className={classes.prizeItem}>
-            <img className={classes.prizeImage} src="/images/smartwatch.png" alt="prize" />
+      <div className={classes.prizeSection}>
+        <Typography variant="body1" className={classes.prizeTitle}>
+          Hadiah periode ini &nbsp;
+          <Typography variant="caption" component="span" className={classes.prizeSubtitle}>
+            (01 - 31 Maret 2023)
+          </Typography>
+        </Typography>
+        <div className={classes.prizesWrapper}>
+          <div className={classes.prizes}>
+            <div className={classes.prizeItem}>
+              <div className={classes.prizeCard}>
+                <div className={classes.prizeImageWrapper}>
+                  <img className={classes.prizeImage} src="/images/motor.png" alt="prize" />
+                </div>
+                <div className={classes.prizeText}>
+                  <Typography variant="caption" component="p">
+                    Peringkat Pertama
+                  </Typography>
+                  <Typography variant="body2">
+                    <b>1 Unit Motor</b>
+                  </Typography>
+                </div>
+              </div>
+            </div>
+            <div className={classes.prizeItem}>
+              <div className={classes.prizeCard}>
+                <div className={classes.prizeImageWrapper}>
+                  <img className={classes.prizeImage} src="/images/handphone.png" alt="prize" />
+                </div>
+                <div className={classes.prizeText}>
+                  <Typography variant="caption" component="p">
+                    Peringkat Kedua
+                  </Typography>
+                  <Typography variant="body2">
+                    <b>1 Unit Handphone</b>
+                  </Typography>
+                </div>
+              </div>
+            </div>
+            <div className={classes.prizeItem}>
+              <div className={classes.prizeCard}>
+                <div className={classes.prizeImageWrapper}>
+                  <img className={classes.prizeImage} src="/images/smartwatch.png" alt="prize" />
+                </div>
+                <div className={classes.prizeText}>
+                  <Typography variant="caption" component="p">
+                    Peringkat Ketiga
+                  </Typography>
+                  <Typography variant="body2">
+                    <b>1 Unit Smart Watch</b>
+                  </Typography>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

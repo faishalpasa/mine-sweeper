@@ -1,9 +1,8 @@
 import React, { lazy, memo, Suspense } from 'react'
 import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
 
-import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { useSelector, shallowEqual } from 'react-redux'
 
-import { navigationTabSelectedSet } from 'redux/reducers/navigationTab'
 import type { RootState } from 'redux/rootReducer'
 
 const Home = lazy(() => import('../../molecules/Home'))

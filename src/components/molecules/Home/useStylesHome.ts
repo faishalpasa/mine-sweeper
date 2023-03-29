@@ -15,8 +15,7 @@ const useStyles = ({ columnsTotal }: StyleProps) =>
       boardContent: {
         display: 'flex',
         flexDirection: 'column',
-        flex: '1',
-        justifyContent: 'center'
+        flex: '1'
       },
       boardPlatfrom: {
         padding: '4px',
@@ -36,15 +35,51 @@ const useStyles = ({ columnsTotal }: StyleProps) =>
         flex: 1,
         textAlign: 'center'
       },
+      prizeSection: {
+        padding: '8px 16px'
+      },
+      prizeTitle: {
+        fontWeight: 500,
+        marginBottom: '8px'
+      },
+      prizeSubtitle: {
+        fontWeight: 400
+      },
+      prizesWrapper: {
+        overflow: 'auto',
+        width: '100%',
+        '-ms-overflow-style': 'none',
+        scrollbarWidth: 'none',
+        '&::-webkit-scrollbar': {
+          display: 'none'
+        }
+      },
       prizes: {
-        display: 'flex'
+        display: 'flex',
+        gap: '8px'
       },
       prizeItem: {
-        flex: 1,
         textAlign: 'center'
+      },
+      prizeCard: {
+        borderRadius: '4px',
+        width: '200px',
+        position: 'relative',
+        overflow: 'hidden'
+      },
+      prizeImageWrapper: {
+        backgroundImage: 'url("/images/prize-bg.jpg")',
+        backgroundSize: '100% 100%',
+        backgroundRepeat: 'no-repeat'
       },
       prizeImage: {
         height: '100px'
+      },
+      prizeText: {
+        textAlign: 'left',
+        background: '#d10d19',
+        padding: '8px',
+        color: '#fff'
       }
     }
   })

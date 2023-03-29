@@ -18,5 +18,7 @@ code {
 #game {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  position: relative;
+  margin-bottom: 75px;
+  margin-top: 40px;
 }

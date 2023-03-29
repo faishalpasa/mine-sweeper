@@ -6,6 +6,7 @@ export const APP_BOARD_DATA_FETCH_FAILURE = 'app/BOARD_DATA_FETCH_FAILURE'
 export const APP_THEME_SET = 'app/THEME_SET'
 export const APP_TOGGLE_FLAG_SET = 'app/TOGGLE_FLAG_SET'
 export const APP_GAME_OVER_SET = 'app/GAME_OVER_SET'
+export const APP_GAME_WIN_SET = 'app/GAME_WIN_SET'
 export const APP_DATA_POINT_SET = 'app/DATA_POINT_SET'
 
 export interface AppInitialState {
@@ -24,6 +25,7 @@ export interface AppInitialState {
   }
   isLoading: boolean
   isGameOver: boolean
+  isGameWin: boolean
   isToggleFlag: boolean
 }
 
@@ -43,6 +45,7 @@ const INITIAL_STATE: AppInitialState = {
   },
   isLoading: false,
   isGameOver: false,
+  isGameWin: false,
   isToggleFlag: false
 }
 
@@ -67,6 +70,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [APP_GAME_OVER_SET]: (state, action) => {
     state.isGameOver = action.payload
+  },
+  [APP_GAME_WIN_SET]: (state, action) => {
+    state.isGameWin = action.payload
   },
   [APP_DATA_POINT_SET]: (state, action) => {
     state.data.points = action.payload
@@ -99,6 +105,11 @@ export const appToggleFlagSet = (value: AppInitialState['isToggleFlag']) => ({
 
 export const appGameOverSet = (value: AppInitialState['isGameOver']) => ({
   type: APP_GAME_OVER_SET,
+  payload: value
+})
+
+export const appGameWinSet = (value: AppInitialState['isGameWin']) => ({
+  type: APP_GAME_WIN_SET,
   payload: value
 })
 

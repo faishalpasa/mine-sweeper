@@ -1,11 +1,17 @@
 import { makeStyles } from '@material-ui/core'
 
 const useStyles = () =>
-  makeStyles(() => {
+  makeStyles((theme) => {
     return {
       footer: {
         display: 'flex',
-        width: '100%'
+        width: '100%',
+        position: 'fixed',
+        bottom: 0,
+        background: '#ffffff',
+        boxShadow: theme.shadows[4],
+        maxWidth: '425px',
+        zIndex: 999
       },
       footerItem: {
         flex: '1',

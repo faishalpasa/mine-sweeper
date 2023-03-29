@@ -10,11 +10,11 @@ const Layout = lazy(() => import('./components/organisms/Layout'))
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#00bfff'
+      main: '#d10d19'
     }
   },
   typography: {
-    fontFamily: 'Open Sans, sans-serif'
+    fontFamily: 'Roboto, sans-serif'
   },
   overrides: {
     MuiButton: {
@@ -23,6 +23,19 @@ const theme = createTheme({
       },
       containedPrimary: {
         color: '#fff'
+      }
+    },
+    MuiDialogContent: {
+      root: {
+        padding: '16px',
+        '&:first-child': {
+          paddingTop: '16px'
+        }
+      }
+    },
+    MuiBackdrop: {
+      root: {
+        zIndex: 1
       }
     }
   }
