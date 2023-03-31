@@ -1,8 +1,13 @@
 import createReducer from 'utils/createReducer'
 
+import type { CellPorps } from 'types/board'
+
 export const APP_BOARD_DATA_FETCH = 'app/BOARD_DATA_FETCH'
 export const APP_BOARD_DATA_FETCH_SUCCESS = 'app/BOARD_DATA_FETCH_SUCCESS'
 export const APP_BOARD_DATA_FETCH_FAILURE = 'app/BOARD_DATA_FETCH_FAILURE'
+export const APP_BOARD_LOG_SAVE = 'app/BOARD_LOG_SAVE'
+export const APP_BOARD_LOG_SAVE_SUCCESS = 'app/BOARD_LOG_SAVE_SUCCESS'
+export const APP_BOARD_LOG_SAVE_FAILURE = 'app/BOARD_LOG_SAVE_FAILURE'
 export const APP_THEME_SET = 'app/THEME_SET'
 export const APP_TOGGLE_FLAG_SET = 'app/TOGGLE_FLAG_SET'
 export const APP_GAME_OVER_SET = 'app/GAME_OVER_SET'
@@ -24,6 +29,7 @@ export interface AppInitialState {
     message: string
   }
   isLoading: boolean
+  isLoadingLog: boolean
   isGameOver: boolean
   isGameWin: boolean
   isToggleFlag: boolean
@@ -44,6 +50,7 @@ const INITIAL_STATE: AppInitialState = {
     message: ''
   },
   isLoading: false,
+  isLoadingLog: false,
   isGameOver: false,
   isGameWin: false,
   isToggleFlag: false
@@ -63,6 +70,21 @@ export default createReducer(INITIAL_STATE, {
   },
   [APP_BOARD_DATA_FETCH_FAILURE]: (state, action) => {
     state.isLoading = true
+    state.error = action.payload
+  },
+  [APP_BOARD_LOG_SAVE]: (state) => {
+    state.isLoadingLog = true
+  },
+  [APP_BOARD_LOG_SAVE_SUCCESS]: (state, action) => {
+    state.isLoadingLog = false
+    state.error = { ...INITIAL_STATE.error }
+    state.board = {
+      ...state.board,
+      state: action.payload
+    }
+  },
+  [APP_BOARD_LOG_SAVE_FAILURE]: (state, action) => {
+    state.isLoadingLog = true
     state.error = action.payload
   },
   [APP_TOGGLE_FLAG_SET]: (state, action) => {
@@ -95,6 +117,24 @@ export const appBoardDataFetchSuccess = (payload: AppInitialState['board']) => (
 
 export const appBoardDataFetchFailure = (payload: AppInitialState['error']) => ({
   type: APP_BOARD_DATA_FETCH_FAILURE,
+  payload
+})
+
+export const appBoardLogSave = (cellsStringify: string, points: number) => ({
+  type: APP_BOARD_LOG_SAVE,
+  payload: {
+    decodedStateName: cellsStringify,
+    decodedPointName: points
+  }
+})
+
+export const appBoardLogSaveSuccess = (payload: AppInitialState['board']['state']) => ({
+  type: APP_BOARD_LOG_SAVE_SUCCESS,
+  payload
+})
+
+export const appBoardLogSaveFailure = (payload: AppInitialState['error']) => ({
+  type: APP_BOARD_LOG_SAVE_FAILURE,
   payload
 })
 

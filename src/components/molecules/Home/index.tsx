@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { Backdrop, Button, CircularProgress, Typography } from '@material-ui/core'
 
 import Cell from 'components/molecules/Cell'
 import {
@@ -7,13 +8,13 @@ import {
   appGameOverSet,
   appToggleFlagSet,
   appDataPointSet,
-  appGameWinSet
+  appGameWinSet,
+  appBoardLogSave
 } from 'redux/reducers/app'
 
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesHome'
-import { Button, Typography } from '@material-ui/core'
 import { isJsonStringValid } from 'utils/string'
 
 interface CellPorps {
@@ -104,13 +105,18 @@ const Home = () => {
         // })
 
         setCells(newCells)
+        const stringifyCells = JSON.stringify(cells)
+        dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
         dispatch(appGameOverSet(true))
       }
     }
   }
 
-  const handleRevealOtherCells = (cells: CellPorps[][], position: { x: number; y: number }) => {
-    const otherCells = handleGetOtherCells(cells, position)
+  const handleRevealOtherCells = (
+    updatedCells: CellPorps[][],
+    position: { x: number; y: number }
+  ) => {
+    const otherCells = handleGetOtherCells(updatedCells, position)
     const isOtherCellsHasBomb = otherCells.find((cell) => cell.isBomb)
 
     let totalCellRevealed = 0
@@ -128,7 +134,10 @@ const Home = () => {
 
         if (otherCellRow && otherCellRow.bombDetected === 0 && !otherCellRow.isBomb) {
           otherCells.push(
-            ...handleGetOtherCells(cells, { x: otherCellRow.positionX, y: otherCellRow.positionY })
+            ...handleGetOtherCells(updatedCells, {
+              x: otherCellRow.positionX,
+              y: otherCellRow.positionY
+            })
           )
         }
 
@@ -141,14 +150,17 @@ const Home = () => {
     }
 
     setTemporaryPoints(totalCellRevealed)
-    setCells(cells)
+    setCells(updatedCells)
+
+    const stringifyCells = JSON.stringify(cells)
+    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
   }
 
-  const handleGetOtherCells = (cells: CellPorps[][], position: { x: number; y: number }) => {
+  const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {
     const otherCells = []
-    const currentRow = cells[position.y]
-    const prevRow = cells[position.y - 1]
-    const nextRow = cells[position.y + 1]
+    const currentRow = currentCells[position.y]
+    const prevRow = currentCells[position.y - 1]
+    const nextRow = currentCells[position.y + 1]
 
     if (currentRow[position.x - 1]) otherCells.push(currentRow[position.x - 1])
     if (currentRow[position.x + 1]) otherCells.push(currentRow[position.x + 1])
@@ -167,7 +179,10 @@ const Home = () => {
   }
 
   useEffect(() => {
-    dispatch(appBoardDataFetch())
+    const { rows, columns } = boardState.board
+    if (rows === 0 && columns === 0) {
+      dispatch(appBoardDataFetch())
+    }
   }, [])
 
   useEffect(() => {
@@ -178,6 +193,7 @@ const Home = () => {
 
   useEffect(() => {
     const { rows, columns, mines, state } = boardState.board
+
     const initialCells: CellPorps[][] = []
     const initialMines = getRandomMines(mines, rows, columns)
     let cellId = 1
@@ -215,7 +231,7 @@ const Home = () => {
           cellId += 1
         }
       }
-      console.log({ initialCells, initialMines, cellId })
+      // console.log({ initialCells, initialMines, cellId })
       setCells(initialCells)
     }
   }, [boardState.board])
@@ -242,7 +258,7 @@ const Home = () => {
         dispatch(appGameWinSet(true))
       }
 
-      console.log({ totalIsNotBombCells, totalOpenedCells })
+      // console.log({ totalIsNotBombCells, totalOpenedCells })
     }
   }, [cells, boardState.board])
 
@@ -251,101 +267,106 @@ const Home = () => {
   }
 
   return (
-    <div className={classes.boardContent}>
-      <div className={classes.tools}>
-        <div className={classes.toolItem}>
-          <Typography>{boardState.data.points}</Typography>
+    <>
+      <div className={classes.boardContent}>
+        <div className={classes.tools}>
+          <div className={classes.toolItem}>
+            <Typography>{boardState.data.points}</Typography>
+          </div>
+          <div className={classes.toolItem}>
+            <Typography>{boardState.board.mines - flaggedCells}</Typography>
+          </div>
+          <div className={classes.toolItem}>
+            <Button
+              onClick={handleToggleFlag}
+              variant="contained"
+              color={boardState.isToggleFlag ? 'primary' : 'default'}
+            >
+              🚩
+            </Button>
+          </div>
         </div>
-        <div className={classes.toolItem}>
-          <Typography>{boardState.board.mines - flaggedCells}</Typography>
+        <div className={classes.boardPlatfrom}>
+          <div className={classes.board}>
+            {cells.map((columns) =>
+              columns.map((row) => (
+                <Cell
+                  key={row.id}
+                  isRevealed={row.isRevealed}
+                  isFlagged={row.isFlagged}
+                  hasBomb={row.isBomb}
+                  isGameOver={boardState.isGameOver || boardState.isGameWin}
+                  onClick={handleClickCell}
+                  positionX={row.positionX}
+                  positionY={row.positionY}
+                  bombDetected={row.bombDetected}
+                />
+              ))
+            )}
+          </div>
         </div>
-        <div className={classes.toolItem}>
-          <Button
-            onClick={handleToggleFlag}
-            variant="contained"
-            color={boardState.isToggleFlag ? 'primary' : 'default'}
-          >
-            🚩
-          </Button>
-        </div>
-      </div>
-      <div className={classes.boardPlatfrom}>
-        <div className={classes.board}>
-          {cells.map((columns) =>
-            columns.map((row) => (
-              <Cell
-                key={row.id}
-                isRevealed={row.isRevealed}
-                isFlagged={row.isFlagged}
-                hasBomb={row.isBomb}
-                isGameOver={boardState.isGameOver || boardState.isGameWin}
-                onClick={handleClickCell}
-                positionX={row.positionX}
-                positionY={row.positionY}
-                bombDetected={row.bombDetected}
-              />
-            ))
-          )}
-        </div>
-      </div>
-      <div className={classes.prizeSection}>
-        <Typography variant="body1" className={classes.prizeTitle}>
-          Hadiah periode ini &nbsp;
-          <Typography variant="caption" component="span" className={classes.prizeSubtitle}>
-            (01 - 31 Maret 2023)
+        <div className={classes.prizeSection}>
+          <Typography variant="body1" className={classes.prizeTitle}>
+            Hadiah periode ini &nbsp;
+            <Typography variant="caption" component="span" className={classes.prizeSubtitle}>
+              (01 - 31 Maret 2023)
+            </Typography>
           </Typography>
-        </Typography>
-        <div className={classes.prizesWrapper}>
-          <div className={classes.prizes}>
-            <div className={classes.prizeItem}>
-              <div className={classes.prizeCard}>
-                <div className={classes.prizeImageWrapper}>
-                  <img className={classes.prizeImage} src="/images/motor.png" alt="prize" />
-                </div>
-                <div className={classes.prizeText}>
-                  <Typography variant="caption" component="p">
-                    Peringkat Pertama
-                  </Typography>
-                  <Typography variant="body2">
-                    <b>1 Unit Motor</b>
-                  </Typography>
-                </div>
-              </div>
-            </div>
-            <div className={classes.prizeItem}>
-              <div className={classes.prizeCard}>
-                <div className={classes.prizeImageWrapper}>
-                  <img className={classes.prizeImage} src="/images/handphone.png" alt="prize" />
-                </div>
-                <div className={classes.prizeText}>
-                  <Typography variant="caption" component="p">
-                    Peringkat Kedua
-                  </Typography>
-                  <Typography variant="body2">
-                    <b>1 Unit Handphone</b>
-                  </Typography>
+          <div className={classes.prizesWrapper}>
+            <div className={classes.prizes}>
+              <div className={classes.prizeItem}>
+                <div className={classes.prizeCard}>
+                  <div className={classes.prizeImageWrapper}>
+                    <img className={classes.prizeImage} src="/images/motor.png" alt="prize" />
+                  </div>
+                  <div className={classes.prizeText}>
+                    <Typography variant="caption" component="p">
+                      Peringkat Pertama
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>1 Unit Motor</b>
+                    </Typography>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className={classes.prizeItem}>
-              <div className={classes.prizeCard}>
-                <div className={classes.prizeImageWrapper}>
-                  <img className={classes.prizeImage} src="/images/smartwatch.png" alt="prize" />
+              <div className={classes.prizeItem}>
+                <div className={classes.prizeCard}>
+                  <div className={classes.prizeImageWrapper}>
+                    <img className={classes.prizeImage} src="/images/handphone.png" alt="prize" />
+                  </div>
+                  <div className={classes.prizeText}>
+                    <Typography variant="caption" component="p">
+                      Peringkat Kedua
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>1 Unit Handphone</b>
+                    </Typography>
+                  </div>
                 </div>
-                <div className={classes.prizeText}>
-                  <Typography variant="caption" component="p">
-                    Peringkat Ketiga
-                  </Typography>
-                  <Typography variant="body2">
-                    <b>1 Unit Smart Watch</b>
-                  </Typography>
+              </div>
+              <div className={classes.prizeItem}>
+                <div className={classes.prizeCard}>
+                  <div className={classes.prizeImageWrapper}>
+                    <img className={classes.prizeImage} src="/images/smartwatch.png" alt="prize" />
+                  </div>
+                  <div className={classes.prizeText}>
+                    <Typography variant="caption" component="p">
+                      Peringkat Ketiga
+                    </Typography>
+                    <Typography variant="body2">
+                      <b>1 Unit Smart Watch</b>
+                    </Typography>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      <Backdrop open={boardState.isLoading}>
+        <CircularProgress />
+      </Backdrop>
+    </>
   )
 }
 
