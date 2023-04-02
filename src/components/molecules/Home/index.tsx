@@ -69,9 +69,11 @@ const Home = () => {
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
   const [isDialogBombOpen, setIsDialogBombOpen] = useState(false)
+  const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
 
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
+  const currentLevel = boardState.data.level
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -86,8 +88,17 @@ const Home = () => {
     dispatch(appDataCoinSet(currentCoins - 1))
     setIsDialogBombOpen(false)
   }
+
+  const handleClickNextLevel = () => {
+    location.href = '/'
+  }
+
   const handleDialogBombOpen = () => {
     setIsDialogBombOpen(true)
+  }
+
+  const handleDialogWinOpen = () => {
+    setIsDialogWinOpen(true)
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -293,6 +304,12 @@ const Home = () => {
     }
   }, [boardState.isGameOver])
 
+  useEffect(() => {
+    if (boardState.isGameWin) {
+      handleDialogWinOpen()
+    }
+  }, [boardState.isGameWin])
+
   if (boardState.isLoading) {
     return <div className={classes.loadingContent} />
   }
@@ -417,6 +434,17 @@ const Home = () => {
         <DialogActions>
           <Button size="small" color="primary" variant="contained" onClick={handleClickPlayAgain}>
             Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isDialogWinOpen}>
+        <DialogContent>
+          <Typography>Hore! Kamu berhasil menyelesaikan level {currentLevel}.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button size="small" color="primary" variant="contained" onClick={handleClickNextLevel}>
+            Level berikutnya
           </Button>
         </DialogActions>
       </Dialog>
