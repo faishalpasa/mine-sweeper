@@ -139,8 +139,8 @@ const Home = () => {
 
         setCells(newCells)
 
-        // const stringifyCells = JSON.stringify(cells)
-        // dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
+        const stringifyCells = JSON.stringify(cells)
+        dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
         dispatch(appGameOverSet(true))
       }
     }
@@ -186,8 +186,8 @@ const Home = () => {
     setTemporaryPoints(totalCellRevealed)
     setCells(updatedCells)
 
-    // const stringifyCells = JSON.stringify(cells)
-    // dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
+    const stringifyCells = JSON.stringify(cells)
+    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
   }
 
   const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {
