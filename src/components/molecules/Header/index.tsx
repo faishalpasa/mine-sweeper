@@ -17,7 +17,7 @@ const isAuthenticated = localStorage.getItem('auth')
 
 const Header = () => {
   const dispatch = useDispatch()
-  const classes = useStyles()()
+  const classes = useStyles()
   const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
   const [isDialogLoginOpen, setIsDialogLoginOpen] = useState(false)
   const [isDialogPinOpen, setIsDialogPinOpen] = useState(false)

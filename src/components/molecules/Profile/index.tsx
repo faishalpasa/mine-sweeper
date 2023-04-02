@@ -23,7 +23,7 @@ const profileSelector = ({ profile }: RootState) => ({
 })
 
 const Profile = () => {
-  const classes = useStyles()()
+  const classes = useStyles()
   const dispatch = useDispatch()
   const profileState = useSelector(profileSelector, shallowEqual)
 

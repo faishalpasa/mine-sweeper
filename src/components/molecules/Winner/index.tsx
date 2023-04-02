@@ -24,7 +24,7 @@ const winnerSelector = ({ winner }: RootState) => ({
 })
 
 const Winner = () => {
-  const classes = useStyles()()
+  const classes = useStyles()
   const dispatch = useDispatch()
   const termsState = useSelector(winnerSelector, shallowEqual)
 

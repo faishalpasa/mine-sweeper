@@ -64,7 +64,7 @@ const getRandomMines = (amount: number, columns: number, rows: number) => {
 const Home = () => {
   const dispatch = useDispatch()
   const boardState = useSelector(homeSelector, shallowEqual)
-  const classes = useStyles({ columnsTotal: boardState.board.columns })()
+  const classes = useStyles({ columnsTotal: boardState.board.columns })
   const [cells, setCells] = useState<CellPorps[][]>([])
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
@@ -139,8 +139,8 @@ const Home = () => {
 
         setCells(newCells)
 
-        const stringifyCells = JSON.stringify(cells)
-        dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
+        // const stringifyCells = JSON.stringify(cells)
+        // dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
         dispatch(appGameOverSet(true))
       }
     }
@@ -157,7 +157,6 @@ const Home = () => {
 
     if (!isOtherCellsHasBomb) {
       while (otherCells.length) {
-        console.count('getOtherCell')
         const otherCellRow = otherCells.shift()
 
         if (otherCellRow && otherCellRow.isRevealed && otherCellRow.isFlagged) {
@@ -187,8 +186,8 @@ const Home = () => {
     setTemporaryPoints(totalCellRevealed)
     setCells(updatedCells)
 
-    const stringifyCells = JSON.stringify(cells)
-    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
+    // const stringifyCells = JSON.stringify(cells)
+    // dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
   }
 
   const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {

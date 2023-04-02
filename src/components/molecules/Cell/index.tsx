@@ -30,7 +30,7 @@ const Cell = ({
   onClick
 }: CellProps) => {
   const boardState = useSelector(cellSelector, shallowEqual)
-  const classes = useStyles({ isGameOver, isFlagged, isRevealed })()
+  const classes = useStyles()
   const [isActive, setIsActive] = useState(false)
 
   let color = ''

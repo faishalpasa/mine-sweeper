@@ -24,7 +24,7 @@ const winnerSelector = ({ topScore }: RootState) => ({
 })
 
 const TopScore = () => {
-  const classes = useStyles()()
+  const classes = useStyles()
   const dispatch = useDispatch()
   const termsState = useSelector(winnerSelector, shallowEqual)
 

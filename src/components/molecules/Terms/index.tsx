@@ -13,7 +13,7 @@ const termsSelector = ({ terms }: RootState) => ({
 })
 
 const Terms = () => {
-  const classes = useStyles()()
+  const classes = useStyles()
   const dispatch = useDispatch()
   const termsState = useSelector(termsSelector, shallowEqual)
 

@@ -21,7 +21,7 @@ const footerSelector = ({ navigationTab }: RootState) => ({
 const Footer = () => {
   const dispatch = useDispatch()
   const footerState = useSelector(footerSelector, shallowEqual)
-  const classes = useStyles()()
+  const classes = useStyles()
 
   const { selectedTab } = footerState
 
