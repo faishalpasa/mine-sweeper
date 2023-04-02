@@ -7,22 +7,22 @@ import type { EpicDependencies } from 'redux/store'
 import type { CellPorps } from 'types/board'
 
 import {
-  APP_BOARD_DATA_FETCH,
-  appBoardDataFetchFailure,
-  appBoardDataFetchSuccess,
+  APP_BOARD_FETCH,
+  appBoardFetchFailure,
+  appBoardFetchSuccess,
   APP_BOARD_LOG_SAVE,
   appBoardLogSaveFailure,
-  appBoardLogSaveSuccess
+  appBoardLogSaveSuccess,
+  APP_DATA_FETCH,
+  appDataFetchFailure,
+  appDataFetchSuccess
 } from 'redux/reducers/app'
 
 import { COMMENT_GET } from 'constants/endpoint'
 
-const dummyState =
-  '[[{"id":1,"isBomb":false,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":0},{"id":2,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":0},{"id":3,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":0},{"id":4,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":0},{"id":5,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":0},{"id":6,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":0},{"id":7,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":6,"positionY":0},{"id":8,"isBomb":false,"isRevealed":false,"isFlagged":false,"bombDetected":1,"positionX":7,"positionY":0},{"id":9,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":8,"positionY":0},{"id":10,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":0},{"id":11,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":10,"positionY":0},{"id":12,"isBomb":false,"isRevealed":false,"isFlagged":false,"bombDetected":1,"positionX":11,"positionY":0}],[{"id":13,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":1},{"id":14,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":1},{"id":15,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":1},{"id":16,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":3,"positionY":1},{"id":17,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":4,"positionY":1},{"id":18,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":5,"positionY":1},{"id":19,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":6,"positionY":1},{"id":20,"isBomb":true,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":1},{"id":21,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":8,"positionY":1},{"id":22,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":1},{"id":23,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":10,"positionY":1},{"id":24,"isBomb":true,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":1}],[{"id":25,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":2},{"id":26,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":2},{"id":27,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":2},{"id":28,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":3,"positionY":2},{"id":29,"isBomb":true,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":2},{"id":30,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":5,"positionY":2},{"id":31,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":6,"positionY":2},{"id":32,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":7,"positionY":2},{"id":33,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":8,"positionY":2},{"id":34,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":2},{"id":35,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":10,"positionY":2},{"id":36,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":11,"positionY":2}],[{"id":37,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":3},{"id":38,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":3},{"id":39,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":3},{"id":40,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":3,"positionY":3},{"id":41,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":4,"positionY":3},{"id":42,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":5,"positionY":3},{"id":43,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":3},{"id":44,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":3},{"id":45,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":3},{"id":46,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":3},{"id":47,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":3},{"id":48,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":3}],[{"id":49,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":4},{"id":50,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":4},{"id":51,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":4},{"id":52,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":4},{"id":53,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":4},{"id":54,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":4},{"id":55,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":4},{"id":56,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":4},{"id":57,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":4},{"id":58,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":4},{"id":59,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":4},{"id":60,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":4}],[{"id":61,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":5},{"id":62,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":5},{"id":63,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":5},{"id":64,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":5},{"id":65,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":5},{"id":66,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":5},{"id":67,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":5},{"id":68,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":5},{"id":69,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":5},{"id":70,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":9,"positionY":5},{"id":71,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":10,"positionY":5},{"id":72,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":11,"positionY":5}],[{"id":73,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":6},{"id":74,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":6},{"id":75,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":6},{"id":76,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":6},{"id":77,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":6},{"id":78,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":6},{"id":79,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":6},{"id":80,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":6},{"id":81,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":6},{"id":82,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":9,"positionY":6},{"id":83,"isBomb":true,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":6},{"id":84,"isBomb":false,"isRevealed":false,"isFlagged":false,"bombDetected":1,"positionX":11,"positionY":6}],[{"id":85,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":7},{"id":86,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":7},{"id":87,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":7},{"id":88,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":7},{"id":89,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":7},{"id":90,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":7},{"id":91,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":7},{"id":92,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":7},{"id":93,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":7},{"id":94,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":9,"positionY":7},{"id":95,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":10,"positionY":7},{"id":96,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":11,"positionY":7}],[{"id":97,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":8},{"id":98,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":8},{"id":99,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":8},{"id":100,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":8},{"id":101,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":8},{"id":102,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":8},{"id":103,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":8},{"id":104,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":8},{"id":105,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":8},{"id":106,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":8},{"id":107,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":8},{"id":108,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":8}],[{"id":109,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":0,"positionY":9},{"id":110,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":9},{"id":111,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":2,"positionY":9},{"id":112,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":9},{"id":113,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":9},{"id":114,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":9},{"id":115,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":9},{"id":116,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":9},{"id":117,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":9},{"id":118,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":9},{"id":119,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":9},{"id":120,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":9}],[{"id":121,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":0,"positionY":10},{"id":122,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":1,"positionY":10},{"id":123,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":2,"positionY":10},{"id":124,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":10},{"id":125,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":10},{"id":126,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":10},{"id":127,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":10},{"id":128,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":10},{"id":129,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":10},{"id":130,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":10},{"id":131,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":10},{"id":132,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":10}],[{"id":133,"isBomb":false,"isRevealed":false,"isFlagged":false,"bombDetected":1,"positionX":0,"positionY":11},{"id":134,"isBomb":true,"isRevealed":false,"isFlagged":false,"bombDetected":0,"positionX":1,"positionY":11},{"id":135,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":1,"positionX":2,"positionY":11},{"id":136,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":3,"positionY":11},{"id":137,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":4,"positionY":11},{"id":138,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":5,"positionY":11},{"id":139,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":6,"positionY":11},{"id":140,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":7,"positionY":11},{"id":141,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":8,"positionY":11},{"id":142,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":9,"positionY":11},{"id":143,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":10,"positionY":11},{"id":144,"isBomb":false,"isRevealed":true,"isFlagged":false,"bombDetected":0,"positionX":11,"positionY":11}]]'
-
-export const appBoardDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+export const appBoardFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
-    ofType(APP_BOARD_DATA_FETCH),
+    ofType(APP_BOARD_FETCH),
     mergeMap((action) =>
       api({
         endpoint: COMMENT_GET,
@@ -33,18 +33,18 @@ export const appBoardDataFetchEpic: Epic = (action$, _, { api }: EpicDependencie
       }).pipe(
         mergeMap(({ response }: any) => {
           const data = {
-            columns: 12,
-            rows: 12,
-            mines: 5,
+            columns: 14,
+            rows: 14,
+            mines: 10,
             state: ''
           }
-          return of(appBoardDataFetchSuccess(data))
+          return of(appBoardFetchSuccess(data))
         }),
         catchError((err) => {
           const error = {
             message: 'Gagal mendapatkan data'
           }
-          return of(appBoardDataFetchFailure(error))
+          return of(appBoardFetchFailure(error))
         })
       )
     )
@@ -67,7 +67,7 @@ export const appBoardLogSaveEpic: Epic = (action$, state$, { api }: EpicDependen
               decodedPointsName: decodedPoints
             })
           )
-          console.log(encodedData)
+          // console.log(encodedData)
           const data = action.payload.decodedStateName
           return of(appBoardLogSaveSuccess(data))
         }),
@@ -79,4 +79,33 @@ export const appBoardLogSaveEpic: Epic = (action$, state$, { api }: EpicDependen
         })
       )
     })
+  )
+
+export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_DATA_FETCH),
+    mergeMap((action) =>
+      api({
+        endpoint: COMMENT_GET,
+        host: 'https://jsonplaceholder.typicode.com',
+        query: {
+          postId: action.payload
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const data = {
+            level: 1,
+            points: 0,
+            coins: 10
+          }
+          return of(appDataFetchSuccess(data))
+        }),
+        catchError((err) => {
+          const error = {
+            message: 'Gagal mendapatkan data'
+          }
+          return of(appDataFetchFailure(error))
+        })
+      )
+    )
   )

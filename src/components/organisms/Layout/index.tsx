@@ -1,4 +1,6 @@
+import { Backdrop } from '@material-ui/core'
 import React, { lazy, memo, Suspense } from 'react'
+
 import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
 
 import { useSelector, shallowEqual } from 'react-redux'
@@ -17,6 +19,8 @@ const layoutSelector = ({ navigationTab }: RootState) => ({
   selectedTab: navigationTab.selectedTab
 })
 
+const isAuthenticated = localStorage.getItem('auth')
+
 const Layout = () => {
   const layoutState = useSelector(layoutSelector, shallowEqual)
   const isMobile = isAndroid || isIOS || isWinPhone
@@ -28,12 +32,14 @@ const Layout = () => {
   return (
     <Suspense fallback={<div />}>
       <Header />
-      {selectedTab === 0 && <Home />}
-      {selectedTab === 1 && <TopScore />}
-      {selectedTab === 2 && <Winner />}
-      {selectedTab === 3 && <Terms />}
-      {selectedTab === 4 && <Profile />}
-      <Footer />
+      <div style={{ marginBottom: isAuthenticated ? '75px' : '0px' }}>
+        {selectedTab === 0 && <Home />}
+        {selectedTab === 1 && <TopScore />}
+        {selectedTab === 2 && <Winner />}
+        {selectedTab === 3 && <Terms />}
+        {selectedTab === 4 && <Profile />}
+      </div>
+      {isAuthenticated && <Footer />}
     </Suspense>
   )
 }

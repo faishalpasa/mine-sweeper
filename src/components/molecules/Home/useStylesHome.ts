@@ -15,13 +15,23 @@ const useStyles = ({ columnsTotal }: StyleProps) =>
       boardContent: {
         display: 'flex',
         flexDirection: 'column',
-        flex: '1'
+        flex: '1',
+        marginTop: '16px',
+        padding: '16px'
       },
       boardPlatfrom: {
         padding: '4px',
         background: 'silver',
         border: '1px solid #000',
-        borderRadius: '4px'
+        borderRadius: '4px',
+        position: 'relative'
+      },
+      boardLoadingLog: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        top: 0
       },
       board: {
         display: 'grid',
@@ -29,14 +39,19 @@ const useStyles = ({ columnsTotal }: StyleProps) =>
         gridTemplateColumns
       },
       tools: {
-        display: 'flex'
+        display: 'flex',
+        alignItems: 'center',
+        marginBottom: '8px'
       },
       toolItem: {
         flex: 1,
         textAlign: 'center'
       },
+      toolItemText: {
+        fontWeight: 600
+      },
       prizeSection: {
-        padding: '8px 16px'
+        marginTop: '16px'
       },
       prizeTitle: {
         fontWeight: 500,

@@ -19,6 +19,5 @@ code {
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-bottom: 75px;
   margin-top: 40px;
 }

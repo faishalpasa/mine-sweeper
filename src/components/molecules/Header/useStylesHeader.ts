@@ -4,20 +4,26 @@ const useStyles = () =>
   makeStyles((theme) => {
     return {
       header: {
-        position: 'fixed',
-        display: 'flex',
         width: '100%',
-        alignItems: 'center',
+        maxWidth: '425px',
+        position: 'fixed',
         top: 0,
         background: '#ffffff',
         zIndex: 999,
-        boxShadow: theme.shadows[3],
-        maxWidth: '425px'
+        boxShadow: theme.shadows[3]
+      },
+      headerContent: {
+        display: 'flex',
+        alignItems: 'center',
+        margin: '8px'
       },
       user: {
         flex: '1'
       },
-      logout: {}
+      logout: {
+        marginLeft: 'auto',
+        marginRight: 0
+      }
     }
   })
 

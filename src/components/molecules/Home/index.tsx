@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { Backdrop, Button, CircularProgress, Typography } from '@material-ui/core'
+import {
+  Backdrop,
+  Button,
+  CircularProgress,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogActions
+} from '@material-ui/core'
 
 import Cell from 'components/molecules/Cell'
 import {
-  appBoardDataFetch,
+  appBoardFetch,
   appGameOverSet,
   appToggleFlagSet,
+  appDataFetch,
   appDataPointSet,
+  appDataCoinSet,
   appGameWinSet,
   appBoardLogSave
 } from 'redux/reducers/app'
@@ -33,6 +43,7 @@ const homeSelector = ({ app }: RootState) => ({
   data: app.data,
   isToggleFlag: app.isToggleFlag,
   isLoading: app.isLoading,
+  isLoadingLog: app.isLoadingLog,
   isGameOver: app.isGameOver,
   isGameWin: app.isGameWin
 })
@@ -57,8 +68,10 @@ const Home = () => {
   const [cells, setCells] = useState<CellPorps[][]>([])
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
+  const [isDialogBombOpen, setIsDialogBombOpen] = useState(false)
 
   const currentPoints = boardState.data.points
+  const currentCoins = boardState.data.coins
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -66,6 +79,15 @@ const Home = () => {
 
   const handleSetPoints = (points: number) => {
     dispatch(appDataPointSet(currentPoints + points))
+  }
+
+  const handleClickPlayAgain = () => {
+    dispatch(appGameOverSet(false))
+    dispatch(appDataCoinSet(currentCoins - 1))
+    setIsDialogBombOpen(false)
+  }
+  const handleDialogBombOpen = () => {
+    setIsDialogBombOpen(true)
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -105,6 +127,7 @@ const Home = () => {
         // })
 
         setCells(newCells)
+
         const stringifyCells = JSON.stringify(cells)
         dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
         dispatch(appGameOverSet(true))
@@ -123,6 +146,7 @@ const Home = () => {
 
     if (!isOtherCellsHasBomb) {
       while (otherCells.length) {
+        console.count('getOtherCell')
         const otherCellRow = otherCells.shift()
 
         if (otherCellRow && otherCellRow.isRevealed && otherCellRow.isFlagged) {
@@ -141,7 +165,7 @@ const Home = () => {
           )
         }
 
-        if (otherCellRow && !otherCellRow.isBomb) {
+        if (otherCellRow && !otherCellRow.isBomb && !otherCellRow.isFlagged) {
           otherCellRow.isFlagged = false
           otherCellRow.isRevealed = true
           totalCellRevealed += 1
@@ -181,7 +205,8 @@ const Home = () => {
   useEffect(() => {
     const { rows, columns } = boardState.board
     if (rows === 0 && columns === 0) {
-      dispatch(appBoardDataFetch())
+      dispatch(appBoardFetch())
+      dispatch(appDataFetch())
     }
   }, [])
 
@@ -262,6 +287,12 @@ const Home = () => {
     }
   }, [cells, boardState.board])
 
+  useEffect(() => {
+    if (boardState.isGameOver) {
+      handleDialogBombOpen()
+    }
+  }, [boardState.isGameOver])
+
   if (boardState.isLoading) {
     return <div className={classes.loadingContent} />
   }
@@ -271,22 +302,30 @@ const Home = () => {
       <div className={classes.boardContent}>
         <div className={classes.tools}>
           <div className={classes.toolItem}>
-            <Typography>{boardState.data.points}</Typography>
+            <Typography variant="caption">Koin</Typography>
+            <Typography className={classes.toolItemText}>{boardState.data.coins}</Typography>
           </div>
           <div className={classes.toolItem}>
-            <Typography>{boardState.board.mines - flaggedCells}</Typography>
+            <Typography variant="caption">Level</Typography>
+            <Typography className={classes.toolItemText}>{boardState.data.level}</Typography>
           </div>
           <div className={classes.toolItem}>
+            <Typography variant="caption">Skor</Typography>
+            <Typography className={classes.toolItemText}>{boardState.data.points}</Typography>
+          </div>
+          {/* <div className={classes.toolItem}>
             <Button
               onClick={handleToggleFlag}
               variant="contained"
-              color={boardState.isToggleFlag ? 'primary' : 'default'}
+              color={boardState.isToggleFlag ? 'secondary' : 'default'}
+              size="small"
             >
-              🚩
+              {boardState.board.mines - flaggedCells} 🚩
             </Button>
-          </div>
+          </div> */}
         </div>
         <div className={classes.boardPlatfrom}>
+          {boardState.isLoadingLog && <div className={classes.boardLoadingLog} />}
           <div className={classes.board}>
             {cells.map((columns) =>
               columns.map((row) => (
@@ -363,9 +402,24 @@ const Home = () => {
           </div>
         </div>
       </div>
+
       <Backdrop open={boardState.isLoading}>
         <CircularProgress />
       </Backdrop>
+
+      <Dialog open={isDialogBombOpen}>
+        <DialogContent>
+          <Typography>Boom! Kamu membuka kotak berisi bom.</Typography>
+          <Typography>
+            Kamu masih memiliki {currentCoins} koin, gunakan 1 untuk melanjutkan?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button size="small" color="primary" variant="contained" onClick={handleClickPlayAgain}>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

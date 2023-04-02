@@ -17,10 +17,10 @@ const useStyles = ({ isGameOver }: StyleProps) =>
         border: '0.5px solid #656565',
         display: 'flex',
         alignItems: 'center',
-        '&:hover': {
-          boxShadow: !isGameOver && 'unset',
-          cursor: !isGameOver && 'pointer'
-        },
+        // '&:hover': {
+        //   boxShadow: !isGameOver && 'unset',
+        //   cursor: !isGameOver && 'pointer'
+        // },
         '&.active': {
           boxShadow: 'unset',
           cursor: 'unset'
