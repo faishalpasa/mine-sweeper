@@ -22,6 +22,22 @@ const useStyles = makeStyles((theme) => {
     logout: {
       marginLeft: 'auto',
       marginRight: 0
+    },
+    buttonProfile: {
+      display: 'flex',
+      gap: '4px',
+      alignItems: 'center'
+    },
+    buttonProfileLabel: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    profileName: {
+      fontSize: '12px',
+      fontWeight: 500
+    },
+    profileMsisdn: {
+      fontSize: '10px'
     }
   }
 })

@@ -67,10 +67,13 @@ const Header = () => {
         <div className={classes.headerContent}>
           {isAuthenticated && (
             <div className={classes.user}>
-              <Button onClick={handleToProfile} size="small">
+              <div onClick={handleToProfile} className={classes.buttonProfile}>
                 <PhoneIcon />
-                0811234567890
-              </Button>
+                <div className={classes.buttonProfileLabel}>
+                  <Typography className={classes.profileName}>John Doe</Typography>
+                  <Typography className={classes.profileMsisdn}>0811234567890</Typography>
+                </div>
+              </div>
             </div>
           )}
 
