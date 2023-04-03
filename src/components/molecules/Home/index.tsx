@@ -21,11 +21,11 @@ import {
   appGameWinSet,
   appBoardLogSave
 } from 'redux/reducers/app'
-
+import { isJsonStringValid } from 'utils/string'
+import DialogCoinPurchase from 'components/molecules/Dialog/CoinPurchase'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesHome'
-import { isJsonStringValid } from 'utils/string'
 
 interface CellPorps {
   id: number
@@ -69,6 +69,7 @@ const Home = () => {
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
   const [isDialogBombOpen, setIsDialogBombOpen] = useState(false)
+  const [isDialogPurchaseCoinOpen, setIsDialogPurchaseCoinOpen] = useState(false)
   const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
 
   const currentPoints = boardState.data.points
@@ -85,8 +86,8 @@ const Home = () => {
 
   const handleClickPlayAgain = () => {
     dispatch(appGameOverSet(false))
-    dispatch(appDataCoinSet(currentCoins - 1))
     setIsDialogBombOpen(false)
+    dispatch(appDataCoinSet(currentCoins - 1))
   }
 
   const handleClickNextLevel = () => {
@@ -99,6 +100,11 @@ const Home = () => {
 
   const handleDialogWinOpen = () => {
     setIsDialogWinOpen(true)
+  }
+
+  const handleDialogPurchaseCoinOpen = () => {
+    setIsDialogBombOpen(false)
+    setIsDialogPurchaseCoinOpen(true)
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -426,16 +432,29 @@ const Home = () => {
       <Dialog open={isDialogBombOpen}>
         <DialogContent>
           <Typography>Boom! Kamu membuka kotak berisi bom.</Typography>
-          <Typography>
-            Kamu masih memiliki {currentCoins} koin, gunakan 1 untuk melanjutkan?
-          </Typography>
+          {currentCoins > 0 ? (
+            <Typography>
+              Kamu masih memiliki <b>{currentCoins}</b> koin, gunakan 1 untuk melanjutkan?
+            </Typography>
+          ) : (
+            <Typography>
+              Kamu memiliki <b>{currentCoins}</b> koin, beli koin melanjutkan?
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions>
-          <Button size="small" color="primary" variant="contained" onClick={handleClickPlayAgain}>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
+          >
             Ok
           </Button>
         </DialogActions>
       </Dialog>
+
+      <DialogCoinPurchase open={isDialogPurchaseCoinOpen} />
 
       <Dialog open={isDialogWinOpen}>
         <DialogContent>

@@ -96,7 +96,7 @@ export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           const data = {
             level: 1,
             points: 0,
-            coins: 10
+            coins: 5
           }
           return of(appDataFetchSuccess(data))
         }),
