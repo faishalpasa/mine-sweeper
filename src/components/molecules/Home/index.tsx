@@ -61,6 +61,8 @@ const getRandomMines = (amount: number, columns: number, rows: number) => {
   return mines
 }
 
+const isAuthenticated = localStorage.getItem('auth')
+
 const Home = () => {
   const dispatch = useDispatch()
   const boardState = useSelector(homeSelector, shallowEqual)
@@ -222,7 +224,9 @@ const Home = () => {
     const { rows, columns } = boardState.board
     if (rows === 0 && columns === 0) {
       dispatch(appBoardFetch())
-      dispatch(appDataFetch())
+      if (isAuthenticated) {
+        dispatch(appDataFetch())
+      }
     }
   }, [])
 
@@ -272,7 +276,6 @@ const Home = () => {
           cellId += 1
         }
       }
-      // console.log({ initialCells, initialMines, cellId })
       setCells(initialCells)
     }
   }, [boardState.board])
@@ -298,8 +301,6 @@ const Home = () => {
       if (totalIsNotBombCells === totalOpenedCells) {
         dispatch(appGameWinSet(true))
       }
-
-      // console.log({ totalIsNotBombCells, totalOpenedCells })
     }
   }, [cells, boardState.board])
 
@@ -347,7 +348,9 @@ const Home = () => {
           </div> */}
         </div>
         <div className={classes.boardPlatfrom}>
-          {boardState.isLoadingLog && <div className={classes.boardLoadingLog} />}
+          {(boardState.isLoadingLog || !isAuthenticated) && (
+            <div className={classes.boardLoadingLog} />
+          )}
           <div className={classes.board}>
             {cells.map((columns) =>
               columns.map((row) => (
