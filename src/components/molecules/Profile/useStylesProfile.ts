@@ -30,6 +30,11 @@ const useStyles = makeStyles(() => {
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
+    },
+    statusWrapper: {
+      display: 'flex',
+      gap: '8px',
+      alignItems: 'center'
     }
   }
 })

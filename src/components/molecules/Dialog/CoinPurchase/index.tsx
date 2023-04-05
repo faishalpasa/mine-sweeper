@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { Dialog, DialogActions, DialogContent, Typography, Button } from '@material-ui/core'
 
 import { appDataCoinSet, appGameOverSet } from 'redux/reducers/app'
+import type { RootState } from 'redux/rootReducer'
+
 import useStyles from './useStylesCoinPurchase'
 
 const coinItems = [
@@ -35,13 +37,19 @@ const paymentMethods = [
   }
 ]
 
+const coinPurchaseSelector = ({ app }: RootState) => ({
+  coins: app.data.coins
+})
+
 interface CoinPurchaseProps {
   open: boolean
+  onClose?: () => void
 }
 
-const CoinPurchase = ({ open }: CoinPurchaseProps) => {
+const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
+  const coinPurchaseState = useSelector(coinPurchaseSelector, shallowEqual)
   const [selectedCoinItem, setSelectedCoinItem] = useState(0)
   const [selectedPaymentItem, setSelectedPaymentItem] = useState(0)
   const [isDialogCoinOpen, setIsDialogCoinOpen] = useState(false)
@@ -69,12 +77,17 @@ const CoinPurchase = ({ open }: CoinPurchaseProps) => {
     setIsDialogSuccessOpen(true)
 
     // TODO: Fetch to API
-    dispatch(appDataCoinSet(selectedCoin?.value || 0))
+    dispatch(appDataCoinSet(coinPurchaseState.coins + (selectedCoin?.value || 0)))
     dispatch(appGameOverSet(false))
   }
 
-  const handleDialogSuccessToggle = (value: boolean) => {
-    setIsDialogSuccessOpen(value)
+  const handleSuccessPurchase = () => {
+    setIsDialogSuccessOpen(false)
+    setSelectedCoinItem(0)
+    setSelectedPaymentItem(0)
+    if (onClose) {
+      onClose()
+    }
   }
 
   useEffect(() => {
@@ -150,12 +163,7 @@ const CoinPurchase = ({ open }: CoinPurchaseProps) => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            onClick={() => handleDialogSuccessToggle(false)}
-          >
+          <Button variant="contained" color="primary" size="small" onClick={handleSuccessPurchase}>
             Ok
           </Button>
         </DialogActions>

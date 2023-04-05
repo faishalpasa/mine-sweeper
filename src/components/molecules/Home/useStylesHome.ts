@@ -4,7 +4,7 @@ interface StyleProps {
   columnsTotal: number
 }
 
-const useStyles = makeStyles<Theme, StyleProps>(() => {
+const useStyles = makeStyles<Theme, StyleProps>((theme) => {
   const gridTemplateColumns = ({ columnsTotal }: StyleProps) => {
     return `repeat(${columnsTotal}, 1fr)`
   }
@@ -17,7 +17,7 @@ const useStyles = makeStyles<Theme, StyleProps>(() => {
       display: 'flex',
       flexDirection: 'column',
       flex: '1',
-      marginTop: '16px',
+      marginTop: '8px',
       padding: '16px'
     },
     boardPlatfrom: {
@@ -32,21 +32,66 @@ const useStyles = makeStyles<Theme, StyleProps>(() => {
       left: 0,
       right: 0,
       bottom: 0,
-      top: 0
+      top: 0,
+      zIndex: 2
+    },
+    authBlocker: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      top: 0,
+      zIndex: 2,
+      background: '#00000038',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    authBlockerContent: {
+      background: theme.palette.common.white,
+      padding: '8px',
+      borderRadius: '8px'
     },
     board: {
+      position: 'relative',
       display: 'grid',
-      border: '1px solid #000',
+      gap: '1px',
       gridTemplateColumns
     },
     tools: {
+      margin: '8px 0px',
+      display: 'flex',
+      background: theme.palette.primary.main,
+      borderRadius: '8px',
+      padding: '8px'
+    },
+    toolItemCoin: {
+      alignItems: 'center',
+      display: 'flex',
+      background: theme.palette.common.white,
+      borderRadius: '4px',
+      padding: '4px 8px',
+      gap: '16px'
+    },
+    coinWrapper: {
       display: 'flex',
       alignItems: 'center',
-      marginBottom: '8px'
+      justifyContent: 'center'
+    },
+    coinTopUp: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'column'
+    },
+    coinIcon: {
+      width: '20px'
     },
     toolItem: {
       flex: 1,
-      textAlign: 'center'
+      textAlign: 'center',
+      color: theme.palette.common.white
     },
     toolItemText: {
       fontWeight: 600
@@ -89,13 +134,38 @@ const useStyles = makeStyles<Theme, StyleProps>(() => {
       backgroundRepeat: 'no-repeat'
     },
     prizeImage: {
-      height: '100px'
+      height: '80px',
+      margin: 'auto'
     },
     prizeText: {
       textAlign: 'left',
       background: '#d10d19',
       padding: '8px',
       color: '#fff'
+    },
+    prizeTextLabel: {
+      fontSize: '8px'
+    },
+    prizeTextName: {
+      fontSize: '10px'
+    },
+
+    sliderWrapper: {
+      '& .slick-slide': {
+        transform: 'scale(.9)',
+        transition: 'all .3s ease',
+        '&.slick-active': {
+          transform: 'scale(1)'
+        }
+      }
+    },
+    sliderPrizeItem: {
+      textAlign: 'center'
+    },
+    sliderPrizeCard: {
+      borderRadius: '4px',
+      position: 'relative',
+      overflow: 'hidden'
     }
   }
 })

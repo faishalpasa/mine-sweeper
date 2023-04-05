@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '@material-ui/core'
+import { Button, Typography } from '@material-ui/core'
 import {
   Home as HomeIcon,
   Equalizer as ScoreIcon,
@@ -37,7 +37,7 @@ const Footer = () => {
         onClick={() => handleSelectTab(0)}
       >
         <HomeIcon />
-        Home
+        <Typography variant="caption">Home</Typography>
       </Button>
       <Button
         className={classes.footerItem}
@@ -45,7 +45,7 @@ const Footer = () => {
         onClick={() => handleSelectTab(1)}
       >
         <ScoreIcon />
-        Top Skor
+        <Typography variant="caption">Top Skor</Typography>
       </Button>
       <Button
         className={classes.footerItem}
@@ -53,7 +53,7 @@ const Footer = () => {
         onClick={() => handleSelectTab(2)}
       >
         <WinnerIcon />
-        Pemenang
+        <Typography variant="caption">Pemenang</Typography>
       </Button>
       <Button
         className={classes.footerItem}
@@ -61,7 +61,7 @@ const Footer = () => {
         onClick={() => handleSelectTab(3)}
       >
         <TermsIcon />
-        S&K
+        <Typography variant="caption">S&K</Typography>
       </Button>
       <Button
         className={classes.footerItem}
@@ -69,7 +69,7 @@ const Footer = () => {
         onClick={() => handleSelectTab(4)}
       >
         <ProfileIcon />
-        Profil
+        <Typography variant="caption">Profil</Typography>
       </Button>
     </div>
   )

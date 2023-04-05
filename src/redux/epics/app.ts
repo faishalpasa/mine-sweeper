@@ -15,7 +15,10 @@ import {
   appBoardLogSaveSuccess,
   APP_DATA_FETCH,
   appDataFetchFailure,
-  appDataFetchSuccess
+  appDataFetchSuccess,
+  APP_PRIZE_FETCH,
+  appPrizeFetchFailure,
+  appPrizeFetchSuccess
 } from 'redux/reducers/app'
 
 import { COMMENT_GET } from 'constants/endpoint'
@@ -105,6 +108,50 @@ export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
             message: 'Gagal mendapatkan data'
           }
           return of(appDataFetchFailure(error))
+        })
+      )
+    )
+  )
+
+export const appPrizeFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_PRIZE_FETCH),
+    mergeMap((action) =>
+      api({
+        endpoint: COMMENT_GET,
+        host: 'https://jsonplaceholder.typicode.com',
+        query: {
+          postId: action.payload
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const data = [
+            {
+              id: 1,
+              name: '1 Unit Sepeda Motor',
+              label: 'Peringkat Pertama',
+              imageSrc: '/images/motor.png'
+            },
+            {
+              id: 2,
+              name: '1 Unit Handphone',
+              label: 'Peringkat Kedua',
+              imageSrc: '/images/handphone.png'
+            },
+            {
+              id: 3,
+              name: '1 Unit Smart Watch',
+              label: 'Peringkat Ketiga',
+              imageSrc: '/images/smartwatch.png'
+            }
+          ]
+          return of(appPrizeFetchSuccess(data))
+        }),
+        catchError((err) => {
+          const error = {
+            message: 'Gagal mendapatkan data'
+          }
+          return of(appPrizeFetchFailure(error))
         })
       )
     )

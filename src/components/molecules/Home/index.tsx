@@ -7,8 +7,13 @@ import {
   Typography,
   Dialog,
   DialogContent,
-  DialogActions
+  DialogActions,
+  IconButton
 } from '@material-ui/core'
+import { AddBox as AddIcon } from '@material-ui/icons'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 import Cell from 'components/molecules/Cell'
 import {
@@ -19,7 +24,8 @@ import {
   appDataPointSet,
   appDataCoinSet,
   appGameWinSet,
-  appBoardLogSave
+  appBoardLogSave,
+  appPrizeFetch
 } from 'redux/reducers/app'
 import { isJsonStringValid } from 'utils/string'
 import DialogCoinPurchase from 'components/molecules/Dialog/CoinPurchase'
@@ -41,6 +47,7 @@ const homeSelector = ({ app }: RootState) => ({
   theme: app.theme,
   board: app.board,
   data: app.data,
+  prizes: app.prizes,
   isToggleFlag: app.isToggleFlag,
   isLoading: app.isLoading,
   isLoadingLog: app.isLoadingLog,
@@ -62,6 +69,19 @@ const getRandomMines = (amount: number, columns: number, rows: number) => {
 }
 
 const isAuthenticated = localStorage.getItem('auth')
+
+const slickSettings = {
+  className: 'center',
+  centerMode: true,
+  infinite: true,
+  autoplay: true,
+  autoplaySpeed: 5000,
+  centerPadding: '60px',
+  slidesToShow: 1,
+  speed: 500,
+  dots: false,
+  arrows: false
+}
 
 const Home = () => {
   const dispatch = useDispatch()
@@ -107,6 +127,10 @@ const Home = () => {
   const handleDialogPurchaseCoinOpen = () => {
     setIsDialogBombOpen(false)
     setIsDialogPurchaseCoinOpen(true)
+  }
+
+  const handleDialogPurchaseCoinClose = () => {
+    setIsDialogPurchaseCoinOpen(false)
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -224,6 +248,7 @@ const Home = () => {
     const { rows, columns } = boardState.board
     if (rows === 0 && columns === 0) {
       dispatch(appBoardFetch())
+      dispatch(appPrizeFetch())
       if (isAuthenticated) {
         dispatch(appDataFetch())
       }
@@ -306,7 +331,7 @@ const Home = () => {
 
   useEffect(() => {
     if (boardState.isGameOver) {
-      handleDialogBombOpen()
+      setTimeout(() => handleDialogBombOpen(), 1000)
     }
   }, [boardState.isGameOver])
 
@@ -323,10 +348,42 @@ const Home = () => {
   return (
     <>
       <div className={classes.boardContent}>
+        <div className={classes.sliderWrapper}>
+          <Slider {...slickSettings}>
+            {boardState.prizes.map((prize) => (
+              <div className={classes.sliderPrizeItem} key={prize.id}>
+                <div className={classes.sliderPrizeCard}>
+                  <div className={classes.prizeImageWrapper}>
+                    <img className={classes.prizeImage} src={prize.imageSrc} alt="prize" />
+                  </div>
+                  <div className={classes.prizeText}>
+                    <Typography className={classes.prizeTextLabel}>{prize.label}</Typography>
+                    <Typography className={classes.prizeTextName}>
+                      <b>{prize.name}</b>
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Slider>
+        </div>
         <div className={classes.tools}>
-          <div className={classes.toolItem}>
-            <Typography variant="caption">Koin</Typography>
-            <Typography className={classes.toolItemText}>{boardState.data.coins}</Typography>
+          <div className={classes.toolItemCoin}>
+            <div>
+              <Typography variant="caption">Sisa Koin</Typography>
+              <div className={classes.coinWrapper}>
+                <img src="/images/koin.png" alt="coin" className={classes.coinIcon} />
+                <Typography className={classes.toolItemText}>{boardState.data.coins}</Typography>
+              </div>
+            </div>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleDialogPurchaseCoinOpen}
+            >
+              Tambah Koin
+            </Button>
           </div>
           <div className={classes.toolItem}>
             <Typography variant="caption">Level</Typography>
@@ -336,95 +393,33 @@ const Home = () => {
             <Typography variant="caption">Skor</Typography>
             <Typography className={classes.toolItemText}>{boardState.data.points}</Typography>
           </div>
-          {/* <div className={classes.toolItem}>
-            <Button
-              onClick={handleToggleFlag}
-              variant="contained"
-              color={boardState.isToggleFlag ? 'secondary' : 'default'}
-              size="small"
-            >
-              {boardState.board.mines - flaggedCells} 🚩
-            </Button>
-          </div> */}
         </div>
-        <div className={classes.boardPlatfrom}>
-          {(boardState.isLoadingLog || !isAuthenticated) && (
-            <div className={classes.boardLoadingLog} />
-          )}
-          <div className={classes.board}>
-            {cells.map((columns) =>
-              columns.map((row) => (
-                <Cell
-                  key={row.id}
-                  isRevealed={row.isRevealed}
-                  isFlagged={row.isFlagged}
-                  hasBomb={row.isBomb}
-                  isGameOver={boardState.isGameOver || boardState.isGameWin}
-                  onClick={handleClickCell}
-                  positionX={row.positionX}
-                  positionY={row.positionY}
-                  bombDetected={row.bombDetected}
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <div className={classes.prizeSection}>
-          <Typography variant="body1" className={classes.prizeTitle}>
-            Hadiah periode ini &nbsp;
-            <Typography variant="caption" component="span" className={classes.prizeSubtitle}>
-              (01 - 31 Maret 2023)
-            </Typography>
-          </Typography>
-          <div className={classes.prizesWrapper}>
-            <div className={classes.prizes}>
-              <div className={classes.prizeItem}>
-                <div className={classes.prizeCard}>
-                  <div className={classes.prizeImageWrapper}>
-                    <img className={classes.prizeImage} src="/images/motor.png" alt="prize" />
-                  </div>
-                  <div className={classes.prizeText}>
-                    <Typography variant="caption" component="p">
-                      Peringkat Pertama
-                    </Typography>
-                    <Typography variant="body2">
-                      <b>1 Unit Motor</b>
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-              <div className={classes.prizeItem}>
-                <div className={classes.prizeCard}>
-                  <div className={classes.prizeImageWrapper}>
-                    <img className={classes.prizeImage} src="/images/handphone.png" alt="prize" />
-                  </div>
-                  <div className={classes.prizeText}>
-                    <Typography variant="caption" component="p">
-                      Peringkat Kedua
-                    </Typography>
-                    <Typography variant="body2">
-                      <b>1 Unit Handphone</b>
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-              <div className={classes.prizeItem}>
-                <div className={classes.prizeCard}>
-                  <div className={classes.prizeImageWrapper}>
-                    <img className={classes.prizeImage} src="/images/smartwatch.png" alt="prize" />
-                  </div>
-                  <div className={classes.prizeText}>
-                    <Typography variant="caption" component="p">
-                      Peringkat Ketiga
-                    </Typography>
-                    <Typography variant="body2">
-                      <b>1 Unit Smart Watch</b>
-                    </Typography>
-                  </div>
-                </div>
+        {(boardState.isLoadingLog || !isAuthenticated) && (
+          <div className={classes.boardLoadingLog} />
+        )}
+        <div className={classes.board}>
+          {!isAuthenticated && (
+            <div className={classes.authBlocker}>
+              <div className={classes.authBlockerContent}>
+                <Typography>Masuk untuk bermain</Typography>
               </div>
             </div>
-          </div>
+          )}
+          {cells.map((columns) =>
+            columns.map((row) => (
+              <Cell
+                key={row.id}
+                isRevealed={row.isRevealed}
+                isFlagged={row.isFlagged}
+                hasBomb={row.isBomb}
+                isGameOver={boardState.isGameOver || boardState.isGameWin}
+                onClick={handleClickCell}
+                positionX={row.positionX}
+                positionY={row.positionY}
+                bombDetected={row.bombDetected}
+              />
+            ))
+          )}
         </div>
       </div>
 
@@ -457,7 +452,7 @@ const Home = () => {
         </DialogActions>
       </Dialog>
 
-      <DialogCoinPurchase open={isDialogPurchaseCoinOpen} />
+      <DialogCoinPurchase open={isDialogPurchaseCoinOpen} onClose={handleDialogPurchaseCoinClose} />
 
       <Dialog open={isDialogWinOpen}>
         <DialogContent>

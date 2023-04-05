@@ -79,14 +79,14 @@ const Header = () => {
 
           {isAuthenticated ? (
             <div className={classes.logout}>
-              <Button onClick={handleClickLogout} size="small">
-                Logout
+              <Button onClick={handleClickLogout} size="small" variant="outlined" color="primary">
+                Keluar
               </Button>
             </div>
           ) : (
             <div className={classes.logout}>
-              <Button onClick={handleClickLogin} size="small">
-                Login
+              <Button onClick={handleClickLogin} size="small" variant="outlined" color="primary">
+                Masuk
               </Button>
             </div>
           )}
@@ -95,7 +95,7 @@ const Header = () => {
 
       <Dialog open={isDialogLogoutOpen} onClose={handleCloseDialogLogout}>
         <DialogContent>
-          <Typography>Apa kamu yakin ingin logout?</Typography>
+          <Typography>Apa kamu yakin ingin keluar?</Typography>
         </DialogContent>
         <DialogActions>
           <Button size="small" color="primary" onClick={handleSubmitLogout}>

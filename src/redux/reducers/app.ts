@@ -15,6 +15,9 @@ export const APP_DATA_FETCH_FAILURE = 'app/DATA_FETCH_FAILURE'
 export const APP_DATA_FETCH_SUCCESS = 'app/DATA_FETCH_SUCCESS'
 export const APP_DATA_POINT_SET = 'app/DATA_POINT_SET'
 export const APP_DATA_COIN_SET = 'app/DATA_COIN_SET'
+export const APP_PRIZE_FETCH = 'app/PRIZE_FETCH'
+export const APP_PRIZE_FETCH_FAILURE = 'app/PRIZE_FETCH_FAILURE'
+export const APP_PRIZE_FETCH_SUCCESS = 'app/PRIZE_FETCH_SUCCESS'
 
 export interface AppInitialState {
   theme: 'dark' | 'light'
@@ -29,6 +32,12 @@ export interface AppInitialState {
     points: number
     coins: number
   }
+  prizes: {
+    id: number
+    label: string
+    name: string
+    imageSrc: string
+  }[]
   error: {
     message: string
   }
@@ -52,6 +61,7 @@ const INITIAL_STATE: AppInitialState = {
     points: 0,
     coins: 0
   },
+  prizes: [],
   error: {
     message: ''
   },
@@ -119,6 +129,18 @@ export default createReducer(INITIAL_STATE, {
   },
   [APP_DATA_COIN_SET]: (state, action) => {
     state.data.coins = action.payload
+  },
+  [APP_PRIZE_FETCH]: (state) => {
+    state.isLoading = true
+  },
+  [APP_PRIZE_FETCH_SUCCESS]: (state, action) => {
+    state.isLoading = false
+    state.error = { ...INITIAL_STATE.error }
+    state.prizes = action.payload
+  },
+  [APP_PRIZE_FETCH_FAILURE]: (state, action) => {
+    state.isLoading = true
+    state.error = action.payload
   }
 })
 
@@ -196,4 +218,18 @@ export const appDataPointSet = (value: AppInitialState['data']['points']) => ({
 export const appDataCoinSet = (value: AppInitialState['data']['coins']) => ({
   type: APP_DATA_COIN_SET,
   payload: value
+})
+
+export const appPrizeFetch = () => ({
+  type: APP_PRIZE_FETCH
+})
+
+export const appPrizeFetchSuccess = (payload: AppInitialState['prizes']) => ({
+  type: APP_PRIZE_FETCH_SUCCESS,
+  payload
+})
+
+export const appPrizeFetchFailure = (payload: AppInitialState['error']) => ({
+  type: APP_PRIZE_FETCH_FAILURE,
+  payload
 })

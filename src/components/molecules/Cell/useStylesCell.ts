@@ -1,18 +1,26 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Theme } from '@material-ui/core'
 
-const useStyles = makeStyles(() => {
+interface StyleProps {
+  hasBomb: boolean
+}
+
+const useStyles = makeStyles<Theme, StyleProps>((theme) => {
+  const flipBoxBackBgColor = ({ hasBomb }: StyleProps) => {
+    return hasBomb ? theme.palette.primary.main : '#d10d1938'
+  }
+
   return {
     block: {
       width: '100%',
       aspectRatio: '1/1',
-      background: 'silver',
-      boxShadow: '3px 3px 1px #fff inset, -3px -3px 2px #8a8a8a inset',
-      border: '0.5px solid #656565',
       display: 'flex',
       alignItems: 'center',
+      borderRadius: '2px',
+      overflow: 'hidden',
       '&.active': {
-        boxShadow: 'unset',
-        cursor: 'unset'
+        '& $flipBoxInner': {
+          transform: 'rotateX(180deg)'
+        }
       },
       '&.flagged': {
         boxShadow: 'unset',
@@ -23,6 +31,33 @@ const useStyles = makeStyles(() => {
       flex: 1,
       textAlign: 'center',
       cursor: 'inherit'
+    },
+    flipBoxInner: {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      textAlign: 'center',
+      transition: 'transform 0.8s',
+      transformStyle: 'preserve-3d'
+    },
+    flipBoxFront: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      WebkitBackfaceVisibility: 'hidden',
+      backfaceVisibility: 'hidden',
+      backgroundColor: theme.palette.grey[500],
+      color: 'black'
+    },
+    flipBoxBack: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      WebkitBackfaceVisibility: 'hidden',
+      backfaceVisibility: 'hidden',
+      backgroundColor: flipBoxBackBgColor,
+      color: 'white',
+      transform: 'rotateX(180deg)'
     }
   }
 })

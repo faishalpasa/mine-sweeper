@@ -3,6 +3,7 @@ import { useSelector, shallowEqual } from 'react-redux'
 
 import type { RootState } from 'redux/rootReducer'
 import useStyles from './useStylesCell'
+import { Typography } from '@material-ui/core'
 
 const cellSelector = ({ app }: RootState) => ({
   isToggleFlag: app.isToggleFlag
@@ -30,7 +31,7 @@ const Cell = ({
   onClick
 }: CellProps) => {
   const boardState = useSelector(cellSelector, shallowEqual)
-  const classes = useStyles()
+  const classes = useStyles({ hasBomb })
   const [isActive, setIsActive] = useState(false)
 
   let color = ''
@@ -65,13 +66,21 @@ const Cell = ({
         isFlagged && boardState.isToggleFlag ? 'flagged' : ''
       }`}
       onClick={handleClickBlock}
-      style={{ color }}
     >
-      {isFlagged ? (
-        <label className={classes.label}>🚩</label>
-      ) : (
-        <label className={classes.label}>{label}</label>
-      )}
+      <div className={classes.flipBoxInner}>
+        <div className={classes.flipBoxFront} />
+        <div className={classes.flipBoxBack}>
+          {isFlagged ? (
+            <label className={classes.label}>
+              <Typography>🚩</Typography>
+            </label>
+          ) : (
+            <label className={classes.label} style={{ color }}>
+              <Typography>{label}</Typography>
+            </label>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
