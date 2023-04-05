@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Backdrop, CircularProgress, Typography } from '@material-ui/core'
+import { Backdrop, CircularProgress, Typography, Paper } from '@material-ui/core'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
 import { termsDataFetch } from 'redux/reducers/terms'
@@ -28,16 +28,16 @@ const Terms = () => {
   return (
     <>
       <div className={classes.content}>
-        <Typography className={classes.contentTitle} style={{ flex: 1 }}>
-          Syarat dan Ketentuan
-        </Typography>
-        <ol className={classes.list}>
-          {data.map((termData) => (
-            <li className={classes.listItem} key={termData.id}>
-              {termData.description}
-            </li>
-          ))}
-        </ol>
+        <Typography className={classes.contentTitle}>Syarat dan Ketentuan</Typography>
+        <Paper className={classes.paper}>
+          <ol className={classes.list}>
+            {data.map((termData) => (
+              <li className={classes.listItem} key={termData.id}>
+                <Typography className={classes.listItemText}>{termData.description}</Typography>
+              </li>
+            ))}
+          </ol>
+        </Paper>
       </div>
 
       <Backdrop open={isLoading}>

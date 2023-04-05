@@ -8,7 +8,8 @@ import {
   TableRow,
   TableBody,
   CircularProgress,
-  Backdrop
+  Backdrop,
+  Paper
 } from '@material-ui/core'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
@@ -40,12 +41,12 @@ const Winner = () => {
     <>
       <div className={classes.content}>
         <Typography className={classes.contentTitle}>Pemenang Periode 01 - 28 Februari</Typography>
-        <TableContainer className={classes.tableContainer}>
+        <TableContainer className={classes.tableContainer} component={Paper}>
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>No. Handphone</TableCell>
-                <TableCell>Hadiah</TableCell>
+                <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
+                <TableCell className={classes.tableHeaderCell}>Hadiah</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

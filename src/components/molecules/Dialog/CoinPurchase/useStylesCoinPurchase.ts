@@ -21,6 +21,11 @@ const useStyles = makeStyles((theme) => {
         background: `${theme.palette.primary.main}33`
       }
     },
+    coinValue: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px'
+    },
     paymentItem: {
       border: `1px solid ${theme.palette.grey[400]}`,
       borderRadius: '8px',
@@ -35,6 +40,9 @@ const useStyles = makeStyles((theme) => {
       }
     },
     paymentLogo: {
+      width: '25px'
+    },
+    coinIcon: {
       width: '25px'
     }
   }

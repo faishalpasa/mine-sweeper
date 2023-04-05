@@ -9,7 +9,9 @@ const useStyles = makeStyles(() => {
       display: 'flex',
       flexDirection: 'column',
       flex: '1',
-      marginTop: '16px'
+      marginTop: '8px'
+      // background: 'linear-gradient(180deg, rgba(209,13,25,1) 0%, rgba(0,0,0,1) 100%)',
+      // minHeight: 'calc(100vh - 50px - 56px - 32px)'
     },
     formSection: {
       padding: '16px'

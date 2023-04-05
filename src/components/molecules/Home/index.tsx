@@ -92,6 +92,7 @@ const Home = () => {
   const [temporaryPoints, setTemporaryPoints] = useState(0)
   const [isDialogBombOpen, setIsDialogBombOpen] = useState(false)
   const [isDialogPurchaseCoinOpen, setIsDialogPurchaseCoinOpen] = useState(false)
+  const [isDialogPurchaseCoinClosable, setIsDialogPurchaseCoinClosable] = useState(false)
   const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
 
   const currentPoints = boardState.data.points
@@ -125,7 +126,13 @@ const Home = () => {
   }
 
   const handleDialogPurchaseCoinOpen = () => {
+    setIsDialogPurchaseCoinClosable(false)
     setIsDialogBombOpen(false)
+    setIsDialogPurchaseCoinOpen(true)
+  }
+
+  const handleClickButtonPurchaseCoin = () => {
+    setIsDialogPurchaseCoinClosable(true)
     setIsDialogPurchaseCoinOpen(true)
   }
 
@@ -341,10 +348,6 @@ const Home = () => {
     }
   }, [boardState.isGameWin])
 
-  if (boardState.isLoading) {
-    return <div className={classes.loadingContent} />
-  }
-
   return (
     <>
       <div className={classes.boardContent}>
@@ -380,7 +383,7 @@ const Home = () => {
               variant="contained"
               color="primary"
               size="small"
-              onClick={handleDialogPurchaseCoinOpen}
+              onClick={handleClickButtonPurchaseCoin}
             >
               Tambah Koin
             </Button>
@@ -452,7 +455,11 @@ const Home = () => {
         </DialogActions>
       </Dialog>
 
-      <DialogCoinPurchase open={isDialogPurchaseCoinOpen} onClose={handleDialogPurchaseCoinClose} />
+      <DialogCoinPurchase
+        open={isDialogPurchaseCoinOpen}
+        onClose={handleDialogPurchaseCoinClose}
+        isClosable={isDialogPurchaseCoinClosable}
+      />
 
       <Dialog open={isDialogWinOpen}>
         <DialogContent>

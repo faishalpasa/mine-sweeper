@@ -6,7 +6,7 @@ interface StyleProps {
 
 const useStyles = makeStyles<Theme, StyleProps>((theme) => {
   const flipBoxBackBgColor = ({ hasBomb }: StyleProps) => {
-    return hasBomb ? theme.palette.primary.main : '#d10d1938'
+    return hasBomb ? theme.palette.primary.main : theme.palette.grey[300]
   }
 
   return {

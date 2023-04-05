@@ -1,4 +1,3 @@
-import { Backdrop } from '@material-ui/core'
 import React, { lazy, memo, Suspense } from 'react'
 
 import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
@@ -32,13 +31,11 @@ const Layout = () => {
   return (
     <Suspense fallback={<div />}>
       <Header />
-      <div style={{ marginBottom: isAuthenticated ? '75px' : '0px' }}>
-        {selectedTab === 0 && <Home />}
-        {selectedTab === 1 && <TopScore />}
-        {selectedTab === 2 && <Winner />}
-        {selectedTab === 3 && <Terms />}
-        {selectedTab === 4 && <Profile />}
-      </div>
+      {selectedTab === 0 && <Home />}
+      {selectedTab === 1 && <TopScore />}
+      {selectedTab === 2 && <Winner />}
+      {selectedTab === 3 && <Terms />}
+      {selectedTab === 4 && <Profile />}
       {isAuthenticated && <Footer />}
     </Suspense>
   )

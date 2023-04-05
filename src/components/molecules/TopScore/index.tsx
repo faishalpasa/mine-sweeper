@@ -8,7 +8,8 @@ import {
   TableRow,
   TableBody,
   CircularProgress,
-  Backdrop
+  Backdrop,
+  Paper
 } from '@material-ui/core'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
@@ -40,18 +41,18 @@ const TopScore = () => {
     <>
       <div className={classes.content}>
         <Typography className={classes.contentTitle}>Top Skor</Typography>
-        <TableContainer className={classes.tableContainer}>
-          <Table size="small">
+        <TableContainer className={classes.tableContainer} component={Paper}>
+          <Table size="small" stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>No. Handphone</TableCell>
-                <TableCell>Level</TableCell>
-                <TableCell>Poin</TableCell>
+                <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
+                <TableCell className={classes.tableHeaderCell}>Level</TableCell>
+                <TableCell className={classes.tableHeaderCell}>Poin</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {data.map((winner) => (
-                <TableRow key={winner.id}>
+                <TableRow key={winner.id} className={classes.tableBody}>
                   <TableCell>{maskPhoneNumber(winner.msisdn)}</TableCell>
                   <TableCell>{winner.level}</TableCell>
                   <TableCell>{winner.points}</TableCell>

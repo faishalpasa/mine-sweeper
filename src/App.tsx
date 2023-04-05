@@ -44,7 +44,7 @@ const theme = createTheme({
     },
     MuiBackdrop: {
       root: {
-        zIndex: 1
+        zIndex: 2
       }
     }
   }

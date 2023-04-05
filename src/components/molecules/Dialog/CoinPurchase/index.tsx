@@ -44,9 +44,10 @@ const coinPurchaseSelector = ({ app }: RootState) => ({
 interface CoinPurchaseProps {
   open: boolean
   onClose?: () => void
+  isClosable?: boolean
 }
 
-const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
+const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const coinPurchaseState = useSelector(coinPurchaseSelector, shallowEqual)
@@ -72,6 +73,11 @@ const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
     setSelectedPaymentItem(id)
   }
 
+  const handleCancelPayement = () => {
+    setIsDialogCoinOpen(true)
+    setIsDialogPaymentOpen(false)
+  }
+
   const handleSubmitPayment = () => {
     setIsDialogPaymentOpen(false)
     setIsDialogSuccessOpen(true)
@@ -90,13 +96,19 @@ const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
     }
   }
 
+  const handleCloseDialog = () => {
+    if (isClosable && onClose) {
+      onClose()
+    }
+  }
+
   useEffect(() => {
     setIsDialogCoinOpen(open)
   }, [open])
 
   return (
     <>
-      <Dialog open={isDialogCoinOpen}>
+      <Dialog open={isDialogCoinOpen} onClose={handleCloseDialog}>
         <DialogContent>
           <Typography>Pilih jumlah koin</Typography>
           <div className={classes.coinItems}>
@@ -106,7 +118,10 @@ const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
                 key={item.id}
                 onClick={() => handleSelectCoin(item.id)}
               >
-                <Typography>{item.label}</Typography>
+                <div className={classes.coinValue}>
+                  <img src="/images/koin.png" alt="coin" className={classes.coinIcon} />
+                  <Typography>{item.label}</Typography>
+                </div>
                 <Typography variant="caption">Rp{item.amount.toLocaleString()}</Typography>
               </div>
             ))}
@@ -125,7 +140,7 @@ const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPaymentOpen}>
+      <Dialog open={isDialogPaymentOpen} onClose={handleCancelPayement}>
         <DialogContent>
           <Typography>Pilih metode pembayaran</Typography>
           <div className={classes.coinItems}>
@@ -144,6 +159,9 @@ const CoinPurchase = ({ open, onClose }: CoinPurchaseProps) => {
           </div>
         </DialogContent>
         <DialogActions>
+          <Button color="primary" size="small" onClick={handleCancelPayement}>
+            Kembali
+          </Button>
           <Button
             variant="contained"
             color="primary"
