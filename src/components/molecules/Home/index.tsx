@@ -432,14 +432,15 @@ const Home = () => {
 
       <Dialog open={isDialogBombOpen}>
         <DialogContent>
-          <Typography>Boom! Kamu membuka kotak berisi bom.</Typography>
           {currentCoins > 0 ? (
             <Typography>
-              Kamu masih memiliki <b>{currentCoins}</b> koin, gunakan 1 untuk melanjutkan?
+              Boom! Kamu membuka kotak berisi bom. Kamu masih memiliki <b>{currentCoins}</b> koin,
+              gunakan 1 untuk melanjutkan?
             </Typography>
           ) : (
             <Typography>
-              Kamu memiliki <b>{currentCoins}</b> koin, beli koin melanjutkan?
+              Boom! Kamu membuka kotak berisi bom. Kamu memiliki <b>{currentCoins}</b> koin, beli
+              koin melanjutkan?
             </Typography>
           )}
         </DialogContent>

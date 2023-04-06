@@ -62,7 +62,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     tools: {
       margin: '8px 0px',
       display: 'flex',
-      background: theme.palette.primary.main,
+      background: theme.palette.secondary.main,
       borderRadius: '8px',
       padding: '8px'
     },
@@ -139,7 +139,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     },
     prizeText: {
       textAlign: 'left',
-      background: '#d10d19',
+      background: theme.palette.primary.main,
       padding: '8px',
       color: '#fff'
     },

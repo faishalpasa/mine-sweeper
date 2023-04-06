@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core'
 
-const useStyles = makeStyles(() => {
+const useStyles = makeStyles((theme) => {
   return {
     loadingContent: {
       flex: '1'
@@ -9,17 +9,21 @@ const useStyles = makeStyles(() => {
       display: 'flex',
       flexDirection: 'column',
       flex: '1',
-      marginTop: '8px'
-      // background: 'linear-gradient(180deg, rgba(209,13,25,1) 0%, rgba(0,0,0,1) 100%)',
-      // minHeight: 'calc(100vh - 50px - 56px - 32px)'
+      marginTop: '8px',
+      padding: '16px',
+      minHeight: 'calc(100vh - 50px - 56px - 32px)',
+      backgroundImage: 'url("/images/background.png")',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'center',
+      backgroundSize: 'cover'
     },
-    formSection: {
-      padding: '16px'
+    contentTitle: {
+      fontWeight: 500,
+      color: theme.palette.common.white
     },
-    formWrapper: {
-      marginBottom: '16px',
+    actionButtons: {
       display: 'flex',
-      alignItems: 'center'
+      justifyContent: 'end'
     },
     formTitle: {
       fontWeight: 500
@@ -28,7 +32,6 @@ const useStyles = makeStyles(() => {
       marginBottom: '16px'
     },
     formInputPin: {
-      marginBottom: '16px',
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
@@ -37,6 +40,10 @@ const useStyles = makeStyles(() => {
       display: 'flex',
       gap: '8px',
       alignItems: 'center'
+    },
+    paper: {
+      margin: '16px 0px',
+      padding: '16px'
     }
   }
 })

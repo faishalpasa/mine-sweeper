@@ -46,7 +46,8 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       height: '100%',
       WebkitBackfaceVisibility: 'hidden',
       backfaceVisibility: 'hidden',
-      backgroundColor: theme.palette.grey[500],
+      backgroundColor: theme.palette.grey[700],
+      // background: '#D10D7B',
       color: 'black'
     },
     flipBoxBack: {

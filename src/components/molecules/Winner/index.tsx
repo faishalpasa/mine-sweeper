@@ -4,7 +4,6 @@ import {
   TableContainer,
   Table,
   TableCell,
-  TableHead,
   TableRow,
   TableBody,
   CircularProgress,
@@ -24,6 +23,18 @@ const winnerSelector = ({ winner }: RootState) => ({
   isLoading: winner.isLoading
 })
 
+const backgroundColor = (position: number) => {
+  if (position === 1) {
+    return '#f59f0b'
+  } else if (position === 2) {
+    return '#c0c0c0'
+  } else if (position === 3) {
+    return '#fa6b25'
+  } else {
+    return ''
+  }
+}
+
 const Winner = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -42,20 +53,22 @@ const Winner = () => {
       <div className={classes.content}>
         <Typography className={classes.contentTitle}>Pemenang Periode 01 - 28 Februari</Typography>
         <TableContainer className={classes.tableContainer} component={Paper}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
-                <TableCell className={classes.tableHeaderCell}>Hadiah</TableCell>
-              </TableRow>
-            </TableHead>
+          <Table>
             <TableBody>
-              {data.map((winner) => (
-                <TableRow key={winner.id}>
+              {data.map((winner, index) => (
+                <TableRow key={winner.id} style={{ backgroundColor: backgroundColor(index + 1) }}>
                   <TableCell>
-                    {maskPhoneNumber(winner.msisdn)}
-                    <br />
-                    <small>Point: {winner.points}</small>
+                    <div className={classes.winner}>
+                      <img
+                        src={`/images/winner-${index + 1}.png`}
+                        alt={`winner-${index + 1}`}
+                        className={classes.winnerLogo}
+                      />
+                      <div className={classes.winnerText}>
+                        <Typography>{maskPhoneNumber(winner.msisdn)}</Typography>
+                        <Typography variant="caption">Point: {winner.points}</Typography>
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>{winner.prize}</TableCell>
                 </TableRow>

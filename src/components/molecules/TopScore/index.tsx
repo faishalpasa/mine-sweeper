@@ -24,6 +24,18 @@ const winnerSelector = ({ topScore }: RootState) => ({
   isLoading: topScore.isLoading
 })
 
+const winnerStyles = (position: number) => {
+  if (position === 1) {
+    return { background: '#f59f0b' }
+  } else if (position === 2) {
+    return { background: '#c0c0c0' }
+  } else if (position === 3) {
+    return { background: '#fa6b25' }
+  } else {
+    return {}
+  }
+}
+
 const TopScore = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
@@ -51,8 +63,8 @@ const TopScore = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {data.map((winner) => (
-                <TableRow key={winner.id} className={classes.tableBody}>
+              {data.map((winner, index) => (
+                <TableRow key={winner.id} style={{ ...winnerStyles(index + 1) }}>
                   <TableCell>{maskPhoneNumber(winner.msisdn)}</TableCell>
                   <TableCell>{winner.level}</TableCell>
                   <TableCell>{winner.points}</TableCell>

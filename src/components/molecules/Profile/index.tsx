@@ -7,7 +7,8 @@ import {
   DialogActions,
   DialogContent,
   TextField,
-  Typography
+  Typography,
+  Paper
 } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
@@ -72,20 +73,8 @@ const Profile = () => {
   return (
     <>
       <div className={classes.content}>
-        <div className={classes.formSection}>
-          <div className={classes.formWrapper}>
-            <Typography className={classes.formTitle} style={{ flex: 1 }}>
-              Data Diri
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              disabled={isButtonUpdateDisabled}
-            >
-              Simpan
-            </Button>
-          </div>
+        <Typography className={classes.contentTitle}>Data Diri</Typography>
+        <Paper className={classes.paper}>
           <div className={classes.formInput}>
             <TextField
               label="No. Handphone"
@@ -117,12 +106,20 @@ const Profile = () => {
               onChange={(e) => handleChangeField(e.target.name, e.target.value)}
             />
           </div>
-        </div>
-
-        <div className={classes.formSection}>
-          <div className={classes.formWrapper}>
-            <Typography className={classes.formTitle}>Keamanan</Typography>
+          <div className={classes.actionButtons}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              disabled={isButtonUpdateDisabled}
+            >
+              Simpan
+            </Button>
           </div>
+        </Paper>
+
+        <Typography className={classes.contentTitle}>Keamanan</Typography>
+        <Paper className={classes.paper}>
           <div className={classes.formInputPin}>
             <TextField
               style={{ flex: 1 }}
@@ -146,7 +143,7 @@ const Profile = () => {
               Ubah PIN
             </Button>
           </div>
-        </div>
+        </Paper>
       </div>
 
       <Dialog open={isDialogPINOpen} onClose={handleClosePINDialog}>
