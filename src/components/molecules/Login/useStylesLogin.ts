@@ -7,10 +7,10 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'column',
       flex: '1',
       marginTop: '-40px',
+      marginBottom: '-55px',
       padding: '16px',
-      minHeight: '100vh',
       position: 'relative',
-      // backgroundColor: theme.palette.grey[700],
+      minHeight: 'calc(100vh - 55px + 23px)',
       justifyContent: 'center',
       '&:before': {
         content: '""',
