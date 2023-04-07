@@ -2,17 +2,16 @@ import { makeStyles } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => {
   return {
-    loadingContent: {
-      flex: '1'
-    },
     content: {
       display: 'flex',
       flexDirection: 'column',
       flex: '1',
-      marginTop: '8px',
+      marginTop: '-40px',
       padding: '16px',
-      minHeight: 'calc(100vh - 50px - 56px - 32px)',
+      minHeight: '100vh',
       position: 'relative',
+      // backgroundColor: theme.palette.grey[700],
+      justifyContent: 'center',
       '&:before': {
         content: '""',
         display: 'block',
@@ -25,25 +24,22 @@ const useStyles = makeStyles((theme) => {
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         backgroundSize: 'cover',
-        zIndex: '-1'
+        zIndex: '-1',
+        opacity: 0.25
       }
     },
-    contentTitle: {
-      fontWeight: 900,
-      fontSize: '20px',
-      color: theme.palette.common.black,
-      '-webkit-text-fill-color': theme.palette.common.black,
-      '-webkit-text-stroke-width': '1px',
-      '-webkit-text-stroke-color': theme.palette.common.white
-    },
-    tableContainer: {
+    paper: {
       marginTop: '8px',
-      maxHeight: 'calc(100vh - 190px)'
+      padding: '16px',
+      background: theme.palette.secondary.main
     },
-    tableHeaderCell: {
-      background: theme.palette.primary.main,
-      color: theme.palette.common.white
-    }
+    actionButtons: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: '16px'
+    },
+    title: {}
   }
 })
 

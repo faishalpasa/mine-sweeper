@@ -13,6 +13,7 @@ const TopScore = lazy(() => import('../../molecules/TopScore'))
 const Winner = lazy(() => import('../../molecules/Winner'))
 const Terms = lazy(() => import('../../molecules/Terms'))
 const Profile = lazy(() => import('../../molecules/Profile'))
+const Login = lazy(() => import('../../molecules/Login'))
 
 const layoutSelector = ({ navigationTab }: RootState) => ({
   selectedTab: navigationTab.selectedTab
@@ -30,13 +31,19 @@ const Layout = () => {
 
   return (
     <Suspense fallback={<div />}>
-      <Header />
-      {selectedTab === 0 && <Home />}
-      {selectedTab === 1 && <TopScore />}
-      {selectedTab === 2 && <Winner />}
-      {selectedTab === 3 && <Terms />}
-      {selectedTab === 4 && <Profile />}
-      {isAuthenticated && <Footer />}
+      {isAuthenticated ? (
+        <>
+          <Header />
+          {selectedTab === 0 && <Home />}
+          {selectedTab === 1 && <TopScore />}
+          {selectedTab === 2 && <Winner />}
+          {selectedTab === 3 && <Terms />}
+          {selectedTab === 4 && <Profile />}
+          <Footer />
+        </>
+      ) : (
+        <Login />
+      )}
     </Suspense>
   )
 }

@@ -9,10 +9,10 @@ const Layout = lazy(() => import('./components/organisms/Layout'))
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#D10D19'
+      main: '#FF3847'
     },
     secondary: {
-      main: '#D1630D'
+      main: '#75C7FB'
     }
   },
   typography: {

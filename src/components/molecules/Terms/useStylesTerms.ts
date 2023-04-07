@@ -12,14 +12,29 @@ const useStyles = makeStyles((theme) => {
       marginTop: '8px',
       padding: '16px',
       minHeight: 'calc(100vh - 50px - 56px - 32px)',
-      backgroundImage: 'url("/images/background.png")',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center',
-      backgroundSize: 'cover'
+      position: 'relative',
+      '&:before': {
+        content: '""',
+        display: 'block',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        backgroundImage: 'url("/images/background.png")',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        zIndex: '-1'
+      }
     },
     contentTitle: {
-      fontWeight: 500,
-      color: theme.palette.common.white
+      fontWeight: 900,
+      fontSize: '20px',
+      color: theme.palette.common.black,
+      '-webkit-text-fill-color': theme.palette.common.black,
+      '-webkit-text-stroke-width': '1px',
+      '-webkit-text-stroke-color': theme.palette.common.white
     },
     list: {
       paddingInlineStart: '16px',
@@ -36,7 +51,7 @@ const useStyles = makeStyles((theme) => {
       lineHeight: '20px'
     },
     paper: {
-      marginTop: '16px',
+      marginTop: '8px',
       padding: '16px'
     }
   }
