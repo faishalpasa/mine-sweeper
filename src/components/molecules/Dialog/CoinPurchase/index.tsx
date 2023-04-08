@@ -120,7 +120,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
               >
                 <div className={classes.coinValue}>
                   <img src="/images/koin.png" alt="coin" className={classes.coinIcon} />
-                  <Typography>{item.label}</Typography>
+                  <Typography>{item.value}</Typography>
                 </div>
                 <Typography variant="caption">Rp{item.amount.toLocaleString()}</Typography>
               </div>

@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => {
       justifyContent: 'space-between',
       '&.selected': {
         borderColor: theme.palette.primary.main,
-        background: `${theme.palette.primary.main}33`
+        background: theme.palette.secondary.main
       }
     },
     coinValue: {
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => {
       gap: '8px',
       '&.selected': {
         borderColor: theme.palette.primary.main,
-        background: `${theme.palette.primary.main}33`
+        background: theme.palette.secondary.main
       }
     },
     paymentLogo: {

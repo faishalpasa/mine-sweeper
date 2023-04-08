@@ -155,7 +155,10 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
         transform: 'scale(.9)',
         transition: 'all .3s ease',
         '&.slick-active': {
-          transform: 'scale(1)'
+          transform: 'scale(1)',
+          '& $sliderPrizeCard': {
+            border: `4px solid ${theme.palette.primary.main}`
+          }
         }
       }
     },
@@ -165,7 +168,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     sliderPrizeCard: {
       borderRadius: '4px',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      border: `0px solid ${theme.palette.primary.main}`,
+      transition: 'all .3s ease'
     }
   }
 })
