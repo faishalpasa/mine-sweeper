@@ -37,14 +37,14 @@ export const winnerDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies)
               id: 2,
               name: 'Lorem Ipsum',
               msisdn: '081234567890',
-              prize: '1 Unit Sepeda Motor',
+              prize: '1 Unit Handphone',
               points: 8888
             },
             {
               id: 3,
               name: 'Lorem Ipsum',
               msisdn: '081234567890',
-              prize: '1 Unit Sepeda Motor',
+              prize: '1 Unit Smart Watch',
               points: 7777
             }
           ]

@@ -57,6 +57,10 @@ const TopScore = () => {
           <Table size="small" stickyHeader>
             <TableHead>
               <TableRow>
+                <TableCell
+                  className={classes.tableHeaderCell}
+                  style={{ padding: '6px 6px 6px 16px' }}
+                ></TableCell>
                 <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
                 <TableCell className={classes.tableHeaderCell}>Level</TableCell>
                 <TableCell className={classes.tableHeaderCell}>Poin</TableCell>
@@ -65,6 +69,7 @@ const TopScore = () => {
             <TableBody>
               {data.map((winner, index) => (
                 <TableRow key={winner.id} style={{ ...winnerStyles(index + 1) }}>
+                  <TableCell style={{ padding: '6px 6px 6px 16px' }}>{index + 1}</TableCell>
                   <TableCell>{maskPhoneNumber(winner.msisdn)}</TableCell>
                   <TableCell>{winner.level}</TableCell>
                   <TableCell>{winner.points}</TableCell>
