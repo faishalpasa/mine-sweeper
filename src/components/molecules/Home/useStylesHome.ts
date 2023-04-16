@@ -50,26 +50,27 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     },
     authBlockerContent: {
       background: theme.palette.common.white,
-      padding: '8px',
+      padding: '16px',
       borderRadius: '8px'
     },
     board: {
       position: 'relative',
       display: 'grid',
       gap: '1px',
-      gridTemplateColumns
+      gridTemplateColumns,
+      margin: '8px 0px'
     },
     tools: {
       margin: '8px 0px',
       display: 'flex',
-      background: theme.palette.secondary.main,
       borderRadius: '8px',
-      padding: '8px'
+      padding: '8px',
+      boxShadow: theme.shadows[4]
     },
     toolItemCoin: {
       alignItems: 'center',
       display: 'flex',
-      background: theme.palette.common.white,
+      boxShadow: theme.shadows[1],
       borderRadius: '4px',
       padding: '4px 8px',
       gap: '16px'
@@ -91,7 +92,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     toolItem: {
       flex: 1,
       textAlign: 'center',
-      color: theme.palette.common.white
+      color: theme.palette.common.black
     },
     toolItemText: {
       fontWeight: 600
@@ -151,14 +152,12 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     },
 
     sliderWrapper: {
+      marginTop: '8px',
       '& .slick-slide': {
         transform: 'scale(.9)',
         transition: 'all .3s ease',
         '&.slick-active': {
-          transform: 'scale(1)',
-          '& $sliderPrizeCard': {
-            border: `4px solid ${theme.palette.primary.main}`
-          }
+          transform: 'scale(1)'
         }
       }
     },
@@ -171,6 +170,10 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       overflow: 'hidden',
       border: `0px solid ${theme.palette.primary.main}`,
       transition: 'all .3s ease'
+    },
+    bombAnimate: {
+      textAlign: 'center',
+      width: '100%'
     }
   }
 })

@@ -31,7 +31,7 @@ const Layout = () => {
 
   return (
     <Suspense fallback={<div />}>
-      {isAuthenticated ? (
+      {/* {isAuthenticated ? (
         <>
           <Header />
           {selectedTab === 0 && <Home />}
@@ -43,7 +43,14 @@ const Layout = () => {
         </>
       ) : (
         <Login />
-      )}
+      )} */}
+      <Header />
+      {selectedTab === 0 && <Home />}
+      {selectedTab === 1 && <TopScore />}
+      {selectedTab === 2 && <Winner />}
+      {selectedTab === 3 && <Terms />}
+      {selectedTab === 4 && <Profile />}
+      {isAuthenticated && <Footer />}
     </Suspense>
   )
 }

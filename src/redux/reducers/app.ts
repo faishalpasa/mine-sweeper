@@ -163,11 +163,12 @@ export const appBoardFetchFailure = (payload: AppInitialState['error']) => ({
   payload
 })
 
-export const appBoardLogSave = (cellsStringify: string, points: number) => ({
+export const appBoardLogSave = (cellsStringify: string, points: number, time: number) => ({
   type: APP_BOARD_LOG_SAVE,
   payload: {
     decodedStateName: cellsStringify,
-    decodedPointName: points
+    decodedPointName: points,
+    decodedTimeName: time
   }
 })
 

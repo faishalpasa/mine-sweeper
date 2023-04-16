@@ -91,6 +91,7 @@ const Home = () => {
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
   const [isDialogBombOpen, setIsDialogBombOpen] = useState(false)
+  const [isBombAnimateShow, setIsBombAnimateShow] = useState(false)
   const [isDialogPurchaseCoinOpen, setIsDialogPurchaseCoinOpen] = useState(false)
   const [isDialogPurchaseCoinClosable, setIsDialogPurchaseCoinClosable] = useState(false)
   const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
@@ -119,6 +120,7 @@ const Home = () => {
 
   const handleDialogBombOpen = () => {
     setIsDialogBombOpen(true)
+    setIsBombAnimateShow(true)
   }
 
   const handleDialogWinOpen = () => {
@@ -179,7 +181,7 @@ const Home = () => {
         setCells(newCells)
 
         const stringifyCells = JSON.stringify(cells)
-        dispatch(appBoardLogSave(stringifyCells, temporaryPoints))
+        dispatch(appBoardLogSave(stringifyCells, temporaryPoints, 0))
         dispatch(appGameOverSet(true))
       }
     }
@@ -226,7 +228,7 @@ const Home = () => {
     setCells(updatedCells)
 
     const stringifyCells = JSON.stringify(cells)
-    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed))
+    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed, 0))
   }
 
   const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {
@@ -348,28 +350,17 @@ const Home = () => {
     }
   }, [boardState.isGameWin])
 
+  useEffect(() => {
+    if (isDialogBombOpen) {
+      setTimeout(() => {
+        setIsBombAnimateShow(false)
+      }, 1500)
+    }
+  }, [isDialogBombOpen])
+
   return (
     <>
       <div className={classes.boardContent}>
-        <div className={classes.sliderWrapper}>
-          <Slider {...slickSettings}>
-            {boardState.prizes.map((prize) => (
-              <div className={classes.sliderPrizeItem} key={prize.id}>
-                <div className={classes.sliderPrizeCard}>
-                  <div className={classes.prizeImageWrapper}>
-                    <img className={classes.prizeImage} src={prize.imageSrc} alt="prize" />
-                  </div>
-                  <div className={classes.prizeText}>
-                    <Typography className={classes.prizeTextLabel}>{prize.label}</Typography>
-                    <Typography className={classes.prizeTextName}>
-                      <b>{prize.name}</b>
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </Slider>
-        </div>
         <div className={classes.tools}>
           <div className={classes.toolItemCoin}>
             <div>
@@ -403,8 +394,12 @@ const Home = () => {
         <div className={classes.board}>
           {!isAuthenticated && (
             <div className={classes.authBlocker}>
-              <div className={classes.authBlockerContent}>
-                <Typography>Masuk untuk bermain</Typography>
+              <div className={classes.authBlockerContent} style={{ textAlign: 'center' }}>
+                <Typography>
+                  Kamu harus masuk terlebih dahulu
+                  <br />
+                  untuk bermain permainan Ranjau Darat
+                </Typography>
               </div>
             </div>
           )}
@@ -424,15 +419,39 @@ const Home = () => {
             ))
           )}
         </div>
+
+        <div className={classes.sliderWrapper}>
+          <Slider {...slickSettings}>
+            {boardState.prizes.map((prize) => (
+              <div className={classes.sliderPrizeItem} key={prize.id}>
+                <div className={classes.sliderPrizeCard}>
+                  <div className={classes.prizeImageWrapper}>
+                    <img className={classes.prizeImage} src={prize.imageSrc} alt="prize" />
+                  </div>
+                  <div className={classes.prizeText}>
+                    <Typography className={classes.prizeTextLabel}>{prize.label}</Typography>
+                    <Typography className={classes.prizeTextName}>
+                      <b>{prize.name}</b>
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </Slider>
+        </div>
       </div>
 
       <Backdrop open={boardState.isLoading}>
         <CircularProgress />
       </Backdrop>
 
-      <Dialog open={isDialogBombOpen}>
+      <Dialog open={isDialogBombOpen} fullWidth maxWidth="xs">
         <DialogContent>
-          {currentCoins > 0 ? (
+          {isBombAnimateShow ? (
+            <div className={classes.bombAnimate}>
+              <img src="/images/bomb.gif" alt="bomb" />
+            </div>
+          ) : currentCoins > 0 ? (
             <Typography>
               Boom! Kamu membuka kotak berisi bom. Kamu masih memiliki <b>{currentCoins}</b> koin,
               gunakan 1 untuk melanjutkan?
@@ -444,16 +463,18 @@ const Home = () => {
             </Typography>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
-          >
-            Ok
-          </Button>
-        </DialogActions>
+        {!isBombAnimateShow && (
+          <DialogActions>
+            <Button
+              size="small"
+              color="primary"
+              variant="contained"
+              onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
 
       <DialogCoinPurchase

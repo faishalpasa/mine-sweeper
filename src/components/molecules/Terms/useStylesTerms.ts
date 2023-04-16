@@ -21,11 +21,26 @@ const useStyles = makeStyles((theme) => {
         top: 0,
         width: '100%',
         height: '100%',
-        backgroundImage: 'url("/images/background.png")',
+        backgroundImage: 'url("/images/background-2.jpg")',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         zIndex: '-1'
+      },
+      '&:after': {
+        content: '""',
+        display: 'block',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: '100%',
+        height: '100%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        zIndex: '-1',
+        background: 'black',
+        opacity: '0.22'
       }
     },
     contentTitle: {

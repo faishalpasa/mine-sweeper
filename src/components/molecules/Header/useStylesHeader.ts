@@ -38,6 +38,11 @@ const useStyles = makeStyles((theme) => {
     },
     profileMsisdn: {
       fontSize: '10px'
+    },
+    timer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
     }
   }
 })

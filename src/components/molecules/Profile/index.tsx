@@ -35,6 +35,16 @@ const Profile = () => {
     name: '',
     email: ''
   })
+  const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
+
+  const handleClickLogout = () => {
+    setIsDialogLogoutOpen(true)
+  }
+
+  const handleSubmitLogout = () => {
+    localStorage.removeItem('auth')
+    location.href = '/'
+  }
 
   const handleChangeField = (field: string, value: string) => {
     setProfile((prevState) => ({
@@ -53,6 +63,10 @@ const Profile = () => {
 
   const handleClosePINDialog = () => {
     setIsDialogPINOpen(false)
+  }
+
+  const handleCloseDialogLogout = () => {
+    setIsDialogLogoutOpen(false)
   }
 
   const isButtonUpdateDisabled =
@@ -120,27 +134,27 @@ const Profile = () => {
 
         <Typography className={classes.contentTitle}>Keamanan</Typography>
         <Paper className={classes.paper}>
-          <div className={classes.formInputPin}>
-            <TextField
-              style={{ flex: 1 }}
-              label="PIN"
-              value="123456"
-              type={isPINVisible ? 'text' : 'password'}
-              InputProps={{
-                readOnly: true
-              }}
-              InputLabelProps={{ shrink: true }}
-            />
-            <Button variant="contained" color="primary" onClick={handleClickPinButton} size="small">
-              {isPINVisible ? <Visibility /> : <VisibilityOff />}
-            </Button>
+          <div>
             <Button
               variant="contained"
               color="primary"
               onClick={handleClickChangePINButton}
               size="small"
+              fullWidth
             >
               Ubah PIN
+            </Button>
+          </div>
+
+          <div style={{ marginTop: '16px' }}>
+            <Button
+              onClick={handleClickLogout}
+              size="small"
+              variant="contained"
+              color="primary"
+              fullWidth
+            >
+              Keluar
             </Button>
           </div>
         </Paper>
@@ -173,6 +187,25 @@ const Profile = () => {
           </Button>
           <Button color="primary" variant="contained" size="small">
             Ubah
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isDialogLogoutOpen} onClose={handleCloseDialogLogout}>
+        <DialogContent>
+          <Typography>Apa kamu yakin ingin keluar?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button size="small" color="primary" onClick={handleSubmitLogout}>
+            Ya
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCloseDialogLogout}
+            size="small"
+          >
+            Tidak
           </Button>
         </DialogActions>
       </Dialog>
