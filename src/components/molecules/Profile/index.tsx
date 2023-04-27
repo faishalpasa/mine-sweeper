@@ -18,7 +18,8 @@ import {
   authDataUpdate,
   authCheckPin,
   authChangePin,
-  authCheckPinReset
+  authCheckPinReset,
+  authIsPinChangedSet
 } from 'redux/reducers/auth'
 import type { RootState } from 'redux/rootReducer'
 
@@ -43,6 +44,7 @@ const Profile = () => {
     name: '',
     email: ''
   })
+  const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
   const [isDialogSuccessChangePinOpen, setIsDialogSuccessPinOpen] = useState(false)
@@ -82,11 +84,22 @@ const Profile = () => {
   }
 
   const handleCheckPin = (value: string) => {
+    setPin(value)
     dispatch(authCheckPin(value))
   }
 
   const handleChangePin = () => {
-    dispatch(authChangePin(newPin))
+    dispatch(authChangePin(pin, newPin))
+  }
+
+  const handleDialogSuccessPinOpen = () => {
+    setIsDialogPINOpen(false)
+    setIsDialogSuccessPinOpen(true)
+  }
+
+  const handleDialogSuccesPinClose = () => {
+    setIsDialogSuccessPinOpen(false)
+    dispatch(authIsPinChangedSet(false))
   }
 
   const isButtonUpdateDisabled =
@@ -106,8 +119,7 @@ const Profile = () => {
 
   useEffect(() => {
     if (profileState.isPinChanged) {
-      setIsDialogPINOpen(false)
-      setIsDialogSuccessPinOpen(true)
+      handleDialogSuccessPinOpen()
     }
   }, [profileState.isPinChanged])
 
@@ -272,7 +284,7 @@ const Profile = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => setIsDialogSuccessPinOpen(false)}
+            onClick={handleDialogSuccesPinClose}
             size="small"
           >
             Tutup

@@ -15,6 +15,7 @@ export const AUTH_RESET_PIN_SUCCESS = 'auth/RESET_PIN_SUCCESS'
 export const AUTH_CHANGE_PIN = 'auth/CHANGE_PIN'
 export const AUTH_CHANGE_PIN_FAILURE = 'auth/CHANGE_PIN_FAILURE'
 export const AUTH_CHANGE_PIN_SUCCESS = 'auth/CHANGE_PIN_SUCCESS'
+export const AUTH_IS_PIN_CHANGED_SET = 'auth/IS_PIN_CHANGED_SET'
 export const AUTH_FETCH = 'auth/FETCH'
 export const AUTH_FETCH_FAILURE = 'auth/FETCH_FAILURE'
 export const AUTH_FETCH_SUCCESS = 'auth/FETCH_SUCCESS'
@@ -111,6 +112,7 @@ export default createReducer(INITIAL_STATE, {
   [AUTH_LOGIN_PIN_SUCCESS]: (state, action) => {
     state.isLoading = false
     state.isAuthenticated = true
+    state.isPinReset = false
     state.data = {
       ...state.data,
       token: action.payload
@@ -147,7 +149,11 @@ export default createReducer(INITIAL_STATE, {
       token: action.payload
     }
     state.isPinChanged = true
+    state.isPinChecked = false
     state.error = { ...INITIAL_STATE.error }
+  },
+  [AUTH_IS_PIN_CHANGED_SET]: (state, action) => {
+    state.isPinChanged = action.payload
   },
   [AUTH_FETCH]: (state) => {
     state.isLoading = true
@@ -249,9 +255,12 @@ export const authResetPinSuccess = (token: AuthInitialState['data']['token']) =>
   type: AUTH_RESET_PIN_SUCCESS,
   payload: token
 })
-export const authChangePin = (pin: AuthInitialState['data']['pin']) => ({
+export const authChangePin = (
+  pin: AuthInitialState['data']['pin'],
+  newPin: AuthInitialState['data']['pin']
+) => ({
   type: AUTH_CHANGE_PIN,
-  payload: pin
+  payload: { pin, newPin }
 })
 export const authChangePinFailure = (payload: AuthInitialState['error']) => ({
   type: AUTH_CHANGE_PIN_FAILURE,
@@ -260,6 +269,10 @@ export const authChangePinFailure = (payload: AuthInitialState['error']) => ({
 export const authChangePinSuccess = (token: AuthInitialState['data']['token']) => ({
   type: AUTH_CHANGE_PIN_SUCCESS,
   payload: token
+})
+export const authIsPinChangedSet = (value: boolean) => ({
+  type: AUTH_IS_PIN_CHANGED_SET,
+  payload: value
 })
 export const authFetch = () => ({
   type: AUTH_FETCH

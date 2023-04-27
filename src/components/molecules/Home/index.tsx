@@ -484,7 +484,7 @@ const Home = () => {
           ) : (
             <Typography>
               Boom! Kamu membuka kotak berisi bom. Kamu memiliki <b>{currentCoins}</b> koin, beli
-              koin melanjutkan?
+              koin untuk melanjutkan?
             </Typography>
           )}
         </DialogContent>

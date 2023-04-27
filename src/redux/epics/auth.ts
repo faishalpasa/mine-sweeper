@@ -177,8 +177,8 @@ export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependenci
         host: 'http://127.0.0.1:8000/api',
         body: {
           msisdn: state$.value.auth.data.msisdn,
-          pin: state$.value.auth.data.pin,
-          new_pin: action.payload
+          pin: action.payload.pin,
+          new_pin: action.payload.newPin
         }
       }).pipe(
         mergeMap(({ response }: any) => {

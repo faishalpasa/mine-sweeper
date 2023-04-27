@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import {
   Button,
@@ -49,6 +49,8 @@ const Header = () => {
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
 
+  let pinInputRef: PinInput | null
+
   const { error, data, isPinReset } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
 
@@ -81,10 +83,11 @@ const Header = () => {
 
   const handleResetPin = () => {
     dispatch(authResetPin())
+    pinInputRef?.clear()
   }
 
   const handleSubmitChangePin = () => {
-    dispatch(authChangePin(newPin))
+    dispatch(authChangePin(pin, newPin))
   }
 
   const handleToProfile = () => {
@@ -105,7 +108,7 @@ const Header = () => {
   }, [headerState.data, isMsisdnSubmitted])
 
   useEffect(() => {
-    if (headerState.data.token && isPinSubmitted && isFirstTimePin) {
+    if (headerState.data.token && isPinSubmitted && isFirstTimePin && !isPinReset) {
       setIsDialogPinOpen(false)
       setIsDialogChangePinOpen(true)
       localStorage.setItem('token', headerState.data.token)
@@ -116,7 +119,7 @@ const Header = () => {
       localStorage.setItem('token', headerState.data.token)
       location.href = '/'
     }
-  }, [headerState.data, isPinSubmitted, isFirstTimePin])
+  }, [headerState.data, isPinSubmitted, isFirstTimePin, isPinReset])
 
   useEffect(() => {
     if (headerState.data.token && headerState.isPinChanged && headerState.selectedTab === 0) {
@@ -205,6 +208,7 @@ const Header = () => {
               inputMode="number"
               focus
               inputFocusStyle={{ borderColor: '#30cfa2' }}
+              ref={(n) => (pinInputRef = n)}
             />
             {error.message && (
               <small style={{ color: 'red', marginTop: '8px' }}>{error.message}</small>
