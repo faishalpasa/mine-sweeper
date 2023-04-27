@@ -26,13 +26,17 @@ import {
   authDataUpdateSuccess,
   AUTH_CHECK_PIN,
   authCheckPinFailure,
-  authCheckPinSuccess
+  authCheckPinSuccess,
+  AUTH_RESET_PIN,
+  authResetPinFailure,
+  authResetPinSuccess
 } from 'redux/reducers/auth'
 
 import {
   LOGIN_PIN_POST,
   LOGIN_POST,
   REGISTER_POST,
+  RESET_PIN_POST,
   CHANGE_PIN_PUT,
   AUTH_GET,
   PLAYER_PUT
@@ -139,6 +143,31 @@ export const authCheckPinEpic: Epic = (action$, state$, { api }: EpicDependencie
     )
   )
 
+export const authResetPinEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(AUTH_RESET_PIN),
+    mergeMap(() =>
+      api({
+        endpoint: RESET_PIN_POST,
+        host: 'http://127.0.0.1:8000/api',
+        body: {
+          msisdn: state$.value.auth.data.msisdn
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          return of(authResetPinSuccess(data.token))
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(authResetPinFailure(error))
+        })
+      )
+    )
+  )
+
 export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(AUTH_CHANGE_PIN),
@@ -182,6 +211,9 @@ export const authFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           const error = {
             message: err?.response?.message || 'Gagal mendapatkan data'
           }
+          localStorage.removeItem('auth')
+          localStorage.removeItem('token')
+          window.location.reload()
           return of(authFetchFailure(error))
         })
       )

@@ -9,6 +9,9 @@ export const AUTH_REGISTER_SUCCESS = 'auth/REGISTER_SUCCESS'
 export const AUTH_LOGIN_PIN = 'auth/LOGIN_PIN'
 export const AUTH_LOGIN_PIN_FAILURE = 'auth/LOGIN_PIN_FAILURE'
 export const AUTH_LOGIN_PIN_SUCCESS = 'auth/LOGIN_PIN_SUCCESS'
+export const AUTH_RESET_PIN = 'auth/RESET_PIN'
+export const AUTH_RESET_PIN_FAILURE = 'auth/RESET_PIN_FAILURE'
+export const AUTH_RESET_PIN_SUCCESS = 'auth/RESET_PIN_SUCCESS'
 export const AUTH_CHANGE_PIN = 'auth/CHANGE_PIN'
 export const AUTH_CHANGE_PIN_FAILURE = 'auth/CHANGE_PIN_FAILURE'
 export const AUTH_CHANGE_PIN_SUCCESS = 'auth/CHANGE_PIN_SUCCESS'
@@ -39,6 +42,7 @@ export interface AuthInitialState {
   isLoading: boolean
   isAuthenticated: boolean
   isPinChanged: boolean
+  isPinReset: boolean
   isPinChecked: boolean
   error: {
     message: string
@@ -61,6 +65,7 @@ const INITIAL_STATE: AuthInitialState = {
   isLoading: false,
   isAuthenticated: false,
   isPinChanged: false,
+  isPinReset: false,
   isPinChecked: false,
   error: {
     message: ''
@@ -110,6 +115,22 @@ export default createReducer(INITIAL_STATE, {
       ...state.data,
       token: action.payload
     }
+    state.error = { ...INITIAL_STATE.error }
+  },
+  [AUTH_RESET_PIN]: (state) => {
+    state.isLoading = true
+  },
+  [AUTH_RESET_PIN_FAILURE]: (state, action) => {
+    state.isLoading = false
+    state.error = action.payload
+  },
+  [AUTH_RESET_PIN_SUCCESS]: (state, action) => {
+    state.isLoading = false
+    state.data = {
+      ...state.data,
+      token: action.payload
+    }
+    state.isPinReset = true
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_CHANGE_PIN]: (state) => {
@@ -215,6 +236,17 @@ export const authLoginPinFailure = (payload: AuthInitialState['error']) => ({
 })
 export const authLoginPinSuccess = (token: AuthInitialState['data']['token']) => ({
   type: AUTH_LOGIN_PIN_SUCCESS,
+  payload: token
+})
+export const authResetPin = () => ({
+  type: AUTH_RESET_PIN
+})
+export const authResetPinFailure = (payload: AuthInitialState['error']) => ({
+  type: AUTH_RESET_PIN_FAILURE,
+  payload
+})
+export const authResetPinSuccess = (token: AuthInitialState['data']['token']) => ({
+  type: AUTH_RESET_PIN_SUCCESS,
   payload: token
 })
 export const authChangePin = (pin: AuthInitialState['data']['pin']) => ({

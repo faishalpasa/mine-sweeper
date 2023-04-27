@@ -20,7 +20,8 @@ import {
   authLoginPin,
   authChangePin,
   authFetch,
-  authRegister
+  authRegister,
+  authResetPin
 } from 'redux/reducers/auth'
 import type { RootState } from 'redux/rootReducer'
 
@@ -30,6 +31,7 @@ const headerSelector = ({ auth, navigationTab }: RootState) => ({
   data: auth.data,
   isLoading: auth.isLoading,
   isPinChanged: auth.isPinChanged,
+  isPinReset: auth.isPinReset,
   error: auth.error,
   selectedTab: navigationTab.selectedTab
 })
@@ -47,7 +49,7 @@ const Header = () => {
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
 
-  const { error, data } = headerState
+  const { error, data, isPinReset } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
 
   const handleClickLogin = () => {
@@ -75,6 +77,10 @@ const Header = () => {
   const handleSubmitPin = () => {
     dispatch(authLoginPin(msisdn, pin))
     setIsPinSubmitted(true)
+  }
+
+  const handleResetPin = () => {
+    dispatch(authResetPin())
   }
 
   const handleSubmitChangePin = () => {
@@ -186,7 +192,11 @@ const Header = () => {
 
       <Dialog open={isDialogPinOpen} onClose={handleCloseDialogPin} fullWidth maxWidth="xs">
         <DialogContent>
-          <Typography>Masukan nomor pin kamu. {isFirstTimePin && 'Cek inbox SMS'}</Typography>
+          {isPinReset ? (
+            <Typography>PIN baru telah terkirim ke nomor handphone mu. Cek inbox SMS.</Typography>
+          ) : (
+            <Typography>Masukan nomor PIN kamu. {isFirstTimePin && 'Cek inbox SMS'}</Typography>
+          )}
           <div className={classes.inputPin}>
             <PinInput
               length={6}
@@ -201,7 +211,16 @@ const Header = () => {
             )}
           </div>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ justifyContent: 'space-between' }}>
+          <Button
+            variant="text"
+            size="small"
+            color="primary"
+            onClick={handleResetPin}
+            disabled={headerState.isLoading}
+          >
+            Reset PIN
+          </Button>
           <Button
             variant="contained"
             size="small"
