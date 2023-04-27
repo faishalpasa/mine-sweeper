@@ -5,6 +5,10 @@ import { ofType } from 'redux-observable'
 import type { Epic } from 'redux-observable'
 import type { EpicDependencies } from 'redux/store'
 
+import config from 'config'
+
+const { apiHost } = config
+
 import {
   AUTH_LOGIN,
   authLoginFailure,
@@ -48,7 +52,7 @@ export const authLoginEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) =>
       api({
         endpoint: LOGIN_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: action.payload
         }
@@ -73,7 +77,7 @@ export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) =>
       api({
         endpoint: REGISTER_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: action.payload
         }
@@ -98,7 +102,7 @@ export const authLoginPinEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) =>
       api({
         endpoint: LOGIN_PIN_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: action.payload.msisdn,
           pin: action.payload.pin
@@ -124,7 +128,7 @@ export const authCheckPinEpic: Epic = (action$, state$, { api }: EpicDependencie
     mergeMap((action) =>
       api({
         endpoint: LOGIN_PIN_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: state$.value.auth.data.msisdn,
           pin: action.payload
@@ -149,7 +153,7 @@ export const authResetPinEpic: Epic = (action$, state$, { api }: EpicDependencie
     mergeMap(() =>
       api({
         endpoint: RESET_PIN_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: state$.value.auth.data.msisdn
         }
@@ -174,7 +178,7 @@ export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependenci
     mergeMap((action) =>
       api({
         endpoint: CHANGE_PIN_PUT,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           msisdn: state$.value.auth.data.msisdn,
           pin: action.payload.pin,
@@ -201,7 +205,7 @@ export const authFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap(() =>
       api({
         endpoint: AUTH_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
@@ -226,7 +230,7 @@ export const authDataUpdateEpic: Epic = (action$, state$, { api }: EpicDependenc
     mergeMap((action) =>
       api({
         endpoint: PLAYER_PUT,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           name: action.payload.name,
           email: action.payload.email

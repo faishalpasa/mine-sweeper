@@ -10,8 +10,11 @@ import {
   termsDataFetchFailure,
   termsDataFetchSuccess
 } from 'redux/reducers/terms'
+import config from 'config'
 
 import { TERMS_GET } from 'constants/endpoint'
+
+const { apiHost } = config
 
 export const termsDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
@@ -19,7 +22,7 @@ export const termsDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) 
     mergeMap((action) =>
       api({
         endpoint: TERMS_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response

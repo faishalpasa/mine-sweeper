@@ -8,7 +8,7 @@ import type { CellPorps } from 'types/board'
 
 import config from 'config'
 
-const { mediaUrl } = config
+const { mediaUrl, apiHost } = config
 
 import {
   APP_BOARD_FETCH,
@@ -65,7 +65,7 @@ export const appBoardFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =
     mergeMap((action) =>
       api({
         endpoint: STEP_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
@@ -99,7 +99,7 @@ export const appBoardLogSaveEpic: Epic = (action$, state$, { api }: EpicDependen
       )
       return api({
         endpoint: STEP_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           data: encodedData
         }
@@ -127,7 +127,7 @@ export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) =>
       api({
         endpoint: DATA_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const data = {
@@ -154,7 +154,7 @@ export const appPrizeFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =
     mergeMap((action) =>
       api({
         endpoint: PRIZE_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
@@ -184,7 +184,7 @@ export const appNextLevelEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) =>
       api({
         endpoint: NEXT_LEVEL_POST,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
@@ -207,7 +207,7 @@ export const appContinuePlayEpic: Epic = (action$, _, { api }: EpicDependencies)
     mergeMap((action) =>
       api({
         endpoint: CONTINUE_PLAY_POST,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
@@ -230,7 +230,7 @@ export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) => {
       return api({
         endpoint: PAY_OVO_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           amount: action.payload.amount,
           msisdn: `+62${action.payload.msisdn}`
@@ -257,7 +257,7 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
     mergeMap((action) => {
       return api({
         endpoint: PAY_OVO_CHECK_GET,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         params: {
           id: action.payload
         }
@@ -286,7 +286,7 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     mergeMap((action) => {
       return api({
         endpoint: PAY_GOPAY_POST,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         body: {
           amount: action.payload.amount,
           msisdn: `+62${action.payload.msisdn}`
@@ -318,7 +318,7 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
     mergeMap((action) => {
       return api({
         endpoint: PAY_GOPAY_CHECK_GET,
-        host: 'http://127.0.0.1:8000/api',
+        host: apiHost,
         params: {
           id: action.payload
         }

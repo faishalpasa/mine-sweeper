@@ -131,7 +131,6 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogSuccessOpen(false)
     setSelectedCoinItem(0)
     setSelectedPaymentItem(0)
-    setMsisdn('')
     if (onClose) {
       onClose()
     }
@@ -146,6 +145,14 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   useEffect(() => {
     setIsDialogCoinOpen(open)
   }, [open])
+
+  useEffect(() => {
+    if (authData.msisdn) {
+      console.log(authData.msisdn)
+      const phoneNumber = authData.msisdn.replace(/^0+/, '')
+      setMsisdn(phoneNumber)
+    }
+  }, [authData.msisdn])
 
   return (
     <>
@@ -238,7 +245,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
             variant="contained"
             color="primary"
             size="small"
-            disabled={!selectedPaymentItem}
+            disabled={!selectedPaymentItem || !msisdn}
             onClick={handleSubmitPayment}
           >
             Lanjutkan

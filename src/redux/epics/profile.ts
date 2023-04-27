@@ -5,6 +5,10 @@ import { ofType } from 'redux-observable'
 import type { Epic } from 'redux-observable'
 import type { EpicDependencies } from 'redux/store'
 
+import config from 'config'
+
+const { apiHost } = config
+
 import {
   PROFILE_DATA_FETCH,
   profileDataFetchFailure,

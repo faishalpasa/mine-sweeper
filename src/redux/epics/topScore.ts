@@ -10,8 +10,11 @@ import {
   topScoreDataFetchFailure,
   topScoreDataFetchSuccess
 } from 'redux/reducers/topScore'
+import config from 'config'
 
 import { TOP_SCORE_GET } from 'constants/endpoint'
+
+const { apiHost } = config
 
 export const topScoreDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
@@ -19,7 +22,7 @@ export const topScoreDataFetchEpic: Epic = (action$, _, { api }: EpicDependencie
     mergeMap(() =>
       api({
         endpoint: TOP_SCORE_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response

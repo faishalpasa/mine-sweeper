@@ -5,7 +5,7 @@ import config from 'config'
 
 import type { Endpoint } from 'constants/endpoint'
 
-const { apiHost } = config
+const { apiHost, apiKey } = config
 
 const generatePath = (path: string, params = {}, query?: Record<string, unknown>): string => {
   const url = new UrlPattern(path).stringify(params)
@@ -50,7 +50,7 @@ const api = (options: Options) => {
     headers: {
       ...headers,
       'Content-Type': 'application/json',
-      'x-api-key': 'loremipsum',
+      'x-api-key': apiKey,
       'x-token': token
     },
     url,

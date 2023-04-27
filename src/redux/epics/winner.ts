@@ -10,8 +10,11 @@ import {
   winnerDataFetchFailure,
   winnerDataFetchSuccess
 } from 'redux/reducers/winner'
+import config from 'config'
 
 import { WINNER_GET } from 'constants/endpoint'
+
+const { apiHost } = config
 
 export const winnerDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
@@ -19,7 +22,7 @@ export const winnerDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies)
     mergeMap(() =>
       api({
         endpoint: WINNER_GET,
-        host: 'http://127.0.0.1:8000/api'
+        host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
