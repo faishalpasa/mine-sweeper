@@ -18,6 +18,24 @@ export const APP_DATA_COIN_SET = 'app/DATA_COIN_SET'
 export const APP_PRIZE_FETCH = 'app/PRIZE_FETCH'
 export const APP_PRIZE_FETCH_FAILURE = 'app/PRIZE_FETCH_FAILURE'
 export const APP_PRIZE_FETCH_SUCCESS = 'app/PRIZE_FETCH_SUCCESS'
+export const APP_NEXT_LEVEL = 'app/NEXT_LEVEL'
+export const APP_NEXT_LEVEL_FAILURE = 'app/NEXT_LEVEL_FAILURE'
+export const APP_NEXT_LEVEL_SUCCESS = 'app/NEXT_LEVEL_SUCCESS'
+export const APP_CONTINUE_PLAY = 'app/CONTINUE_PLAY'
+export const APP_CONTINUE_PLAY_FAILURE = 'app/CONTINUE_PLAY_FAILURE'
+export const APP_CONTINUE_PLAY_SUCCESS = 'app/CONTINUE_PLAY_SUCCESS'
+export const APP_PAY_OVO = 'app/PAY_OVO'
+export const APP_PAY_OVO_FAILURE = 'app/PAY_OVO_FAILURE'
+export const APP_PAY_OVO_SUCCESS = 'app/PAY_OVO_SUCCESS'
+export const APP_PAY_OVO_CHECK = 'app/PAY_OVO_CHECK'
+export const APP_PAY_OVO_CHECK_SUCCESS = 'app/PAY_OVO_CHECK_SUCCESS'
+export const APP_PAY_OVO_CHECK_FAILURE = 'app/PAY_OVO_CHECK_FAILURE'
+export const APP_PAY_GOPAY = 'app/PAY_GOPAY'
+export const APP_PAY_GOPAY_FAILURE = 'app/PAY_GOPAY_FAILURE'
+export const APP_PAY_GOPAY_SUCCESS = 'app/PAY_GOPAY_SUCCESS'
+export const APP_PAY_GOPAY_CHECK = 'app/PAY_GOPAY_CHECK'
+export const APP_PAY_GOPAY_CHECK_SUCCESS = 'app/PAY_GOPAY_CHECK_SUCCESS'
+export const APP_PAY_GOPAY_CHECK_FAILURE = 'app/PAY_GOPAY_CHECK_FAILURE'
 
 export interface AppInitialState {
   theme: 'dark' | 'light'
@@ -29,6 +47,7 @@ export interface AppInitialState {
   }
   data: {
     level: number
+    level_id: number
     points: number
     coins: number
   }
@@ -43,6 +62,7 @@ export interface AppInitialState {
   }
   isLoading: boolean
   isLoadingLog: boolean
+  isLoadingPay: boolean
   isGameOver: boolean
   isGameWin: boolean
   isToggleFlag: boolean
@@ -58,6 +78,7 @@ const INITIAL_STATE: AppInitialState = {
   },
   data: {
     level: 0,
+    level_id: 0,
     points: 0,
     coins: 0
   },
@@ -67,6 +88,7 @@ const INITIAL_STATE: AppInitialState = {
   },
   isLoading: false,
   isLoadingLog: false,
+  isLoadingPay: false,
   isGameOver: false,
   isGameWin: false,
   isToggleFlag: false
@@ -96,11 +118,15 @@ export default createReducer(INITIAL_STATE, {
     state.error = { ...INITIAL_STATE.error }
     state.board = {
       ...state.board,
-      state: action.payload
+      state: action.payload.state
+    }
+    state.data = {
+      ...state.data,
+      points: action.payload.points
     }
   },
   [APP_BOARD_LOG_SAVE_FAILURE]: (state, action) => {
-    state.isLoadingLog = true
+    state.isLoadingLog = false
     state.error = action.payload
   },
   [APP_TOGGLE_FLAG_SET]: (state, action) => {
@@ -141,6 +167,50 @@ export default createReducer(INITIAL_STATE, {
   [APP_PRIZE_FETCH_FAILURE]: (state, action) => {
     state.isLoading = true
     state.error = action.payload
+  },
+  [APP_NEXT_LEVEL]: (state) => {
+    state.isLoading = true
+  },
+  [APP_NEXT_LEVEL_SUCCESS]: (state) => {
+    state.isLoading = false
+  },
+  [APP_NEXT_LEVEL_FAILURE]: (state, action) => {
+    state.isLoadingPay = true
+    state.error = action.payload
+  },
+  [APP_PAY_OVO]: (state) => {
+    state.isLoadingPay = true
+  },
+  [APP_PAY_OVO_FAILURE]: (state, action) => {
+    state.isLoadingPay = true
+    state.error = action.payload
+  },
+  [APP_PAY_OVO_CHECK]: (state) => {
+    state.isLoadingPay = true
+  },
+  [APP_PAY_OVO_CHECK_SUCCESS]: (state) => {
+    state.isLoadingPay = false
+  },
+  [APP_PAY_OVO_CHECK_FAILURE]: (state, action) => {
+    state.isLoadingPay = true
+    state.error = action.payload
+  },
+  [APP_PAY_GOPAY]: (state) => {
+    state.isLoadingPay = true
+  },
+  [APP_PAY_GOPAY_FAILURE]: (state, action) => {
+    state.isLoadingPay = true
+    state.error = action.payload
+  },
+  [APP_PAY_GOPAY_CHECK]: (state) => {
+    state.isLoadingPay = true
+  },
+  [APP_PAY_GOPAY_CHECK_SUCCESS]: (state) => {
+    state.isLoadingPay = false
+  },
+  [APP_PAY_GOPAY_CHECK_FAILURE]: (state, action) => {
+    state.isLoadingPay = true
+    state.error = action.payload
   }
 })
 
@@ -172,7 +242,10 @@ export const appBoardLogSave = (cellsStringify: string, points: number, time: nu
   }
 })
 
-export const appBoardLogSaveSuccess = (payload: AppInitialState['board']['state']) => ({
+export const appBoardLogSaveSuccess = (payload: {
+  state: AppInitialState['board']['state']
+  points: AppInitialState['data']['points']
+}) => ({
   type: APP_BOARD_LOG_SAVE_SUCCESS,
   payload
 })
@@ -232,5 +305,87 @@ export const appPrizeFetchSuccess = (payload: AppInitialState['prizes']) => ({
 
 export const appPrizeFetchFailure = (payload: AppInitialState['error']) => ({
   type: APP_PRIZE_FETCH_FAILURE,
+  payload
+})
+
+export const appNextLevel = () => ({
+  type: APP_NEXT_LEVEL
+})
+
+export const appNextLevelSuccess = () => ({
+  type: APP_NEXT_LEVEL_SUCCESS
+})
+
+export const appNextLevelFailure = (payload: AppInitialState['error']) => ({
+  type: APP_NEXT_LEVEL_FAILURE,
+  payload
+})
+
+export const appContinuePlay = () => ({
+  type: APP_CONTINUE_PLAY
+})
+
+export const appContinuePlaySuccess = () => ({
+  type: APP_CONTINUE_PLAY_SUCCESS
+})
+
+export const appContinuePlayFailure = (payload: AppInitialState['error']) => ({
+  type: APP_CONTINUE_PLAY_FAILURE,
+  payload
+})
+
+export const appPayOvo = (payload: { amount: number; msisdn: string }) => ({
+  type: APP_PAY_OVO,
+  payload
+})
+
+export const appPayOvoSuccess = () => ({
+  type: APP_PAY_OVO_SUCCESS
+})
+
+export const appPayOvoFailure = (payload: AppInitialState['error']) => ({
+  type: APP_PAY_OVO_FAILURE,
+  payload
+})
+
+export const appPayOvoCheck = (paymentId: string) => ({
+  type: APP_PAY_OVO_CHECK,
+  payload: paymentId
+})
+
+export const appPayOvoCheckSuccess = () => ({
+  type: APP_PAY_OVO_CHECK_SUCCESS
+})
+
+export const appPayOvoCheckFailure = (payload: AppInitialState['error']) => ({
+  type: APP_PAY_OVO_CHECK_FAILURE,
+  payload
+})
+
+export const appPayGopay = (payload: { amount: number; msisdn: string }) => ({
+  type: APP_PAY_GOPAY,
+  payload
+})
+
+export const appPayGopaySuccess = () => ({
+  type: APP_PAY_GOPAY_SUCCESS
+})
+
+export const appPayGopayFailure = (payload: AppInitialState['error']) => ({
+  type: APP_PAY_GOPAY_FAILURE,
+  payload
+})
+
+export const appPayGopayCheck = (paymentId: string) => ({
+  type: APP_PAY_GOPAY_CHECK,
+  payload: paymentId
+})
+
+export const appPayGopayCheckSuccess = () => ({
+  type: APP_PAY_GOPAY_CHECK_SUCCESS
+})
+
+export const appPayGopayCheckFailure = (payload: AppInitialState['error']) => ({
+  type: APP_PAY_GOPAY_CHECK_FAILURE,
   payload
 })

@@ -43,6 +43,17 @@ const useStyles = makeStyles((theme) => {
       display: 'flex',
       alignItems: 'center',
       gap: '8px'
+    },
+    inputPin: {
+      textAlign: 'center',
+      marginTop: '8px',
+      '& .pincode-input-container': {
+        '& .pincode-input-text': {
+          width: '40px !important',
+          height: '40px !important',
+          borderRadius: '4px'
+        }
+      }
     }
   }
 })

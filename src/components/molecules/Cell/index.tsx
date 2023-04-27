@@ -71,13 +71,11 @@ const Cell = ({
         <div className={classes.flipBoxFront} />
         <div className={classes.flipBoxBack}>
           {isFlagged ? (
-            <label className={classes.label}>
-              <Typography>🚩</Typography>
-            </label>
+            <Typography className={classes.label}>🚩</Typography>
           ) : (
-            <label className={classes.label} style={{ color }}>
-              <Typography>{label}</Typography>
-            </label>
+            <Typography className={classes.label} style={{ color }}>
+              {label}
+            </Typography>
           )}
         </div>
       </div>

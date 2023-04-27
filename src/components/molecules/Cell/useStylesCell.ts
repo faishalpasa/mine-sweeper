@@ -47,7 +47,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       WebkitBackfaceVisibility: 'hidden',
       backfaceVisibility: 'hidden',
       background: theme.palette.primary.main,
-      color: 'black'
+      color: 'black',
+      display: 'flex',
+      alignItems: 'center'
     },
     flipBoxBack: {
       position: 'absolute',
@@ -57,7 +59,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       backfaceVisibility: 'hidden',
       backgroundColor: flipBoxBackBgColor,
       color: 'white',
-      transform: 'rotateX(180deg)'
+      transform: 'rotateX(180deg)',
+      display: 'flex',
+      alignItems: 'center'
     }
   }
 })

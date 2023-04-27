@@ -10,17 +10,26 @@ import {
   Typography,
   Paper
 } from '@material-ui/core'
-import { Visibility, VisibilityOff } from '@material-ui/icons'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import PinInput from 'react-pin-input'
 
-import { profileDataFetch } from 'redux/reducers/profile'
+import {
+  authFetch,
+  authDataUpdate,
+  authCheckPin,
+  authChangePin,
+  authCheckPinReset
+} from 'redux/reducers/auth'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesProfile'
 
-const profileSelector = ({ profile }: RootState) => ({
-  data: profile.data,
-  isLoading: profile.isLoading
+const profileSelector = ({ auth }: RootState) => ({
+  data: auth.data,
+  isLoading: auth.isLoading,
+  isPinChecked: auth.isPinChecked,
+  isPinChanged: auth.isPinChanged,
+  error: auth.error
 })
 
 const Profile = () => {
@@ -28,14 +37,15 @@ const Profile = () => {
   const dispatch = useDispatch()
   const profileState = useSelector(profileSelector, shallowEqual)
 
-  const [isPINVisible, setIsPINVisible] = useState(false)
   const [isDialogPINOpen, setIsDialogPINOpen] = useState(false)
   const [profile, setProfile] = useState({
     msisdn: '',
     name: '',
     email: ''
   })
+  const [newPin, setNewPin] = useState('')
   const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
+  const [isDialogSuccessChangePinOpen, setIsDialogSuccessPinOpen] = useState(false)
 
   const handleClickLogout = () => {
     setIsDialogLogoutOpen(true)
@@ -43,6 +53,7 @@ const Profile = () => {
 
   const handleSubmitLogout = () => {
     localStorage.removeItem('auth')
+    localStorage.removeItem('token')
     location.href = '/'
   }
 
@@ -53,20 +64,29 @@ const Profile = () => {
     }))
   }
 
-  const handleClickPinButton = () => {
-    setIsPINVisible((prevState) => !prevState)
-  }
-
   const handleClickChangePINButton = () => {
     setIsDialogPINOpen(true)
   }
 
   const handleClosePINDialog = () => {
     setIsDialogPINOpen(false)
+    dispatch(authCheckPinReset())
   }
 
   const handleCloseDialogLogout = () => {
     setIsDialogLogoutOpen(false)
+  }
+
+  const handleUpdateSubmit = () => {
+    dispatch(authDataUpdate(profile.name, profile.email))
+  }
+
+  const handleCheckPin = (value: string) => {
+    dispatch(authCheckPin(value))
+  }
+
+  const handleChangePin = () => {
+    dispatch(authChangePin(newPin))
   }
 
   const isButtonUpdateDisabled =
@@ -80,9 +100,16 @@ const Profile = () => {
 
   useEffect(() => {
     if (!profileState.data.msisdn) {
-      dispatch(profileDataFetch())
+      dispatch(authFetch())
     }
   }, [])
+
+  useEffect(() => {
+    if (profileState.isPinChanged) {
+      setIsDialogPINOpen(false)
+      setIsDialogSuccessPinOpen(true)
+    }
+  }, [profileState.isPinChanged])
 
   return (
     <>
@@ -126,6 +153,7 @@ const Profile = () => {
               color="primary"
               size="small"
               disabled={isButtonUpdateDisabled}
+              onClick={handleUpdateSubmit}
             >
               Simpan
             </Button>
@@ -160,32 +188,58 @@ const Profile = () => {
         </Paper>
       </div>
 
-      <Dialog open={isDialogPINOpen} onClose={handleClosePINDialog}>
+      <Dialog open={isDialogPINOpen} onClose={handleClosePINDialog} fullWidth maxWidth="xs">
         <DialogContent>
-          <div className={classes.formInput}>
-            <TextField
-              label="PIN Lama"
-              type="password"
-              name="old_pin"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{ autoComplete: 'off' }}
-            />
-          </div>
-          <div className={classes.formInput}>
-            <TextField
-              label="PIN Baru"
-              type="password"
-              name="new_pin"
-              InputLabelProps={{ shrink: true }}
-              InputProps={{ autoComplete: 'off' }}
-            />
-          </div>
+          <>
+            {!profileState.isPinChecked && (
+              <div className={classes.formInput}>
+                <Typography>Masukan PIN lama kamu</Typography>
+                <div className={classes.inputPin}>
+                  <PinInput
+                    length={6}
+                    type="numeric"
+                    inputMode="number"
+                    focus
+                    inputFocusStyle={{ borderColor: '#30cfa2' }}
+                    onComplete={(value, index) => handleCheckPin(value)}
+                  />
+                  {profileState.error.message && (
+                    <small style={{ color: 'red', marginTop: '8px' }}>
+                      {profileState.error.message}
+                    </small>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {profileState.isPinChecked && (
+              <div className={classes.formInput}>
+                <Typography>Masukan PIN baru kamu</Typography>
+                <div className={classes.inputPin}>
+                  <PinInput
+                    length={6}
+                    onChange={(value, index) => setNewPin(value)}
+                    type="numeric"
+                    inputMode="number"
+                    focus
+                    inputFocusStyle={{ borderColor: '#30cfa2' }}
+                  />
+                </div>
+              </div>
+            )}
+          </>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClosePINDialog} color="primary" size="small">
             Batal
           </Button>
-          <Button color="primary" variant="contained" size="small">
+          <Button
+            color="primary"
+            variant="contained"
+            size="small"
+            disabled={!profileState.isPinChecked}
+            onClick={handleChangePin}
+          >
             Ubah
           </Button>
         </DialogActions>
@@ -206,6 +260,22 @@ const Profile = () => {
             size="small"
           >
             Tidak
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isDialogSuccessChangePinOpen} fullWidth maxWidth="xs">
+        <DialogContent>
+          <Typography>Pin berhasil diubah.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setIsDialogSuccessPinOpen(false)}
+            size="small"
+          >
+            Tutup
           </Button>
         </DialogActions>
       </Dialog>

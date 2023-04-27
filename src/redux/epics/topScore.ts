@@ -11,33 +11,31 @@ import {
   topScoreDataFetchSuccess
 } from 'redux/reducers/topScore'
 
-import { COMMENT_GET } from 'constants/endpoint'
+import { TOP_SCORE_GET } from 'constants/endpoint'
 
 export const topScoreDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(TOP_SCORE_DATA_FETCH),
-    mergeMap((action) =>
+    mergeMap(() =>
       api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com',
-        query: {
-          postId: action.payload
-        }
+        endpoint: TOP_SCORE_GET,
+        host: 'http://127.0.0.1:8000/api'
       }).pipe(
         mergeMap(({ response }: any) => {
-          const data = Array.from(Array(25).keys()).map((index) => ({
-            id: index + 1,
-            name: `Lorem Ipsum ${index + 1}`,
-            msisdn: '081234567890',
-            level: 50,
-            points: 1000 - index
+          const { data } = response
+          const mappedData = data.map((item: any) => ({
+            id: item.player_id,
+            name: item.player_name,
+            msisdn: item.player_msisdn,
+            level: item.max_level,
+            points: item.total_score
           }))
 
-          return of(topScoreDataFetchSuccess(data))
+          return of(topScoreDataFetchSuccess(mappedData))
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(topScoreDataFetchFailure(error))
         })

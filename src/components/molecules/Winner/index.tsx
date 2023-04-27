@@ -51,7 +51,7 @@ const Winner = () => {
   return (
     <>
       <div className={classes.content}>
-        <Typography className={classes.contentTitle}>Pemenang Periode 01 - 28 Februari</Typography>
+        <Typography className={classes.contentTitle}>Pemenang Periode Sebelumnya</Typography>
         <TableContainer className={classes.tableContainer} component={Paper}>
           <Table>
             <TableBody>

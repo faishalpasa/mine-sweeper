@@ -74,6 +74,17 @@ const useStyles = makeStyles((theme) => {
     paper: {
       margin: '8px 0px',
       padding: '16px'
+    },
+    inputPin: {
+      textAlign: 'center',
+      marginTop: '8px',
+      '& .pincode-input-container': {
+        '& .pincode-input-text': {
+          width: '40px !important',
+          height: '40px !important',
+          borderRadius: '4px'
+        }
+      }
     }
   }
 })

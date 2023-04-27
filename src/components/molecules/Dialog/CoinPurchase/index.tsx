@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
-import { Dialog, DialogActions, DialogContent, Typography, Button } from '@material-ui/core'
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Typography,
+  Button,
+  TextField,
+  InputAdornment
+} from '@material-ui/core'
 
-import { appDataCoinSet, appGameOverSet } from 'redux/reducers/app'
+import { appDataCoinSet, appGameOverSet, appPayOvo, appPayGopay } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesCoinPurchase'
@@ -37,8 +45,10 @@ const paymentMethods = [
   }
 ]
 
-const coinPurchaseSelector = ({ app }: RootState) => ({
-  coins: app.data.coins
+const coinPurchaseSelector = ({ app, auth }: RootState) => ({
+  coins: app.data.coins,
+  isLoadinPay: app.isLoadingPay,
+  authData: auth.data
 })
 
 interface CoinPurchaseProps {
@@ -55,13 +65,24 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   const [selectedPaymentItem, setSelectedPaymentItem] = useState(0)
   const [isDialogCoinOpen, setIsDialogCoinOpen] = useState(false)
   const [isDialogPaymentOpen, setIsDialogPaymentOpen] = useState(false)
+  const [isDialogPhoneOpen, setIsDialogPhoneOpen] = useState(false)
   const [isDialogSuccessOpen, setIsDialogSuccessOpen] = useState(false)
+  const [msisdn, setMsisdn] = useState('')
 
   const selectedCoin = coinItems.find((item) => item.id === selectedCoinItem)
   const selectedPayment = paymentMethods.find((item) => item.id === selectedPaymentItem)
+  const { authData } = coinPurchaseState
 
   const handleSelectCoin = (id: number) => {
     setSelectedCoinItem(id)
+  }
+
+  const handleChangeMsisdn = (value: string) => {
+    const accept = /^[0-9\b]+$/
+    if (value === '' || accept.test(value)) {
+      const newValue = value.replace(/^0+/, '')
+      setMsisdn(newValue)
+    }
   }
 
   const handleContinueToPayment = () => {
@@ -78,19 +99,39 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogPaymentOpen(false)
   }
 
+  const handleCancelPhoneNo = () => {
+    setIsDialogPhoneOpen(false)
+    setIsDialogPaymentOpen(true)
+  }
+
+  const handleContinueToPhone = () => {
+    if (selectedCoin) {
+      if (selectedPayment?.label === 'OVO') {
+        setIsDialogPaymentOpen(false)
+        setIsDialogPhoneOpen(true)
+      } else {
+        setIsDialogPaymentOpen(false)
+        setIsDialogSuccessOpen(true)
+        const gopayNumber = authData.msisdn.replace(/^0+/, '')
+        dispatch(appPayGopay({ amount: selectedCoin?.amount, msisdn: gopayNumber }))
+      }
+    }
+  }
+
   const handleSubmitPayment = () => {
-    setIsDialogPaymentOpen(false)
+    setIsDialogPhoneOpen(false)
     setIsDialogSuccessOpen(true)
 
-    // TODO: Fetch to API
-    dispatch(appDataCoinSet(coinPurchaseState.coins + (selectedCoin?.value || 0)))
-    dispatch(appGameOverSet(false))
+    if (selectedCoin && selectedPayment?.label === 'OVO') {
+      dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn }))
+    }
   }
 
   const handleSuccessPurchase = () => {
     setIsDialogSuccessOpen(false)
     setSelectedCoinItem(0)
     setSelectedPaymentItem(0)
+    setMsisdn('')
     if (onClose) {
       onClose()
     }
@@ -108,7 +149,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   return (
     <>
-      <Dialog open={isDialogCoinOpen} onClose={handleCloseDialog}>
+      <Dialog open={isDialogCoinOpen} onClose={handleCloseDialog} fullWidth maxWidth="xs">
         <DialogContent>
           <Typography>Pilih jumlah koin</Typography>
           <div className={classes.coinItems}>
@@ -140,7 +181,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPaymentOpen} onClose={handleCancelPayement}>
+      <Dialog open={isDialogPaymentOpen} onClose={handleCancelPayement} fullWidth maxWidth="xs">
         <DialogContent>
           <Typography>Pilih metode pembayaran</Typography>
           <div className={classes.coinItems}>
@@ -167,6 +208,37 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
             color="primary"
             size="small"
             disabled={!selectedPaymentItem}
+            onClick={handleContinueToPhone}
+          >
+            Lanjutkan
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isDialogPhoneOpen} onClose={handleCancelPhoneNo} fullWidth maxWidth="xs">
+        <DialogContent>
+          <Typography>
+            Silakan masukan nomor handphone kamu. Pastikan nomor kamu terdaftar di aplikasi&nbsp;
+            {selectedPayment?.label}
+          </Typography>
+          <div className={classes.coinItems}>
+            <TextField
+              value={msisdn}
+              variant="outlined"
+              onChange={(e) => handleChangeMsisdn(e.target.value)}
+              InputProps={{ startAdornment: <InputAdornment position="start">+62</InputAdornment> }}
+            />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" size="small" onClick={handleCancelPhoneNo}>
+            Kembali
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            size="small"
+            disabled={!selectedPaymentItem}
             onClick={handleSubmitPayment}
           >
             Lanjutkan
@@ -176,15 +248,28 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
       <Dialog open={isDialogSuccessOpen}>
         <DialogContent>
-          <Typography>
-            Pembayaran berhasil, {selectedCoin?.label} telah ditambahkan ke akun kamu.
-          </Typography>
+          {coinPurchaseState.isLoadinPay ? (
+            <Typography>
+              Sedang memproses pembayaran, check aplikasi {selectedPayment?.label} mu.
+            </Typography>
+          ) : (
+            <Typography>
+              Pembayaran berhasil, {selectedCoin?.label} telah ditambahkan ke akun kamu.
+            </Typography>
+          )}
         </DialogContent>
-        <DialogActions>
-          <Button variant="contained" color="primary" size="small" onClick={handleSuccessPurchase}>
-            Ok
-          </Button>
-        </DialogActions>
+        {!coinPurchaseState.isLoadinPay && (
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleSuccessPurchase}
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        )}
       </Dialog>
     </>
   )

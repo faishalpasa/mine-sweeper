@@ -1,10 +1,14 @@
 import { of } from 'rxjs'
-import { catchError, mergeMap } from 'rxjs/operators'
+import { catchError, mergeMap, debounceTime } from 'rxjs/operators'
 import { ofType } from 'redux-observable'
 
 import type { Epic } from 'redux-observable'
 import type { EpicDependencies } from 'redux/store'
 import type { CellPorps } from 'types/board'
+
+import config from 'config'
+
+const { mediaUrl } = config
 
 import {
   APP_BOARD_FETCH,
@@ -14,38 +18,62 @@ import {
   appBoardLogSaveFailure,
   appBoardLogSaveSuccess,
   APP_DATA_FETCH,
+  appDataFetch,
   appDataFetchFailure,
   appDataFetchSuccess,
   APP_PRIZE_FETCH,
   appPrizeFetchFailure,
-  appPrizeFetchSuccess
+  appPrizeFetchSuccess,
+  APP_NEXT_LEVEL,
+  appNextLevelFailure,
+  appNextLevelSuccess,
+  APP_CONTINUE_PLAY,
+  appContinuePlayFailure,
+  appContinuePlaySuccess,
+  APP_PAY_OVO,
+  appPayOvoFailure,
+  appPayOvoSuccess,
+  APP_PAY_OVO_CHECK,
+  appPayOvoCheck,
+  appPayOvoCheckSuccess,
+  appPayOvoCheckFailure,
+  APP_PAY_GOPAY,
+  appPayGopaySuccess,
+  appPayGopayFailure,
+  APP_PAY_GOPAY_CHECK,
+  appPayGopayCheck,
+  appPayGopayCheckFailure,
+  appPayGopayCheckSuccess
 } from 'redux/reducers/app'
 
-import { COMMENT_GET } from 'constants/endpoint'
+import {
+  PRIZE_GET,
+  STEP_POST,
+  STEP_GET,
+  DATA_GET,
+  NEXT_LEVEL_POST,
+  CONTINUE_PLAY_POST,
+  PAY_OVO_POST,
+  PAY_OVO_CHECK_GET,
+  PAY_GOPAY_POST,
+  PAY_GOPAY_CHECK_GET
+} from 'constants/endpoint'
 
 export const appBoardFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_BOARD_FETCH),
     mergeMap((action) =>
       api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com',
-        query: {
-          postId: action.payload
-        }
+        endpoint: STEP_GET,
+        host: 'http://127.0.0.1:8000/api'
       }).pipe(
         mergeMap(({ response }: any) => {
-          const data = {
-            columns: 14,
-            rows: 14,
-            mines: 10,
-            state: ''
-          }
+          const { data } = response
           return of(appBoardFetchSuccess(data))
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(appBoardFetchFailure(error))
         })
@@ -57,26 +85,35 @@ export const appBoardLogSaveEpic: Epic = (action$, state$, { api }: EpicDependen
   action$.pipe(
     ofType(APP_BOARD_LOG_SAVE),
     mergeMap((action) => {
+      const decodedState = btoa(action.payload.decodedStateName)
+      const decodedPoints = btoa(action.payload.decodedPointName)
+      const decodedTime = btoa(action.payload.decodedTimeName)
+      const decodedLevel = btoa(state$.value.app.data.level_id)
+      const encodedData = btoa(
+        JSON.stringify({
+          decodedStateName: decodedState,
+          decodedPointsName: decodedPoints,
+          decodedTimeName: decodedTime,
+          decodedLevelName: decodedLevel
+        })
+      )
       return api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com'
+        endpoint: STEP_POST,
+        host: 'http://127.0.0.1:8000/api',
+        body: {
+          data: encodedData
+        }
       }).pipe(
         mergeMap(({ response }: any) => {
-          const decodedState = btoa(action.payload.decodedStateName)
-          const decodedPoints = btoa(action.payload.decodedPointName)
-          const encodedData = btoa(
-            JSON.stringify({
-              decodedStateName: decodedState,
-              decodedPointsName: decodedPoints
-            })
-          )
-          // console.log(encodedData)
-          const data = action.payload.decodedStateName
+          const data = {
+            state: action.payload.decodedStateName,
+            points: response.data.total_score
+          }
           return of(appBoardLogSaveSuccess(data))
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(appBoardLogSaveFailure(error))
         })
@@ -89,23 +126,21 @@ export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     ofType(APP_DATA_FETCH),
     mergeMap((action) =>
       api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com',
-        query: {
-          postId: action.payload
-        }
+        endpoint: DATA_GET,
+        host: 'http://127.0.0.1:8000/api'
       }).pipe(
         mergeMap(({ response }: any) => {
           const data = {
-            level: 1,
-            points: 0,
-            coins: 5
+            level: +response.data.level,
+            level_id: +response.data.level_id,
+            points: +response.data.points,
+            coins: +response.data.coins
           }
           return of(appDataFetchSuccess(data))
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(appDataFetchFailure(error))
         })
@@ -118,41 +153,190 @@ export const appPrizeFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =
     ofType(APP_PRIZE_FETCH),
     mergeMap((action) =>
       api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com',
-        query: {
-          postId: action.payload
-        }
+        endpoint: PRIZE_GET,
+        host: 'http://127.0.0.1:8000/api'
       }).pipe(
         mergeMap(({ response }: any) => {
-          const data = [
-            {
-              id: 1,
-              name: '1 Unit Sepeda Motor',
-              label: 'Peringkat Pertama',
-              imageSrc: '/images/motor.png'
-            },
-            {
-              id: 2,
-              name: '1 Unit Handphone',
-              label: 'Peringkat Kedua',
-              imageSrc: '/images/handphone.png'
-            },
-            {
-              id: 3,
-              name: '1 Unit Smart Watch',
-              label: 'Peringkat Ketiga',
-              imageSrc: '/images/smartwatch.png'
+          const { data } = response
+          const mapData = data.map((item: any) => {
+            return {
+              id: item.id,
+              name: item.name,
+              label: `Peringkat ${item.rank}`,
+              imageSrc: `${mediaUrl}/${item.image_url}`
             }
-          ]
-          return of(appPrizeFetchSuccess(data))
+          })
+          return of(appPrizeFetchSuccess(mapData))
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(appPrizeFetchFailure(error))
         })
       )
     )
+  )
+
+export const appNextLevelEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_NEXT_LEVEL),
+    mergeMap((action) =>
+      api({
+        endpoint: NEXT_LEVEL_POST,
+        host: 'http://127.0.0.1:8000/api'
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          window.location.reload()
+          return of(appNextLevelSuccess())
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appNextLevelFailure(error))
+        })
+      )
+    )
+  )
+
+export const appContinuePlayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_CONTINUE_PLAY),
+    mergeMap((action) =>
+      api({
+        endpoint: CONTINUE_PLAY_POST,
+        host: 'http://127.0.0.1:8000/api'
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          window.location.reload()
+          return of(appContinuePlaySuccess())
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appContinuePlayFailure(error))
+        })
+      )
+    )
+  )
+
+export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_PAY_OVO),
+    mergeMap((action) => {
+      return api({
+        endpoint: PAY_OVO_POST,
+        host: 'http://127.0.0.1:8000/api',
+        body: {
+          amount: action.payload.amount,
+          msisdn: `+62${action.payload.msisdn}`
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          return of(appPayOvoSuccess(), appPayOvoCheck(data.id))
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appPayOvoFailure(error))
+        })
+      )
+    })
+  )
+
+export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_PAY_OVO_CHECK),
+    debounceTime(1000),
+    mergeMap((action) => {
+      return api({
+        endpoint: PAY_OVO_CHECK_GET,
+        host: 'http://127.0.0.1:8000/api',
+        params: {
+          id: action.payload
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          if (data.status === 'PENDING') {
+            return of(appPayOvoCheck(data.id))
+          } else {
+            return of(appPayOvoCheckSuccess(), appDataFetch())
+          }
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appPayOvoCheckFailure(error))
+        })
+      )
+    })
+  )
+
+export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_PAY_GOPAY),
+    mergeMap((action) => {
+      return api({
+        endpoint: PAY_GOPAY_POST,
+        host: 'http://127.0.0.1:8000/api',
+        body: {
+          amount: action.payload.amount,
+          msisdn: `+62${action.payload.msisdn}`
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          const action = data.actions[1]
+          if (action?.url) {
+            window.open(action.url)
+          }
+
+          return of(appPayGopaySuccess(), appPayGopayCheck(data.transaction_id))
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appPayGopayFailure(error))
+        })
+      )
+    })
+  )
+
+export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(APP_PAY_GOPAY_CHECK),
+    debounceTime(1000),
+    mergeMap((action) => {
+      return api({
+        endpoint: PAY_GOPAY_CHECK_GET,
+        host: 'http://127.0.0.1:8000/api',
+        params: {
+          id: action.payload
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          if (data.transaction_status === 'pending') {
+            return of(appPayGopayCheck(data.transaction_id))
+          } else {
+            return of(appPayOvoCheckSuccess(), appDataFetch())
+          }
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(appPayOvoCheckFailure(error))
+        })
+      )
+    })
   )

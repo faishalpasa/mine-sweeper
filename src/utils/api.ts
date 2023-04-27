@@ -43,12 +43,15 @@ const api = (options: Options) => {
 
   const generatedPath = generatePath(path, params, query)
   const url = `${hostName}/${generatedPath}`
+  const token = localStorage.getItem('token')
 
   return ajax({
     method,
     headers: {
       ...headers,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'x-api-key': 'loremipsum',
+      'x-token': token
     },
     url,
     body

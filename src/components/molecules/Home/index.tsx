@@ -25,7 +25,9 @@ import {
   appDataCoinSet,
   appGameWinSet,
   appBoardLogSave,
-  appPrizeFetch
+  appPrizeFetch,
+  appNextLevel,
+  appContinuePlay
 } from 'redux/reducers/app'
 import { isJsonStringValid } from 'utils/string'
 import DialogCoinPurchase from 'components/molecules/Dialog/CoinPurchase'
@@ -43,7 +45,8 @@ interface CellPorps {
   positionY: number
 }
 
-const homeSelector = ({ app }: RootState) => ({
+const homeSelector = ({ app, auth }: RootState) => ({
+  authData: auth.data,
   theme: app.theme,
   board: app.board,
   data: app.data,
@@ -95,6 +98,8 @@ const Home = () => {
   const [isDialogPurchaseCoinOpen, setIsDialogPurchaseCoinOpen] = useState(false)
   const [isDialogPurchaseCoinClosable, setIsDialogPurchaseCoinClosable] = useState(false)
   const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
+  const [currentStep, setCurrentStep] = useState('')
+  const [time, setTime] = useState(0)
 
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
@@ -104,18 +109,12 @@ const Home = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
   }
 
-  const handleSetPoints = (points: number) => {
-    dispatch(appDataPointSet(currentPoints + points))
-  }
-
   const handleClickPlayAgain = () => {
-    dispatch(appGameOverSet(false))
-    setIsDialogBombOpen(false)
-    dispatch(appDataCoinSet(currentCoins - 1))
+    dispatch(appContinuePlay())
   }
 
   const handleClickNextLevel = () => {
-    location.href = '/'
+    dispatch(appNextLevel())
   }
 
   const handleDialogBombOpen = () => {
@@ -140,6 +139,9 @@ const Home = () => {
 
   const handleDialogPurchaseCoinClose = () => {
     setIsDialogPurchaseCoinOpen(false)
+    if (boardState.isGameOver) {
+      setIsDialogBombOpen(true)
+    }
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
@@ -167,7 +169,6 @@ const Home = () => {
       }
       if (!isBomb) {
         handleRevealOtherCells(newCells, { x: position.x, y: position.y })
-        handleSetPoints(1)
       } else {
         // Commented: disable reveal all bombs
         // newCells.forEach((cellRows, indexRow) => {
@@ -181,7 +182,8 @@ const Home = () => {
         setCells(newCells)
 
         const stringifyCells = JSON.stringify(cells)
-        dispatch(appBoardLogSave(stringifyCells, temporaryPoints, 0))
+        setCurrentStep(stringifyCells)
+        setTemporaryPoints(0)
         dispatch(appGameOverSet(true))
       }
     }
@@ -224,11 +226,12 @@ const Home = () => {
       }
     }
 
-    setTemporaryPoints(totalCellRevealed)
+    setTemporaryPoints(1 + totalCellRevealed)
     setCells(updatedCells)
 
     const stringifyCells = JSON.stringify(cells)
-    dispatch(appBoardLogSave(stringifyCells, totalCellRevealed, 0))
+    setCurrentStep(stringifyCells)
+    // dispatch(appBoardLogSave(stringifyCells, currentPoints, 0))
   }
 
   const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {
@@ -264,11 +267,21 @@ const Home = () => {
     }
   }, [])
 
+  // useEffect(() => {
+  //   if (temporaryPoints) {
+  //     handleSetPoints(temporaryPoints)
+  //   }
+  // }, [temporaryPoints])
+
   useEffect(() => {
-    if (temporaryPoints) {
-      handleSetPoints(temporaryPoints)
+    if (isAuthenticated) {
+      const interval = setInterval(() => {
+        setTime((prevState) => prevState + 1000)
+      }, 1000)
+
+      return () => clearInterval(interval)
     }
-  }, [temporaryPoints])
+  }, [isAuthenticated])
 
   useEffect(() => {
     const { rows, columns, mines, state } = boardState.board
@@ -358,6 +371,18 @@ const Home = () => {
     }
   }, [isDialogBombOpen])
 
+  useEffect(() => {
+    if (currentStep) {
+      dispatch(appBoardLogSave(currentStep, temporaryPoints, time))
+      setTime(0)
+    }
+  }, [currentStep, temporaryPoints])
+
+  useEffect(() => {
+    const isGameOver = boardState.authData.is_game_over && +boardState.authData.is_game_over
+    dispatch(appGameOverSet(!!isGameOver))
+  }, [boardState])
+
   return (
     <>
       <div className={classes.boardContent}>
@@ -381,11 +406,11 @@ const Home = () => {
           </div>
           <div className={classes.toolItem}>
             <Typography variant="caption">Level</Typography>
-            <Typography className={classes.toolItemText}>{boardState.data.level}</Typography>
+            <Typography className={classes.toolItemText}>{currentLevel}</Typography>
           </div>
           <div className={classes.toolItem}>
             <Typography variant="caption">Skor</Typography>
-            <Typography className={classes.toolItemText}>{boardState.data.points}</Typography>
+            <Typography className={classes.toolItemText}>{currentPoints}</Typography>
           </div>
         </div>
         {(boardState.isLoadingLog || !isAuthenticated) && (

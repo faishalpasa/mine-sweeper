@@ -31,19 +31,6 @@ const Layout = () => {
 
   return (
     <Suspense fallback={<div />}>
-      {/* {isAuthenticated ? (
-        <>
-          <Header />
-          {selectedTab === 0 && <Home />}
-          {selectedTab === 1 && <TopScore />}
-          {selectedTab === 2 && <Winner />}
-          {selectedTab === 3 && <Terms />}
-          {selectedTab === 4 && <Profile />}
-          <Footer />
-        </>
-      ) : (
-        <Login />
-      )} */}
       <Header />
       {selectedTab === 0 && <Home />}
       {selectedTab === 1 && <TopScore />}
