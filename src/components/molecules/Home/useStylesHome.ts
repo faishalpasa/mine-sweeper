@@ -130,12 +130,12 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       overflow: 'hidden'
     },
     prizeImageWrapper: {
-      backgroundImage: 'url("/images/prize-bg.jpg")',
       backgroundSize: '100% 100%',
       backgroundRepeat: 'no-repeat'
     },
     prizeImage: {
-      height: '80px',
+      width: '100%',
+      aspectRatio: '3/1',
       margin: 'auto'
     },
     prizeText: {

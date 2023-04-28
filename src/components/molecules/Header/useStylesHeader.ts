@@ -44,6 +44,15 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       gap: '8px'
     },
+    checkboxWrapper: {
+      display: 'flex',
+      gap: '4px',
+      marginTop: '8px',
+      alignItems: 'flex-start'
+    },
+    checkbox: {
+      padding: 0
+    },
     inputPin: {
       textAlign: 'center',
       marginTop: '8px',

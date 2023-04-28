@@ -6,7 +6,8 @@ import {
   DialogActions,
   DialogContent,
   Typography,
-  TextField
+  TextField,
+  Checkbox
 } from '@material-ui/core'
 import { Timer as TimerIcon } from '@material-ui/icons'
 import PinInput from 'react-pin-input'
@@ -45,6 +46,7 @@ const Header = () => {
   const [isDialogChangePinOpen, setIsDialogChangePinOpen] = useState(false)
   const [isMsisdnSubmitted, setIsMsisdnSubmitted] = useState(false)
   const [isPinSubmitted, setIsPinSubmitted] = useState(false)
+  const [isTermChecked, setIsTermChecked] = useState(false)
   const [msisdn, setMsisdn] = useState('')
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
@@ -92,6 +94,10 @@ const Header = () => {
 
   const handleToProfile = () => {
     dispatch(navigationTabSelectedSet(4))
+  }
+
+  const handleCheckTerm = () => {
+    setIsTermChecked((prevState) => !prevState)
   }
 
   useEffect(() => {
@@ -169,7 +175,21 @@ const Header = () => {
             value={msisdn}
             error={!!error.message}
             helperText={error.message}
+            fullWidth
           />
+          <div className={classes.checkboxWrapper}>
+            <Checkbox
+              color="primary"
+              checked={isTermChecked}
+              onClick={handleCheckTerm}
+              size="small"
+              className={classes.checkbox}
+            />
+            <Typography variant="caption">
+              Saya menyetujui syarat dan ketentuan yang berlaku, serta bersedia menerima promosi
+              dari PT. Koneksi Global
+            </Typography>
+          </div>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between' }}>
           <Button
@@ -177,7 +197,7 @@ const Header = () => {
             size="small"
             color="primary"
             onClick={handleSubmitRegister}
-            disabled={headerState.isLoading || msisdn.length < 8}
+            disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
           >
             Daftar
           </Button>
@@ -186,7 +206,7 @@ const Header = () => {
             size="small"
             color="primary"
             onClick={handleSubmitLogin}
-            disabled={headerState.isLoading || msisdn.length < 8}
+            disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
           >
             Masuk
           </Button>
