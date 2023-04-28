@@ -71,8 +71,8 @@ export interface AppInitialState {
 const INITIAL_STATE: AppInitialState = {
   theme: 'light',
   board: {
-    columns: 10,
-    rows: 10,
+    columns: 0,
+    rows: 0,
     mines: 0,
     state: ''
   },

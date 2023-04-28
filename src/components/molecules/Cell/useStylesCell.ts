@@ -12,11 +12,14 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
   return {
     block: {
       width: '100%',
-      aspectRatio: '1/1',
       display: 'flex',
       alignItems: 'center',
       borderRadius: '2px',
       overflow: 'hidden',
+      '&:before': {
+        content: '""',
+        paddingTop: '100%'
+      },
       '&.active': {
         '& $flipBoxInner': {
           transform: 'rotateX(180deg)'

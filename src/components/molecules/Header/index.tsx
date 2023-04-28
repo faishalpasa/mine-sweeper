@@ -176,6 +176,7 @@ const Header = () => {
             error={!!error.message}
             helperText={error.message}
             fullWidth
+            type="tel"
           />
           <div className={classes.checkboxWrapper}>
             <Checkbox

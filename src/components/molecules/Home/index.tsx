@@ -257,7 +257,11 @@ const Home = () => {
   }
 
   useEffect(() => {
-    dispatch(appPrizeFetch())
+    const { rows, columns } = boardState.board
+    if (rows === 0 && columns === 0) {
+      dispatch(appBoardFetch())
+      dispatch(appPrizeFetch())
+    }
   }, [])
 
   // useEffect(() => {
@@ -268,9 +272,7 @@ const Home = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      dispatch(appBoardFetch())
       dispatch(appDataFetch())
-
       const interval = setInterval(() => {
         setTime((prevState) => prevState + 1000)
       }, 1000)
