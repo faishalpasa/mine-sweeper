@@ -2,6 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core'
 
 interface StyleProps {
   hasBomb: boolean
+  columns: number
 }
 
 const useStyles = makeStyles<Theme, StyleProps>((theme) => {
@@ -9,17 +10,22 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     return hasBomb ? 'red' : theme.palette.grey[200]
   }
 
+  const cellHeight = ({ columns }: StyleProps) => {
+    return `calc((100vw - 32px) / ${columns})`
+  }
+
   return {
     block: {
       width: '100%',
+      height: cellHeight,
       display: 'flex',
       alignItems: 'center',
       borderRadius: '2px',
       overflow: 'hidden',
-      '&:before': {
-        content: '""',
-        paddingTop: '100%'
-      },
+      // '&:before': {
+      //   content: '""',
+      //   paddingTop: '100%'
+      // },
       '&.active': {
         '& $flipBoxInner': {
           transform: 'rotateX(180deg)'

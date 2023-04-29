@@ -6,7 +6,8 @@ import useStyles from './useStylesCell'
 import { Typography } from '@material-ui/core'
 
 const cellSelector = ({ app }: RootState) => ({
-  isToggleFlag: app.isToggleFlag
+  isToggleFlag: app.isToggleFlag,
+  board: app.board
 })
 
 interface CellProps {
@@ -31,7 +32,9 @@ const Cell = ({
   onClick
 }: CellProps) => {
   const boardState = useSelector(cellSelector, shallowEqual)
-  const classes = useStyles({ hasBomb })
+  const { board } = boardState
+
+  const classes = useStyles({ hasBomb, columns: board.columns })
   const [isActive, setIsActive] = useState(false)
 
   let color = ''

@@ -328,14 +328,14 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
           if (data.transaction_status === 'pending') {
             return of(appPayGopayCheck(data.transaction_id))
           } else {
-            return of(appPayOvoCheckSuccess(), appDataFetch())
+            return of(appPayGopayCheckSuccess(), appDataFetch())
           }
         }),
         catchError((err) => {
           const error = {
             message: err?.response?.message || 'Gagal mendapatkan data'
           }
-          return of(appPayOvoCheckFailure(error))
+          return of(appPayGopayCheckFailure(error))
         })
       )
     })
