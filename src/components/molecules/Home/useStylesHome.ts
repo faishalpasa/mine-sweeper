@@ -135,7 +135,6 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     },
     prizeImage: {
       width: '100%',
-      aspectRatio: '3/1',
       margin: 'auto'
     },
     prizeText: {
