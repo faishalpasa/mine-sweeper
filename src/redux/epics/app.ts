@@ -70,11 +70,8 @@ export const appBoardFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data, success } = response
-          if (success) {
-            return of(appBoardFetchSuccess(data), appGamePeriodSet(true))
-          } else {
-            return of(appGamePeriodSet(false))
-          }
+          const isPeriodActive = !!success
+          return of(appBoardFetchSuccess(data), appGamePeriodSet(isPeriodActive))
         }),
         catchError((err) => {
           const error = {

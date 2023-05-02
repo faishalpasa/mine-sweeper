@@ -187,11 +187,7 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      alignItems: 'center',
-      height: 'calc((100vw - 32px))',
-      '@media screen and (min-width: 425px)': {
-        height: 'calc((425px - 32px))'
-      }
+      alignItems: 'center'
     },
     periodBlockerContent: {
       background: theme.palette.common.white,

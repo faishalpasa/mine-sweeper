@@ -7,7 +7,8 @@ import { Typography } from '@material-ui/core'
 
 const cellSelector = ({ app }: RootState) => ({
   isToggleFlag: app.isToggleFlag,
-  board: app.board
+  board: app.board,
+  isPeriodActive: app.isPeriodActive
 })
 
 interface CellProps {
@@ -32,7 +33,7 @@ const Cell = ({
   onClick
 }: CellProps) => {
   const boardState = useSelector(cellSelector, shallowEqual)
-  const { board } = boardState
+  const { board, isPeriodActive } = boardState
 
   const classes = useStyles({ hasBomb, columns: board.columns })
   const [isActive, setIsActive] = useState(false)
@@ -54,7 +55,7 @@ const Cell = ({
   }
 
   const handleClickBlock = () => {
-    if (!isGameOver) {
+    if (!isGameOver && isPeriodActive) {
       onClick({ x: positionX, y: positionY })
     }
   }
