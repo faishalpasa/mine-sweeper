@@ -14,6 +14,10 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     return `calc((100vw - 32px) / ${columns})`
   }
 
+  const cellHeightDesktop = ({ columns }: StyleProps) => {
+    return `calc((425px - 32px) / ${columns})`
+  }
+
   return {
     block: {
       width: '100%',
@@ -22,10 +26,9 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       alignItems: 'center',
       borderRadius: '2px',
       overflow: 'hidden',
-      // '&:before': {
-      //   content: '""',
-      //   paddingTop: '100%'
-      // },
+      '@media screen and (min-width: 425px)': {
+        height: cellHeightDesktop
+      },
       '&.active': {
         '& $flipBoxInner': {
           transform: 'rotateX(180deg)'

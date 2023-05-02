@@ -43,7 +43,8 @@ import {
   APP_PAY_GOPAY_CHECK,
   appPayGopayCheck,
   appPayGopayCheckFailure,
-  appPayGopayCheckSuccess
+  appPayGopayCheckSuccess,
+  appGamePeriodSet
 } from 'redux/reducers/app'
 
 import {
@@ -62,14 +63,18 @@ import {
 export const appBoardFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_BOARD_FETCH),
-    mergeMap((action) =>
+    mergeMap(() =>
       api({
         endpoint: STEP_GET,
         host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
-          const { data } = response
-          return of(appBoardFetchSuccess(data))
+          const { data, success } = response
+          if (success) {
+            return of(appBoardFetchSuccess(data), appGamePeriodSet(true))
+          } else {
+            return of(appGamePeriodSet(false))
+          }
         }),
         catchError((err) => {
           const error = {

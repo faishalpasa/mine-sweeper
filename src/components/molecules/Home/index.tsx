@@ -55,7 +55,9 @@ const homeSelector = ({ app, auth }: RootState) => ({
   isLoading: app.isLoading,
   isLoadingLog: app.isLoadingLog,
   isGameOver: app.isGameOver,
-  isGameWin: app.isGameWin
+  isGameWin: app.isGameWin,
+  isPeriodActive: app.isPeriodActive,
+  isAuthenticated: auth.isAuthenticated
 })
 
 const getRandomMines = (amount: number, columns: number, rows: number) => {
@@ -70,16 +72,10 @@ const getRandomMines = (amount: number, columns: number, rows: number) => {
 
   return mines
 }
-
-const isAuthenticated = localStorage.getItem('auth')
-
 const slickSettings = {
-  className: 'center',
-  centerMode: true,
   infinite: true,
   autoplay: true,
   autoplaySpeed: 5000,
-  centerPadding: '60px',
   slidesToShow: 1,
   speed: 500,
   dots: false,
@@ -104,6 +100,7 @@ const Home = () => {
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
+  const { isAuthenticated, isPeriodActive } = boardState
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -231,7 +228,6 @@ const Home = () => {
 
     const stringifyCells = JSON.stringify(cells)
     setCurrentStep(stringifyCells)
-    // dispatch(appBoardLogSave(stringifyCells, currentPoints, 0))
   }
 
   const handleGetOtherCells = (currentCells: CellPorps[][], position: { x: number; y: number }) => {
@@ -263,12 +259,6 @@ const Home = () => {
       dispatch(appPrizeFetch())
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (temporaryPoints) {
-  //     handleSetPoints(temporaryPoints)
-  //   }
-  // }, [temporaryPoints])
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -422,6 +412,17 @@ const Home = () => {
                   Kamu harus masuk terlebih dahulu
                   <br />
                   untuk bermain permainan Ranjau Darat
+                </Typography>
+              </div>
+            </div>
+          )}
+          {isAuthenticated && !isPeriodActive && (
+            <div className={classes.periodBlocker}>
+              <div className={classes.periodBlockerContent} style={{ textAlign: 'center' }}>
+                <Typography>
+                  Maaf, saat ini belum ada periode
+                  <br />
+                  permainan yang aktif.
                 </Typography>
               </div>
             </div>

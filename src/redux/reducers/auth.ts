@@ -161,9 +161,11 @@ export default createReducer(INITIAL_STATE, {
   [AUTH_FETCH_FAILURE]: (state, action) => {
     state.isLoading = false
     state.error = action.payload
+    state.isAuthenticated = false
   },
   [AUTH_FETCH_SUCCESS]: (state, action) => {
     state.isLoading = false
+    state.isAuthenticated = true
     state.data = {
       ...state.data,
       ...action.payload

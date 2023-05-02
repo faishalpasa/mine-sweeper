@@ -174,6 +174,29 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     bombAnimate: {
       textAlign: 'center',
       width: '100%'
+    },
+
+    periodBlocker: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      top: 0,
+      zIndex: 2,
+      background: '#00000038',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 'calc((100vw - 32px))',
+      '@media screen and (min-width: 425px)': {
+        height: 'calc((425px - 32px))'
+      }
+    },
+    periodBlockerContent: {
+      background: theme.palette.common.white,
+      padding: '16px',
+      borderRadius: '8px'
     }
   }
 })

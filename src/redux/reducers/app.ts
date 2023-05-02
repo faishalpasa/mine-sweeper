@@ -10,6 +10,7 @@ export const APP_THEME_SET = 'app/THEME_SET'
 export const APP_TOGGLE_FLAG_SET = 'app/TOGGLE_FLAG_SET'
 export const APP_GAME_OVER_SET = 'app/GAME_OVER_SET'
 export const APP_GAME_WIN_SET = 'app/GAME_WIN_SET'
+export const APP_GAME_PERIOD_SET = 'app/GAME_PERIOD_SET'
 export const APP_DATA_FETCH = 'app/DATA_FETCH'
 export const APP_DATA_FETCH_FAILURE = 'app/DATA_FETCH_FAILURE'
 export const APP_DATA_FETCH_SUCCESS = 'app/DATA_FETCH_SUCCESS'
@@ -65,6 +66,7 @@ export interface AppInitialState {
   isLoadingPay: boolean
   isGameOver: boolean
   isGameWin: boolean
+  isPeriodActive: boolean
   isToggleFlag: boolean
 }
 
@@ -91,6 +93,7 @@ const INITIAL_STATE: AppInitialState = {
   isLoadingPay: false,
   isGameOver: false,
   isGameWin: false,
+  isPeriodActive: false,
   isToggleFlag: false
 }
 
@@ -137,6 +140,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [APP_GAME_WIN_SET]: (state, action) => {
     state.isGameWin = action.payload
+  },
+  [APP_GAME_PERIOD_SET]: (state, action) => {
+    state.isPeriodActive = action.payload
   },
   [APP_DATA_FETCH]: (state) => {
     state.isLoading = true
@@ -267,6 +273,11 @@ export const appGameOverSet = (value: AppInitialState['isGameOver']) => ({
 
 export const appGameWinSet = (value: AppInitialState['isGameWin']) => ({
   type: APP_GAME_WIN_SET,
+  payload: value
+})
+
+export const appGamePeriodSet = (value: AppInitialState['isPeriodActive']) => ({
+  type: APP_GAME_PERIOD_SET,
   payload: value
 })
 
