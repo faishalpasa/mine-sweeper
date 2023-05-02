@@ -46,6 +46,7 @@ const Header = () => {
   const [isDialogChangePinOpen, setIsDialogChangePinOpen] = useState(false)
   const [isMsisdnSubmitted, setIsMsisdnSubmitted] = useState(false)
   const [isPinSubmitted, setIsPinSubmitted] = useState(false)
+  const [isRegister, setIsRegister] = useState(false)
   const [isTermChecked, setIsTermChecked] = useState(false)
   const [msisdn, setMsisdn] = useState('')
   const [pin, setPin] = useState('')
@@ -72,6 +73,7 @@ const Header = () => {
   const handleSubmitRegister = () => {
     dispatch(authRegister(msisdn))
     setIsMsisdnSubmitted(true)
+    setIsRegister(true)
   }
 
   const handleCloseDialogPin = () => {
@@ -214,7 +216,7 @@ const Header = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPinOpen} onClose={handleCloseDialogPin} fullWidth maxWidth="xs">
+      <Dialog open={isDialogPinOpen} fullWidth maxWidth="xs">
         <DialogContent>
           {isPinReset ? (
             <Typography>PIN baru telah terkirim ke nomor handphone mu. Cek inbox SMS.</Typography>
@@ -237,15 +239,19 @@ const Header = () => {
           </div>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between' }}>
-          <Button
-            variant="text"
-            size="small"
-            color="primary"
-            onClick={handleResetPin}
-            disabled={headerState.isLoading}
-          >
-            Reset PIN
-          </Button>
+          {!isPinReset && !isRegister ? (
+            <Button
+              variant="text"
+              size="small"
+              color="primary"
+              onClick={handleResetPin}
+              disabled={headerState.isLoading}
+            >
+              Reset PIN
+            </Button>
+          ) : (
+            <div />
+          )}
           <Button
             variant="contained"
             size="small"
