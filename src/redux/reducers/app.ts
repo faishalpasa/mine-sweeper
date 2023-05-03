@@ -51,6 +51,7 @@ export interface AppInitialState {
     level_id: number
     points: number
     coins: number
+    time: number
   }
   prizes: {
     id: number
@@ -82,7 +83,8 @@ const INITIAL_STATE: AppInitialState = {
     level: 0,
     level_id: 0,
     points: 0,
-    coins: 0
+    coins: 0,
+    time: 0
   },
   prizes: [],
   error: {

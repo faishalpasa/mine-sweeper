@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => {
     timer: {
       display: 'flex',
       alignItems: 'center',
-      gap: '8px'
+      gap: '4px'
     },
     checkboxWrapper: {
       display: 'flex',

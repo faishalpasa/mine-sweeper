@@ -19,7 +19,7 @@ const layoutSelector = ({ navigationTab }: RootState) => ({
   selectedTab: navigationTab.selectedTab
 })
 
-const isAuthenticated = localStorage.getItem('auth')
+const isAuthenticated = localStorage.getItem('token')
 
 const Layout = () => {
   const layoutState = useSelector(layoutSelector, shallowEqual)

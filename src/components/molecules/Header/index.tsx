@@ -26,16 +26,18 @@ import {
 } from 'redux/reducers/auth'
 import type { RootState } from 'redux/rootReducer'
 
-const isAuthenticated = localStorage.getItem('auth')
-
-const headerSelector = ({ auth, navigationTab }: RootState) => ({
+const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   data: auth.data,
+  appData: app.data,
   isLoading: auth.isLoading,
+  isAuthenticated: auth.isAuthenticated,
   isPinChanged: auth.isPinChanged,
   isPinReset: auth.isPinReset,
   error: auth.error,
   selectedTab: navigationTab.selectedTab
 })
+
+const token = localStorage.getItem('token')
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -51,10 +53,11 @@ const Header = () => {
   const [msisdn, setMsisdn] = useState('')
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
+  const [timer, setTimer] = useState(0)
 
   let pinInputRef: PinInput | null
 
-  const { error, data, isPinReset } = headerState
+  const { error, data, isPinReset, isAuthenticated } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
 
   const handleClickLogin = () => {
@@ -103,10 +106,16 @@ const Header = () => {
   }
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (token) {
       dispatch(authFetch())
     }
-  }, [isAuthenticated])
+  }, [token])
+
+  useEffect(() => {
+    if (isAuthenticated && headerState.appData.time) {
+      setTimer(headerState.appData.time)
+    }
+  }, [headerState.appData.time, isAuthenticated])
 
   useEffect(() => {
     if (headerState.data.id && isMsisdnSubmitted) {
@@ -138,6 +147,16 @@ const Header = () => {
     }
   }, [headerState.isPinChanged, headerState.data, headerState.selectedTab])
 
+  useEffect(() => {
+    if (isAuthenticated && headerState.selectedTab === 0) {
+      const interval = setInterval(() => {
+        setTimer((prevState) => prevState + 1000)
+      }, 1000)
+
+      return () => clearInterval(interval)
+    }
+  }, [headerState.selectedTab, isAuthenticated])
+
   return (
     <>
       <div className={classes.header}>
@@ -155,7 +174,12 @@ const Header = () => {
           )}
 
           {isAuthenticated ? (
-            <div className={classes.timer}></div>
+            <div className={classes.timer}>
+              <TimerIcon />
+              <Typography variant="body1">
+                <b>{millisToMinutesAndSeconds(timer)}</b>
+              </Typography>
+            </div>
           ) : (
             <div className={classes.logout}>
               <Button onClick={handleClickLogin} size="small" variant="outlined" color="primary">
