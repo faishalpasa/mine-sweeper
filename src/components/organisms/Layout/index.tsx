@@ -25,7 +25,12 @@ const Layout = () => {
   const layoutState = useSelector(layoutSelector, shallowEqual)
   const isMobile = isAndroid || isIOS || isWinPhone
 
-  console.log({ isMobile, isAndroid, isIOS, deviceType, getUA })
+  const queryParams = new URLSearchParams(window.location.search)
+  const trxId = queryParams.get('trx_id')
+
+  if (trxId) {
+    localStorage.setItem('trx_id', trxId)
+  }
 
   const { selectedTab } = layoutState
 

@@ -258,11 +258,15 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
     ofType(APP_PAY_OVO_CHECK),
     debounceTime(1000),
     mergeMap((action) => {
+      const trxId = localStorage.getItem('trx_id')
       return api({
         endpoint: PAY_OVO_CHECK_GET,
         host: apiHost,
         params: {
           id: action.payload
+        },
+        query: {
+          trx_id: trxId
         }
       }).pipe(
         mergeMap(({ response }: any) => {
@@ -319,11 +323,15 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
     ofType(APP_PAY_GOPAY_CHECK),
     debounceTime(1000),
     mergeMap((action) => {
+      const trxId = localStorage.getItem('trx_id')
       return api({
         endpoint: PAY_GOPAY_CHECK_GET,
         host: apiHost,
         params: {
           id: action.payload
+        },
+        query: {
+          trx_id: trxId
         }
       }).pipe(
         mergeMap(({ response }: any) => {
