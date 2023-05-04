@@ -55,7 +55,9 @@ const useStyles = makeStyles((theme) => {
     },
     dialogContent: {
       background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
-      paddingTop: '64px !important'
+      paddingTop: '64px !important',
+      position: 'relative',
+      overflow: 'unset'
     },
     imageBomb: {
       position: 'absolute',
