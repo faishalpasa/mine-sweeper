@@ -38,7 +38,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
 })
 
 const token = localStorage.getItem('token')
-const TIMER_SMS_RESEND = 300000
+const TIMER_SMS_RESEND = 3000
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -272,20 +272,20 @@ const Header = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmitRegister}
-            disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
-            fullWidth
-          >
-            Daftar
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
             onClick={handleSubmitLogin}
             disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
             fullWidth
           >
             Masuk
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitRegister}
+            disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
+            fullWidth
+          >
+            Daftar
           </Button>
         </DialogActions>
       </Dialog>
@@ -319,6 +319,15 @@ const Header = () => {
           </div>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitPin}
+            disabled={headerState.isLoading || pin.length < 6}
+            fullWidth
+          >
+            Konfirmasi
+          </Button>
           {!isPinReset && !isRegister ? (
             <Button
               variant="contained"
@@ -342,15 +351,6 @@ const Header = () => {
                 : 'Kirim Ulang SMS'}
             </Button>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmitPin}
-            disabled={headerState.isLoading || pin.length < 6}
-            fullWidth
-          >
-            Konfirmasi
-          </Button>
         </DialogActions>
       </Dialog>
 
