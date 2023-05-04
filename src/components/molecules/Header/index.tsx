@@ -47,6 +47,7 @@ const Header = () => {
   const headerState = useSelector(headerSelector, shallowEqual)
   const classes = useStyles()
   const [isDialogLoginOpen, setIsDialogLoginOpen] = useState(false)
+  const [isDialogRegisterOpen, setIsDialogRegisterOpen] = useState(false)
   const [isDialogPinOpen, setIsDialogPinOpen] = useState(false)
   const [isDialogChangePinOpen, setIsDialogChangePinOpen] = useState(false)
   const [isMsisdnSubmitted, setIsMsisdnSubmitted] = useState(false)
@@ -78,14 +79,21 @@ const Header = () => {
     setIsMsisdnSubmitted(true)
   }
 
+  const handleClickRegister = () => {
+    setIsDialogRegisterOpen(true)
+    setIsDialogLoginOpen(false)
+  }
+
+  const handleCloseDialogRegister = () => {
+    setIsDialogRegisterOpen(false)
+    setIsDialogLoginOpen(true)
+    setIsTermChecked(false)
+  }
+
   const handleSubmitRegister = () => {
     dispatch(authRegister(msisdn))
     setIsMsisdnSubmitted(true)
     setIsRegister(true)
-  }
-
-  const handleCloseDialogPin = () => {
-    setIsDialogPinOpen(false)
   }
 
   const handleSubmitPin = () => {
@@ -117,6 +125,7 @@ const Header = () => {
   }
 
   const handleToTerms = () => {
+    setIsDialogRegisterOpen(false)
     dispatch(appDialogLoginSet(false))
     dispatch(navigationTabSelectedSet(3))
   }
@@ -140,6 +149,7 @@ const Header = () => {
   useEffect(() => {
     if (headerState.data.id && isMsisdnSubmitted) {
       setIsDialogLoginOpen(false)
+      setIsDialogRegisterOpen(false)
       setIsDialogPinOpen(true)
     }
   }, [headerState.data, isMsisdnSubmitted])
@@ -261,6 +271,50 @@ const Header = () => {
             fullWidth
             type="tel"
           />
+        </DialogContent>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitLogin}
+            disabled={headerState.isLoading || msisdn.length < 8}
+            fullWidth
+          >
+            Masuk
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickRegister}
+            disabled={headerState.isLoading || msisdn.length < 8}
+            fullWidth
+          >
+            Daftar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={isDialogRegisterOpen}
+        onClose={handleCloseDialogRegister}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
+          <Typography>Nomor HP anda:</Typography>
+          <TextField
+            margin="dense"
+            placeholder="081234567890"
+            onChange={(e) => setMsisdn(e.target.value)}
+            value={msisdn}
+            error={!!error.message}
+            helperText={error.message}
+            fullWidth
+            type="tel"
+            disabled
+          />
           <div className={classes.checkboxWrapper}>
             <Checkbox
               color="primary"
@@ -281,11 +335,11 @@ const Header = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmitLogin}
-            disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
+            onClick={handleCloseDialogRegister}
+            disabled={headerState.isLoading || msisdn.length < 8}
             fullWidth
           >
-            Masuk
+            Kembali
           </Button>
           <Button
             variant="contained"
@@ -294,7 +348,7 @@ const Header = () => {
             disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
             fullWidth
           >
-            Daftar
+            Lanjutkan
           </Button>
         </DialogActions>
       </Dialog>
