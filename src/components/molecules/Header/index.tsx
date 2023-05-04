@@ -38,7 +38,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
 })
 
 const token = localStorage.getItem('token')
-const TIMER_SMS_RESEND = 3000
+const TIMER_SMS_RESEND = 300000
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -181,7 +181,7 @@ const Header = () => {
 
   useEffect(() => {
     let intervalSMS: any = null
-    if (isRegister && isDialogPinOpen && countdownSMS > 0) {
+    if (isDialogPinOpen && countdownSMS > 0) {
       intervalSMS = setInterval(() => {
         setCountdownSMS((prevState) => prevState - 1000)
       }, 1000)
@@ -190,7 +190,7 @@ const Header = () => {
     } else {
       clearInterval(intervalSMS)
     }
-  }, [isDialogPinOpen, isRegister, countdownSMS])
+  }, [isDialogPinOpen, countdownSMS])
 
   return (
     <>
@@ -337,8 +337,9 @@ const Header = () => {
               disabled={headerState.isLoading || isButtonResendSMSDisabled}
               fullWidth
             >
-              Kirim Ulang SMS&nbsp;
-              {isButtonResendSMSDisabled ? millisToMinutesAndSeconds(countdownSMS) : ''}
+              {isButtonResendSMSDisabled
+                ? millisToMinutesAndSeconds(countdownSMS)
+                : 'Kirim Ulang SMS'}
             </Button>
           )}
           <Button
