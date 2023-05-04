@@ -163,7 +163,6 @@ const Profile = () => {
             <Button
               variant="contained"
               color="primary"
-              size="small"
               disabled={isButtonUpdateDisabled}
               onClick={handleUpdateSubmit}
             >
@@ -179,7 +178,6 @@ const Profile = () => {
               variant="contained"
               color="primary"
               onClick={handleClickChangePINButton}
-              size="small"
               fullWidth
             >
               Ubah PIN
@@ -187,13 +185,7 @@ const Profile = () => {
           </div>
 
           <div style={{ marginTop: '16px' }}>
-            <Button
-              onClick={handleClickLogout}
-              size="small"
-              variant="contained"
-              color="primary"
-              fullWidth
-            >
+            <Button onClick={handleClickLogout} variant="contained" color="primary" fullWidth>
               Keluar
             </Button>
           </div>
@@ -242,13 +234,12 @@ const Profile = () => {
           </>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClosePINDialog} color="primary" size="small">
+          <Button onClick={handleClosePINDialog} color="primary">
             Batal
           </Button>
           <Button
             color="primary"
             variant="contained"
-            size="small"
             disabled={!profileState.isPinChecked}
             onClick={handleChangePin}
           >
@@ -261,16 +252,11 @@ const Profile = () => {
         <DialogContent>
           <Typography>Apa kamu yakin ingin keluar?</Typography>
         </DialogContent>
-        <DialogActions>
-          <Button size="small" color="primary" onClick={handleSubmitLogout}>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+          <Button color="primary" onClick={handleSubmitLogout} fullWidth>
             Ya
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCloseDialogLogout}
-            size="small"
-          >
+          <Button variant="contained" color="primary" onClick={handleCloseDialogLogout} fullWidth>
             Tidak
           </Button>
         </DialogActions>
@@ -281,12 +267,7 @@ const Profile = () => {
           <Typography>Pin berhasil diubah.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleDialogSuccesPinClose}
-            size="small"
-          >
+          <Button variant="contained" color="primary" onClick={handleDialogSuccesPinClose}>
             Tutup
           </Button>
         </DialogActions>

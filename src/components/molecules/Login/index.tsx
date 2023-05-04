@@ -94,12 +94,7 @@ const Login = () => {
           <Typography>PIN baru telah dikirim ke nomor kamu.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            onClick={handleDialogForgotPinClose}
-          >
+          <Button color="primary" variant="contained" onClick={handleDialogForgotPinClose}>
             Tutup
           </Button>
         </DialogActions>

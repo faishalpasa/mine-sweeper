@@ -42,7 +42,7 @@ const Layout = () => {
       {selectedTab === 2 && <Winner />}
       {selectedTab === 3 && <Terms />}
       {selectedTab === 4 && <Profile />}
-      {isAuthenticated && <Footer />}
+      <Footer />
     </Suspense>
   )
 }

@@ -49,9 +49,16 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       alignItems: 'center'
     },
     authBlockerContent: {
-      background: theme.palette.common.white,
+      background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
       padding: '16px',
-      borderRadius: '8px'
+      borderRadius: '8px',
+      position: 'relative',
+      textAlign: 'center'
+    },
+    splashImage: {
+      width: '150px',
+      height: '150px',
+      marginTop: '16px'
     },
     board: {
       position: 'relative',

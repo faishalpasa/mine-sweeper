@@ -178,7 +178,6 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
           <Button
             variant="contained"
             color="primary"
-            size="small"
             disabled={!selectedCoinItem}
             onClick={handleContinueToPayment}
           >
@@ -206,13 +205,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
           </div>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" size="small" onClick={handleCancelPayement}>
+          <Button color="primary" onClick={handleCancelPayement}>
             Kembali
           </Button>
           <Button
             variant="contained"
             color="primary"
-            size="small"
             disabled={!selectedPaymentItem}
             onClick={handleContinueToPhone}
           >
@@ -237,13 +235,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
           </div>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" size="small" onClick={handleCancelPhoneNo}>
+          <Button color="primary" onClick={handleCancelPhoneNo}>
             Kembali
           </Button>
           <Button
             variant="contained"
             color="primary"
-            size="small"
             disabled={!selectedPaymentItem || !msisdn}
             onClick={handleSubmitPayment}
           >
@@ -266,12 +263,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
         </DialogContent>
         {!coinPurchaseState.isLoadinPay && (
           <DialogActions>
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleSuccessPurchase}
-            >
+            <Button variant="contained" color="primary" onClick={handleSuccessPurchase}>
               Ok
             </Button>
           </DialogActions>

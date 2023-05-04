@@ -53,6 +53,20 @@ const useStyles = makeStyles((theme) => {
     checkbox: {
       padding: 0
     },
+    dialogContent: {
+      background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
+      paddingTop: '64px !important'
+    },
+    imageBomb: {
+      position: 'absolute',
+      left: '50%',
+      top: '-50%',
+      transform: 'translate(-50%, 0)',
+      width: '150px'
+    },
+    dialogPaper: {
+      overflow: 'unset'
+    },
     inputPin: {
       textAlign: 'center',
       marginTop: '8px',

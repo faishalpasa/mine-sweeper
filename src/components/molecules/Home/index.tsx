@@ -386,8 +386,8 @@ const Home = () => {
             <Button
               variant="contained"
               color="primary"
-              size="small"
               onClick={handleClickButtonPurchaseCoin}
+              disabled={!isAuthenticated}
             >
               Tambah Koin
             </Button>
@@ -407,12 +407,17 @@ const Home = () => {
         <div className={classes.board}>
           {!isAuthenticated && (
             <div className={classes.authBlocker}>
-              <div className={classes.authBlockerContent} style={{ textAlign: 'center' }}>
+              <div className={classes.authBlockerContent}>
                 <Typography>
-                  Kamu harus masuk terlebih dahulu
+                  Untuk mulai main tekan tombol masuk.
                   <br />
-                  untuk bermain permainan Ranjau Darat
+                  Raih skor tertinggi dan menangin hadiahnya
                 </Typography>
+                <img
+                  src="/images/splash-image-2.png"
+                  alt="background"
+                  className={classes.splashImage}
+                />
               </div>
             </div>
           )}
@@ -490,7 +495,6 @@ const Home = () => {
         {!isBombAnimateShow && (
           <DialogActions>
             <Button
-              size="small"
               color="primary"
               variant="contained"
               onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
@@ -512,7 +516,7 @@ const Home = () => {
           <Typography>Hore! Kamu berhasil menyelesaikan level {currentLevel}.</Typography>
         </DialogContent>
         <DialogActions>
-          <Button size="small" color="primary" variant="contained" onClick={handleClickNextLevel}>
+          <Button color="primary" variant="contained" onClick={handleClickNextLevel}>
             Level berikutnya
           </Button>
         </DialogActions>

@@ -38,6 +38,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
 })
 
 const token = localStorage.getItem('token')
+const TIMER_SMS_RESEND = 3000
 
 const Header = () => {
   const dispatch = useDispatch()
@@ -54,11 +55,13 @@ const Header = () => {
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [timer, setTimer] = useState(0)
+  const [countdownSMS, setCountdownSMS] = useState(TIMER_SMS_RESEND)
 
   let pinInputRef: PinInput | null
 
-  const { error, data, isPinReset, isAuthenticated } = headerState
+  const { error, data, isPinReset, isAuthenticated, appData } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
+  const isButtonResendSMSDisabled = countdownSMS > 0
 
   const handleClickLogin = () => {
     setIsDialogLoginOpen(true)
@@ -93,6 +96,12 @@ const Header = () => {
     pinInputRef?.clear()
   }
 
+  const handleResendSMS = () => {
+    dispatch(authResetPin())
+    setCountdownSMS(TIMER_SMS_RESEND)
+    pinInputRef?.clear()
+  }
+
   const handleSubmitChangePin = () => {
     dispatch(authChangePin(pin, newPin))
   }
@@ -103,6 +112,11 @@ const Header = () => {
 
   const handleCheckTerm = () => {
     setIsTermChecked((prevState) => !prevState)
+  }
+
+  const handleToTerms = () => {
+    setIsDialogLoginOpen(false)
+    dispatch(navigationTabSelectedSet(3))
   }
 
   useEffect(() => {
@@ -148,14 +162,35 @@ const Header = () => {
   }, [headerState.isPinChanged, headerState.data, headerState.selectedTab])
 
   useEffect(() => {
+    setTimer(appData.time)
+  }, [appData.time])
+
+  useEffect(() => {
+    let intervalTimer: any = null
     if (isAuthenticated && headerState.selectedTab === 0) {
-      const interval = setInterval(() => {
+      intervalTimer = setInterval(() => {
         setTimer((prevState) => prevState + 1000)
       }, 1000)
 
-      return () => clearInterval(interval)
+      return () => clearInterval(intervalTimer)
+    } else {
+      clearInterval(intervalTimer)
+      setTimer(appData.time)
     }
-  }, [headerState.selectedTab, isAuthenticated])
+  }, [headerState.selectedTab, isAuthenticated, appData.time])
+
+  useEffect(() => {
+    let intervalSMS: any = null
+    if (isRegister && isDialogPinOpen && countdownSMS > 0) {
+      intervalSMS = setInterval(() => {
+        setCountdownSMS((prevState) => prevState - 1000)
+      }, 1000)
+
+      return () => clearInterval(intervalSMS)
+    } else {
+      clearInterval(intervalSMS)
+    }
+  }, [isDialogPinOpen, isRegister, countdownSMS])
 
   return (
     <>
@@ -175,14 +210,20 @@ const Header = () => {
 
           {isAuthenticated ? (
             <div className={classes.timer}>
-              <TimerIcon />
-              <Typography variant="body1">
-                <b>{millisToMinutesAndSeconds(timer)}</b>
-              </Typography>
+              {headerState.selectedTab === 0 ? (
+                <>
+                  <TimerIcon />
+                  <Typography variant="body1">
+                    <b>{millisToMinutesAndSeconds(timer)}</b>
+                  </Typography>
+                </>
+              ) : (
+                <></>
+              )}
             </div>
           ) : (
             <div className={classes.logout}>
-              <Button onClick={handleClickLogin} size="small" variant="outlined" color="primary">
+              <Button onClick={handleClickLogin} variant="contained" color="primary">
                 Masuk
               </Button>
             </div>
@@ -190,9 +231,16 @@ const Header = () => {
         </div>
       </div>
 
-      <Dialog open={isDialogLoginOpen} onClose={handleCloseDialogLogin} fullWidth maxWidth="xs">
-        <DialogContent>
-          <Typography>Silakan masukan nomor handphone kamu</Typography>
+      <Dialog
+        open={isDialogLoginOpen}
+        onClose={handleCloseDialogLogin}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
+          <Typography>Silahkan masukan nomer HP anda</Typography>
           <TextField
             variant="outlined"
             margin="dense"
@@ -209,43 +257,51 @@ const Header = () => {
               color="primary"
               checked={isTermChecked}
               onClick={handleCheckTerm}
-              size="small"
               className={classes.checkbox}
             />
             <Typography variant="caption">
-              Saya menyetujui syarat dan ketentuan yang berlaku, serta bersedia menerima promosi
-              dari PT. Koneksi Global
+              Saya menyetujui&nbsp;
+              <a style={{ color: '#30cfa2', fontWeight: 600 }} onClick={handleToTerms}>
+                syarat dan ketentuan
+              </a>
+              &nbsp;yang berlaku.
             </Typography>
           </div>
         </DialogContent>
-        <DialogActions style={{ justifyContent: 'space-between' }}>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           <Button
             variant="contained"
-            size="small"
             color="primary"
             onClick={handleSubmitRegister}
             disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
+            fullWidth
           >
             Daftar
           </Button>
           <Button
             variant="contained"
-            size="small"
             color="primary"
             onClick={handleSubmitLogin}
             disabled={headerState.isLoading || msisdn.length < 8 || !isTermChecked}
+            fullWidth
           >
             Masuk
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPinOpen} fullWidth maxWidth="xs">
-        <DialogContent>
+      <Dialog
+        open={isDialogPinOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           {isPinReset ? (
             <Typography>PIN baru telah terkirim ke nomor handphone mu. Cek inbox SMS.</Typography>
           ) : (
-            <Typography>Masukan nomor PIN kamu. {isFirstTimePin && 'Cek inbox SMS'}</Typography>
+            <Typography>Masukan nomor PIN anda. {isFirstTimePin && 'Cek inbox SMS'}</Typography>
           )}
           <div className={classes.inputPin}>
             <PinInput
@@ -262,34 +318,49 @@ const Header = () => {
             )}
           </div>
         </DialogContent>
-        <DialogActions style={{ justifyContent: 'space-between' }}>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           {!isPinReset && !isRegister ? (
             <Button
-              variant="text"
-              size="small"
+              variant="contained"
               color="primary"
               onClick={handleResetPin}
               disabled={headerState.isLoading}
+              fullWidth
             >
               Reset PIN
             </Button>
           ) : (
-            <div />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleResendSMS}
+              disabled={headerState.isLoading || isButtonResendSMSDisabled}
+              fullWidth
+            >
+              Kirim Ulang SMS&nbsp;
+              {isButtonResendSMSDisabled ? millisToMinutesAndSeconds(countdownSMS) : ''}
+            </Button>
           )}
           <Button
             variant="contained"
-            size="small"
             color="primary"
             onClick={handleSubmitPin}
             disabled={headerState.isLoading || pin.length < 6}
+            fullWidth
           >
             Konfirmasi
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogChangePinOpen} fullWidth maxWidth="xs">
-        <DialogContent>
+      <Dialog
+        open={isDialogChangePinOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           <Typography>Masukan nomor pin baru kamu.</Typography>
           <div className={classes.inputPin}>
             <PinInput
@@ -302,13 +373,14 @@ const Header = () => {
             />
           </div>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ justifyContent: 'flex-end', padding: '0px 16px 16px' }}>
           <Button
             variant="contained"
-            size="small"
             color="primary"
             onClick={handleSubmitChangePin}
             disabled={headerState.isLoading || newPin.length < 6}
+            fullWidth
+            style={{ maxWidth: '50%' }}
           >
             Ubah PIN
           </Button>

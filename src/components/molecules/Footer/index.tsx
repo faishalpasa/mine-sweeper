@@ -14,8 +14,9 @@ import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesFooter'
 
-const footerSelector = ({ navigationTab }: RootState) => ({
-  selectedTab: navigationTab.selectedTab
+const footerSelector = ({ navigationTab, auth }: RootState) => ({
+  selectedTab: navigationTab.selectedTab,
+  isAuthenticated: auth.isAuthenticated
 })
 
 const Footer = () => {
@@ -23,7 +24,7 @@ const Footer = () => {
   const footerState = useSelector(footerSelector, shallowEqual)
   const classes = useStyles()
 
-  const { selectedTab } = footerState
+  const { selectedTab, isAuthenticated } = footerState
 
   const handleSelectTab = (position: number) => {
     dispatch(navigationTabSelectedSet(position))
@@ -63,14 +64,16 @@ const Footer = () => {
         <TermsIcon />
         <Typography variant="caption">S&K</Typography>
       </Button>
-      <Button
-        className={classes.footerItem}
-        color={selectedTab === 4 ? 'primary' : 'default'}
-        onClick={() => handleSelectTab(4)}
-      >
-        <ProfileIcon />
-        <Typography variant="caption">Profil</Typography>
-      </Button>
+      {isAuthenticated && (
+        <Button
+          className={classes.footerItem}
+          color={selectedTab === 4 ? 'primary' : 'default'}
+          onClick={() => handleSelectTab(4)}
+        >
+          <ProfileIcon />
+          <Typography variant="caption">Profil</Typography>
+        </Button>
+      )}
     </div>
   )
 }
