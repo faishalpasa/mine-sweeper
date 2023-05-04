@@ -32,6 +32,9 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   appData: app.data,
   isLoading: auth.isLoading,
   isAuthenticated: auth.isAuthenticated,
+  isGameOver: app.isGameOver,
+  isGameWin: app.isGameWin,
+  isPeriodActive: app.isPeriodActive,
   isPinChanged: auth.isPinChanged,
   isPinReset: auth.isPinReset,
   error: auth.error,
@@ -62,7 +65,17 @@ const Header = () => {
 
   let pinInputRef: PinInput | null
 
-  const { error, data, isPinReset, isAuthenticated, appData, isLoginOpen } = headerState
+  const {
+    error,
+    data,
+    isPinReset,
+    isAuthenticated,
+    appData,
+    isLoginOpen,
+    isGameOver,
+    isGameWin,
+    isPeriodActive
+  } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
   const isButtonResendSMSDisabled = countdownSMS > 0
 
@@ -178,12 +191,20 @@ const Header = () => {
   }, [headerState.isPinChanged, headerState.data, headerState.selectedTab])
 
   useEffect(() => {
-    setTimer(appData.time)
-  }, [appData.time])
+    if (headerState.selectedTab === 0) {
+      setTimer(appData.time)
+    }
+  }, [appData.time, headerState.selectedTab])
 
   useEffect(() => {
     let intervalTimer: any = null
-    if (isAuthenticated && headerState.selectedTab === 0) {
+    if (
+      isAuthenticated &&
+      isPeriodActive &&
+      !isGameOver &&
+      !isGameWin &&
+      headerState.selectedTab === 0
+    ) {
       intervalTimer = setInterval(() => {
         setTimer((prevState) => prevState + 1000)
       }, 1000)
@@ -191,9 +212,15 @@ const Header = () => {
       return () => clearInterval(intervalTimer)
     } else {
       clearInterval(intervalTimer)
-      setTimer(appData.time)
     }
-  }, [headerState.selectedTab, isAuthenticated, appData.time])
+  }, [
+    headerState.selectedTab,
+    isAuthenticated,
+    appData.time,
+    isGameOver,
+    isGameWin,
+    isPeriodActive
+  ])
 
   useEffect(() => {
     let intervalSMS: any = null
@@ -307,10 +334,7 @@ const Header = () => {
           <TextField
             margin="dense"
             placeholder="081234567890"
-            onChange={(e) => setMsisdn(e.target.value)}
             value={msisdn}
-            error={!!error.message}
-            helperText={error.message}
             fullWidth
             type="tel"
             disabled
@@ -425,7 +449,7 @@ const Header = () => {
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          <Typography>Masukan nomor pin baru kamu.</Typography>
+          <Typography>Masukan nomor PIN baru anda:</Typography>
           <div className={classes.inputPin}>
             <PinInput
               length={6}

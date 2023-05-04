@@ -35,6 +35,7 @@ import {
   authResetPinFailure,
   authResetPinSuccess
 } from 'redux/reducers/auth'
+import { snackbarOpen } from 'redux/reducers/snackbar'
 
 import {
   LOGIN_PIN_POST,
@@ -187,7 +188,7 @@ export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependenci
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          return of(authChangePinSuccess(data.token))
+          return of(authChangePinSuccess(data.token), snackbarOpen('Berhasil merubah PIN.'))
         }),
         catchError((err) => {
           const error = {
@@ -241,7 +242,7 @@ export const authDataUpdateEpic: Epic = (action$, state$, { api }: EpicDependenc
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          return of(authDataUpdateSuccess(data))
+          return of(authDataUpdateSuccess(data), snackbarOpen('Profil anda telah diubah.'))
         }),
         catchError((err) => {
           const error = {

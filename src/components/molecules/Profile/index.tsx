@@ -47,7 +47,6 @@ const Profile = () => {
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
-  const [isDialogSuccessChangePinOpen, setIsDialogSuccessPinOpen] = useState(false)
 
   const handleClickLogout = () => {
     setIsDialogLogoutOpen(true)
@@ -92,16 +91,6 @@ const Profile = () => {
     dispatch(authChangePin(pin, newPin))
   }
 
-  const handleDialogSuccessPinOpen = () => {
-    setIsDialogPINOpen(false)
-    setIsDialogSuccessPinOpen(true)
-  }
-
-  const handleDialogSuccesPinClose = () => {
-    setIsDialogSuccessPinOpen(false)
-    dispatch(authIsPinChangedSet(false))
-  }
-
   const isButtonUpdateDisabled =
     profile.name === profileState.data.name && profile.email === profileState.data.email
 
@@ -119,7 +108,8 @@ const Profile = () => {
 
   useEffect(() => {
     if (profileState.isPinChanged) {
-      handleDialogSuccessPinOpen()
+      setIsDialogPINOpen(false)
+      dispatch(authIsPinChangedSet(false))
     }
   }, [profileState.isPinChanged])
 
@@ -233,8 +223,8 @@ const Profile = () => {
             )}
           </>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePINDialog} color="primary">
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+          <Button onClick={handleClosePINDialog} color="primary" fullWidth>
             Batal
           </Button>
           <Button
@@ -242,6 +232,7 @@ const Profile = () => {
             variant="contained"
             disabled={!profileState.isPinChecked}
             onClick={handleChangePin}
+            fullWidth
           >
             Ubah
           </Button>
@@ -258,17 +249,6 @@ const Profile = () => {
           </Button>
           <Button variant="contained" color="primary" onClick={handleCloseDialogLogout} fullWidth>
             Tidak
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={isDialogSuccessChangePinOpen} fullWidth maxWidth="xs">
-        <DialogContent>
-          <Typography>Pin berhasil diubah.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" color="primary" onClick={handleDialogSuccesPinClose}>
-            Tutup
           </Button>
         </DialogActions>
       </Dialog>

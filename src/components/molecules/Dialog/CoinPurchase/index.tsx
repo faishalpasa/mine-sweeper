@@ -10,7 +10,7 @@ import {
   InputAdornment
 } from '@material-ui/core'
 
-import { appDataCoinSet, appGameOverSet, appPayOvo, appPayGopay } from 'redux/reducers/app'
+import { appPayOvo, appPayGopay } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesCoinPurchase'

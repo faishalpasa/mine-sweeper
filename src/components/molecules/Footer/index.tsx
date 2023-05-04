@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Typography } from '@material-ui/core'
 import {
   Home as HomeIcon,
@@ -14,9 +14,10 @@ import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesFooter'
 
-const footerSelector = ({ navigationTab, auth }: RootState) => ({
+const footerSelector = ({ navigationTab, auth, app }: RootState) => ({
   selectedTab: navigationTab.selectedTab,
-  isAuthenticated: auth.isAuthenticated
+  isAuthenticated: auth.isAuthenticated,
+  dataData: app.data
 })
 
 const Footer = () => {

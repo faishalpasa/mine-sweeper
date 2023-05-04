@@ -4,7 +4,7 @@ export const TOP_SCORE_DATA_FETCH = 'topScore/DATA_FETCH'
 export const TOP_SCORE_DATA_FETCH_SUCCESS = 'topScore/DATA_FETCH_SUCCESS'
 export const TOP_SCORE_DATA_FETCH_FAILURE = 'topScore/DATA_FETCH_FAILURE'
 
-export interface WinnerInitialState {
+export interface TopScoreInitialState {
   data: {
     id: number
     name: string
@@ -18,7 +18,7 @@ export interface WinnerInitialState {
   }
 }
 
-const INITIAL_STATE: WinnerInitialState = {
+const INITIAL_STATE: TopScoreInitialState = {
   data: [],
   isLoading: false,
   error: {
@@ -45,12 +45,12 @@ export const topScoreDataFetch = () => ({
   type: TOP_SCORE_DATA_FETCH
 })
 
-export const topScoreDataFetchSuccess = (payload: WinnerInitialState['data']) => ({
+export const topScoreDataFetchSuccess = (payload: TopScoreInitialState['data']) => ({
   type: TOP_SCORE_DATA_FETCH_SUCCESS,
   payload
 })
 
-export const topScoreDataFetchFailure = (payload: WinnerInitialState['error']) => ({
+export const topScoreDataFetchFailure = (payload: TopScoreInitialState['error']) => ({
   type: TOP_SCORE_DATA_FETCH_FAILURE,
   payload
 })

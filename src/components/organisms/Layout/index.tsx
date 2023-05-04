@@ -1,8 +1,9 @@
-import React, { lazy, memo, Suspense } from 'react'
+import React, { lazy, memo, Suspense, useEffect } from 'react'
+import { Snackbar } from '@material-ui/core'
+import { useSelector, shallowEqual, useDispatch } from 'react-redux'
+// import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
 
-import { isAndroid, isIOS, isWinPhone, deviceType, getUA } from 'react-device-detect'
-
-import { useSelector, shallowEqual } from 'react-redux'
+import { snackbarClose, snackbarOpen } from 'redux/reducers/snackbar'
 
 import type { RootState } from 'redux/rootReducer'
 
@@ -13,17 +14,17 @@ const TopScore = lazy(() => import('../../molecules/TopScore'))
 const Winner = lazy(() => import('../../molecules/Winner'))
 const Terms = lazy(() => import('../../molecules/Terms'))
 const Profile = lazy(() => import('../../molecules/Profile'))
-const Login = lazy(() => import('../../molecules/Login'))
+// const Login = lazy(() => import('../../molecules/Login'))
 
-const layoutSelector = ({ navigationTab }: RootState) => ({
-  selectedTab: navigationTab.selectedTab
+const layoutSelector = ({ navigationTab, snackbar }: RootState) => ({
+  selectedTab: navigationTab.selectedTab,
+  snackbar: snackbar
 })
 
-const isAuthenticated = localStorage.getItem('token')
-
 const Layout = () => {
+  const dispatch = useDispatch()
   const layoutState = useSelector(layoutSelector, shallowEqual)
-  const isMobile = isAndroid || isIOS || isWinPhone
+  // const isMobile = isAndroid || isIOS || isWinPhone
 
   const queryParams = new URLSearchParams(window.location.search)
   const trxId = queryParams.get('trx_id')
@@ -32,7 +33,15 @@ const Layout = () => {
     localStorage.setItem('trx_id', trxId)
   }
 
-  const { selectedTab } = layoutState
+  const { selectedTab, snackbar } = layoutState
+
+  useEffect(() => {
+    if (snackbar.isOpen) {
+      setTimeout(() => {
+        dispatch(snackbarClose())
+      }, 3000)
+    }
+  }, [snackbar.isOpen])
 
   return (
     <Suspense fallback={<div />}>
@@ -43,6 +52,7 @@ const Layout = () => {
       {selectedTab === 3 && <Terms />}
       {selectedTab === 4 && <Profile />}
       <Footer />
+      <Snackbar open={snackbar.isOpen} message={snackbar.message} />
     </Suspense>
   )
 }

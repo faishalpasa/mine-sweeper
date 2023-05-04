@@ -7,6 +7,7 @@ import profile from 'redux/reducers/profile'
 import terms from 'redux/reducers/terms'
 import topScore from 'redux/reducers/topScore'
 import winner from 'redux/reducers/winner'
+import snackbar from 'redux/reducers/snackbar'
 
 const reducers = combineReducers({
   app,
@@ -15,7 +16,8 @@ const reducers = combineReducers({
   profile,
   terms,
   topScore,
-  winner
+  winner,
+  snackbar
 })
 
 export default reducers

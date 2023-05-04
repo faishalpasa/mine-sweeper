@@ -369,8 +369,10 @@ const Home = () => {
 
   useEffect(() => {
     const isGameOver = boardState.authData.is_game_over && +boardState.authData.is_game_over
-    dispatch(appGameOverSet(!!isGameOver))
-  }, [boardState])
+    if (isGameOver) {
+      dispatch(appGameOverSet(true))
+    }
+  }, [boardState.authData.is_game_over])
 
   return (
     <>
