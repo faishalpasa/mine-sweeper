@@ -80,6 +80,12 @@ const useStyles = makeStyles((theme) => {
           borderRadius: '4px'
         }
       }
+    },
+    loginButton: {
+      width: '40%',
+      marginLeft: 'auto',
+      marginRight: 0,
+      fontWeight: 700
     }
   }
 })

@@ -222,11 +222,14 @@ const Header = () => {
               )}
             </div>
           ) : (
-            <div className={classes.logout}>
-              <Button onClick={handleClickLogin} variant="contained" color="primary">
-                Masuk
-              </Button>
-            </div>
+            <Button
+              onClick={handleClickLogin}
+              variant="contained"
+              color="primary"
+              className={classes.loginButton}
+            >
+              Masuk
+            </Button>
           )}
         </div>
       </div>
@@ -240,7 +243,7 @@ const Header = () => {
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          <Typography>Silahkan masukan nomer HP anda</Typography>
+          <Typography>Silahkan masukan nomer HP anda:</Typography>
           <TextField
             variant="outlined"
             margin="dense"
