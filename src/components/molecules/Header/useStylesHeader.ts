@@ -62,9 +62,10 @@ const useStyles = makeStyles((theme) => {
     imageBomb: {
       position: 'absolute',
       left: '50%',
-      top: '-50%',
+      top: '-100',
       transform: 'translate(-50%, 0)',
-      width: '150px'
+      width: '150px',
+      height: '150px'
     },
     dialogPaper: {
       overflow: 'unset'
