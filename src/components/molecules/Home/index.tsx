@@ -57,7 +57,8 @@ const homeSelector = ({ app, auth }: RootState) => ({
   isGameOver: app.isGameOver,
   isGameWin: app.isGameWin,
   isPeriodActive: app.isPeriodActive,
-  isAuthenticated: auth.isAuthenticated
+  isAuthenticated: auth.isAuthenticated,
+  isDialogLoginOpen: app.isDialogLoginOpen
 })
 
 const getRandomMines = (amount: number, columns: number, rows: number) => {
@@ -100,7 +101,7 @@ const Home = () => {
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
-  const { isAuthenticated, isPeriodActive } = boardState
+  const { isAuthenticated, isPeriodActive, isDialogLoginOpen } = boardState
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -405,7 +406,7 @@ const Home = () => {
           <div className={classes.boardLoadingLog} />
         )}
         <div className={classes.board}>
-          {!isAuthenticated && (
+          {!isDialogLoginOpen && !isAuthenticated && (
             <div className={classes.authBlocker}>
               <div className={classes.authBlockerContent}>
                 <Typography>
@@ -421,7 +422,7 @@ const Home = () => {
               </div>
             </div>
           )}
-          {isAuthenticated && !isPeriodActive && (
+          {!isDialogLoginOpen && isAuthenticated && !isPeriodActive && (
             <div className={classes.periodBlocker}>
               <div className={classes.periodBlockerContent} style={{ textAlign: 'center' }}>
                 <Typography>

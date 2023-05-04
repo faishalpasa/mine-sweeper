@@ -37,6 +37,7 @@ export const APP_PAY_GOPAY_SUCCESS = 'app/PAY_GOPAY_SUCCESS'
 export const APP_PAY_GOPAY_CHECK = 'app/PAY_GOPAY_CHECK'
 export const APP_PAY_GOPAY_CHECK_SUCCESS = 'app/PAY_GOPAY_CHECK_SUCCESS'
 export const APP_PAY_GOPAY_CHECK_FAILURE = 'app/PAY_GOPAY_CHECK_FAILURE'
+export const APP_DIALOG_LOGIN_SET = 'app/DIALOG_LOGIN_SET'
 
 export interface AppInitialState {
   theme: 'dark' | 'light'
@@ -69,6 +70,7 @@ export interface AppInitialState {
   isGameWin: boolean
   isPeriodActive: boolean
   isToggleFlag: boolean
+  isDialogLoginOpen: boolean
 }
 
 const INITIAL_STATE: AppInitialState = {
@@ -96,7 +98,8 @@ const INITIAL_STATE: AppInitialState = {
   isGameOver: false,
   isGameWin: false,
   isPeriodActive: false,
-  isToggleFlag: false
+  isToggleFlag: false,
+  isDialogLoginOpen: false
 }
 
 export default createReducer(INITIAL_STATE, {
@@ -219,6 +222,9 @@ export default createReducer(INITIAL_STATE, {
   [APP_PAY_GOPAY_CHECK_FAILURE]: (state, action) => {
     state.isLoadingPay = true
     state.error = action.payload
+  },
+  [APP_DIALOG_LOGIN_SET]: (state, action) => {
+    state.isDialogLoginOpen = action.payload
   }
 })
 
@@ -400,5 +406,10 @@ export const appPayGopayCheckSuccess = () => ({
 
 export const appPayGopayCheckFailure = (payload: AppInitialState['error']) => ({
   type: APP_PAY_GOPAY_CHECK_FAILURE,
+  payload
+})
+
+export const appDialogLoginSet = (payload: AppInitialState['isDialogLoginOpen']) => ({
+  type: APP_DIALOG_LOGIN_SET,
   payload
 })

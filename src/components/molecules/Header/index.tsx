@@ -24,6 +24,7 @@ import {
   authRegister,
   authResetPin
 } from 'redux/reducers/auth'
+import { appDialogLoginSet } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
 
 const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
@@ -34,7 +35,8 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   isPinChanged: auth.isPinChanged,
   isPinReset: auth.isPinReset,
   error: auth.error,
-  selectedTab: navigationTab.selectedTab
+  selectedTab: navigationTab.selectedTab,
+  isLoginOpen: app.isDialogLoginOpen
 })
 
 const token = localStorage.getItem('token')
@@ -59,16 +61,16 @@ const Header = () => {
 
   let pinInputRef: PinInput | null
 
-  const { error, data, isPinReset, isAuthenticated, appData } = headerState
+  const { error, data, isPinReset, isAuthenticated, appData, isLoginOpen } = headerState
   const isFirstTimePin = data.is_first_time_pin && +data.is_first_time_pin === 1
   const isButtonResendSMSDisabled = countdownSMS > 0
 
   const handleClickLogin = () => {
-    setIsDialogLoginOpen(true)
+    dispatch(appDialogLoginSet(true))
   }
 
   const handleCloseDialogLogin = () => {
-    setIsDialogLoginOpen(false)
+    dispatch(appDialogLoginSet(false))
   }
 
   const handleSubmitLogin = () => {
@@ -115,9 +117,13 @@ const Header = () => {
   }
 
   const handleToTerms = () => {
-    setIsDialogLoginOpen(false)
+    dispatch(appDialogLoginSet(false))
     dispatch(navigationTabSelectedSet(3))
   }
+
+  useEffect(() => {
+    setIsDialogLoginOpen(isLoginOpen)
+  }, [isLoginOpen])
 
   useEffect(() => {
     if (token) {
