@@ -391,9 +391,13 @@ const Header = () => {
         <DialogContent className={classes.dialogContent}>
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           {isPinReset ? (
-            <Typography>PIN baru telah terkirim ke nomor handphone mu. Cek inbox SMS.</Typography>
+            <Typography>PIN baru telah terkirim ke nomor handphone mu. Cek inbox SMS:</Typography>
           ) : (
-            <Typography>Masukan nomor PIN anda. {isFirstTimePin && 'Cek inbox SMS'}</Typography>
+            <Typography>
+              {isFirstTimePin
+                ? 'Masukan nomor PIN anda. Cek inbox SMS:'
+                : 'Masukan nomor PIN anda:'}
+            </Typography>
           )}
           <div className={classes.inputPin}>
             <PinInput
