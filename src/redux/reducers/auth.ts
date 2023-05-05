@@ -26,6 +26,7 @@ export const AUTH_CHECK_PIN = 'auth/CHECK_PIN'
 export const AUTH_CHECK_PIN_SUCCESS = 'auth/CHECK_PIN_SUCCESS'
 export const AUTH_CHECK_PIN_FAILURE = 'auth/CHECK_PIN_FAILURE'
 export const AUTH_CHECK_PIN_RESET = 'auth/CHECK_PIN_RESET'
+export const AUTH_ERROR_RESET = 'auth/ERROR_RESET'
 
 export interface AuthInitialState {
   data: {
@@ -201,6 +202,9 @@ export default createReducer(INITIAL_STATE, {
   },
   [AUTH_CHECK_PIN_RESET]: (state) => {
     state.isPinChecked = false
+  },
+  [AUTH_ERROR_RESET]: (state) => {
+    state.error = { ...INITIAL_STATE.error }
   }
 })
 
@@ -318,4 +322,8 @@ export const authCheckPinSuccess = () => ({
 })
 export const authCheckPinReset = () => ({
   type: AUTH_CHECK_PIN_RESET
+})
+
+export const authErrorReset = () => ({
+  type: AUTH_ERROR_RESET
 })

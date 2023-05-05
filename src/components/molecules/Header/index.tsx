@@ -22,7 +22,8 @@ import {
   authChangePin,
   authFetch,
   authRegister,
-  authResetPin
+  authResetPin,
+  authErrorReset
 } from 'redux/reducers/auth'
 import { appDialogLoginSet } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
@@ -95,12 +96,14 @@ const Header = () => {
   const handleClickRegister = () => {
     setIsDialogRegisterOpen(true)
     setIsDialogLoginOpen(false)
+    dispatch(authErrorReset())
   }
 
   const handleCloseDialogRegister = () => {
     setIsDialogRegisterOpen(false)
     setIsDialogLoginOpen(true)
     setIsTermChecked(false)
+    dispatch(authErrorReset())
   }
 
   const handleSubmitRegister = () => {
@@ -337,6 +340,8 @@ const Header = () => {
             placeholder="081234567890"
             onChange={(e) => setMsisdn(e.target.value)}
             value={msisdn}
+            error={!!error.message}
+            helperText={error.message}
             fullWidth
             type="tel"
           />
