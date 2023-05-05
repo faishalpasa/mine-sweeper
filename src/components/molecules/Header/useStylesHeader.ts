@@ -70,6 +70,16 @@ const useStyles = makeStyles((theme) => {
     dialogPaper: {
       overflow: 'unset'
     },
+    dialogCloseIcon: {
+      position: 'absolute',
+      top: '8px',
+      right: '8px'
+    },
+    dialogBackIcon: {
+      position: 'absolute',
+      top: '8px',
+      left: '8px'
+    },
     inputPin: {
       textAlign: 'center',
       marginTop: '8px',

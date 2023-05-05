@@ -3,6 +3,12 @@ import createReducer from 'utils/createReducer'
 export const AUTH_LOGIN = 'auth/LOGIN'
 export const AUTH_LOGIN_FAILURE = 'auth/LOGIN_FAILURE'
 export const AUTH_LOGIN_SUCCESS = 'auth/LOGIN_SUCCESS'
+export const AUTH_PRE_REGISTER = 'auth/PRE_REGISTER'
+export const AUTH_PRE_REGISTER_FAILURE = 'auth/PRE_REGISTER_FAILURE'
+export const AUTH_PRE_REGISTER_SUCCESS = 'auth/PRE_REGISTER_SUCCESS'
+export const AUTH_FIRST_PIN_CHECK = 'auth/FIRST_PIN_CHECK'
+export const AUTH_FIRST_PIN_CHECK_FAILURE = 'auth/FIRST_PIN_CHECK_FAILURE'
+export const AUTH_FIRST_PIN_CHECK_SUCCESS = 'auth/FIRST_PIN_CHECK_SUCCESS'
 export const AUTH_REGISTER = 'auth/REGISTER'
 export const AUTH_REGISTER_FAILURE = 'auth/REGISTER_FAILURE'
 export const AUTH_REGISTER_SUCCESS = 'auth/REGISTER_SUCCESS'
@@ -27,6 +33,9 @@ export const AUTH_CHECK_PIN_SUCCESS = 'auth/CHECK_PIN_SUCCESS'
 export const AUTH_CHECK_PIN_FAILURE = 'auth/CHECK_PIN_FAILURE'
 export const AUTH_CHECK_PIN_RESET = 'auth/CHECK_PIN_RESET'
 export const AUTH_ERROR_RESET = 'auth/ERROR_RESET'
+export const AUTH_MSISDN_CHECK = 'auth/MSISDN_CHECK'
+export const AUTH_MSISDN_CHECK_SUCCESS = 'auth/MSISDN_CHECK_SUCCESS'
+export const AUTH_MSISDN_CHECK_FAILURE = 'auth/MSISDN_CHECK_FAILURE'
 
 export interface AuthInitialState {
   data: {
@@ -46,6 +55,10 @@ export interface AuthInitialState {
   isPinChanged: boolean
   isPinReset: boolean
   isPinChecked: boolean
+  isPreRegisterRequested: boolean
+  isFirstPinChecked: boolean
+  isRegisterSuccess: boolean
+  isEligibleToRegister: boolean
   error: {
     message: string
   }
@@ -69,6 +82,10 @@ const INITIAL_STATE: AuthInitialState = {
   isPinChanged: false,
   isPinReset: false,
   isPinChecked: false,
+  isPreRegisterRequested: false,
+  isFirstPinChecked: false,
+  isRegisterSuccess: false,
+  isEligibleToRegister: false,
   error: {
     message: ''
   }
@@ -87,6 +104,30 @@ export default createReducer(INITIAL_STATE, {
     state.data = action.payload
     state.error = { ...INITIAL_STATE.error }
   },
+  [AUTH_PRE_REGISTER]: (state) => {
+    state.isLoading = true
+  },
+  [AUTH_PRE_REGISTER_FAILURE]: (state, action) => {
+    state.isLoading = false
+    state.error = action.payload
+  },
+  [AUTH_PRE_REGISTER_SUCCESS]: (state) => {
+    state.isLoading = false
+    state.isPreRegisterRequested = true
+    state.error = { ...INITIAL_STATE.error }
+  },
+  [AUTH_FIRST_PIN_CHECK]: (state) => {
+    state.isLoading = true
+  },
+  [AUTH_FIRST_PIN_CHECK_FAILURE]: (state, action) => {
+    state.isLoading = false
+    state.error = action.payload
+  },
+  [AUTH_FIRST_PIN_CHECK_SUCCESS]: (state) => {
+    state.isLoading = false
+    state.isFirstPinChecked = true
+    state.error = { ...INITIAL_STATE.error }
+  },
   [AUTH_REGISTER]: (state) => {
     state.isLoading = true
   },
@@ -97,6 +138,7 @@ export default createReducer(INITIAL_STATE, {
   [AUTH_REGISTER_SUCCESS]: (state, action) => {
     state.isLoading = false
     state.data = action.payload
+    state.isRegisterSuccess = true
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_LOGIN_PIN]: (state, action) => {
@@ -205,6 +247,21 @@ export default createReducer(INITIAL_STATE, {
   },
   [AUTH_ERROR_RESET]: (state) => {
     state.error = { ...INITIAL_STATE.error }
+  },
+  [AUTH_MSISDN_CHECK]: (state) => {
+    state.isLoading = true
+  },
+  [AUTH_MSISDN_CHECK_SUCCESS]: (state, action) => {
+    state.isLoading = false
+    state.isEligibleToRegister = !action.payload
+    state.error = {
+      ...INITIAL_STATE.error,
+      message: action.payload ? 'Nomor HP sudah terdaftar, silakan tekan masuk.' : ''
+    }
+  },
+  [AUTH_MSISDN_CHECK_FAILURE]: (state, action) => {
+    state.isLoading = false
+    state.error = action.payload
   }
 })
 
@@ -220,9 +277,49 @@ export const authLoginSuccess = (data: AuthInitialState['data']) => ({
   type: AUTH_LOGIN_SUCCESS,
   payload: data
 })
-export const authRegister = (payload: AuthInitialState['data']['msisdn']) => ({
-  type: AUTH_REGISTER,
+export const authPreRegister = (payload: AuthInitialState['data']['msisdn']) => ({
+  type: AUTH_PRE_REGISTER,
   payload
+})
+export const authPreRegisterFailure = (payload: AuthInitialState['error']) => ({
+  type: AUTH_PRE_REGISTER_FAILURE,
+  payload
+})
+export const authPreRegisterSuccess = () => ({
+  type: AUTH_PRE_REGISTER_SUCCESS
+})
+export const authFirstPinCheck = ({
+  msisdn,
+  pin
+}: {
+  msisdn: AuthInitialState['data']['msisdn']
+  pin: AuthInitialState['data']['pin']
+}) => ({
+  type: AUTH_FIRST_PIN_CHECK,
+  payload: {
+    msisdn,
+    pin
+  }
+})
+export const authFirstPinCheckFailure = (payload: AuthInitialState['error']) => ({
+  type: AUTH_FIRST_PIN_CHECK_FAILURE,
+  payload
+})
+export const authFirstPinCheckSuccess = () => ({
+  type: AUTH_FIRST_PIN_CHECK_SUCCESS
+})
+export const authRegister = ({
+  msisdn,
+  pin
+}: {
+  msisdn: AuthInitialState['data']['msisdn']
+  pin: AuthInitialState['data']['pin']
+}) => ({
+  type: AUTH_REGISTER,
+  payload: {
+    msisdn,
+    pin
+  }
 })
 export const authRegisterFailure = (payload: AuthInitialState['error']) => ({
   type: AUTH_REGISTER_FAILURE,
@@ -326,4 +423,18 @@ export const authCheckPinReset = () => ({
 
 export const authErrorReset = () => ({
   type: AUTH_ERROR_RESET
+})
+
+export const authMsisdnCheck = (msisdn: AuthInitialState['data']['msisdn']) => ({
+  type: AUTH_MSISDN_CHECK,
+  payload: msisdn
+})
+
+export const authMsisdnCheckSuccess = (id: number) => ({
+  type: AUTH_MSISDN_CHECK_SUCCESS,
+  payload: id
+})
+
+export const authMsisdnCheckFailure = () => ({
+  type: AUTH_MSISDN_CHECK_FAILURE
 })

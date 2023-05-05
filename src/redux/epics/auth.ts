@@ -13,6 +13,12 @@ import {
   AUTH_LOGIN,
   authLoginFailure,
   authLoginSuccess,
+  AUTH_PRE_REGISTER,
+  authPreRegisterFailure,
+  authPreRegisterSuccess,
+  AUTH_FIRST_PIN_CHECK,
+  authFirstPinCheckFailure,
+  authFirstPinCheckSuccess,
   AUTH_REGISTER,
   authRegisterFailure,
   authRegisterSuccess,
@@ -33,18 +39,24 @@ import {
   authCheckPinSuccess,
   AUTH_RESET_PIN,
   authResetPinFailure,
-  authResetPinSuccess
+  authResetPinSuccess,
+  AUTH_MSISDN_CHECK,
+  authMsisdnCheckFailure,
+  authMsisdnCheckSuccess
 } from 'redux/reducers/auth'
 import { snackbarOpen } from 'redux/reducers/snackbar'
 
 import {
   LOGIN_PIN_POST,
   LOGIN_POST,
+  PRE_REGISTER_POST,
   REGISTER_POST,
   RESET_PIN_POST,
   CHANGE_PIN_PUT,
   AUTH_GET,
-  PLAYER_PUT
+  PLAYER_PUT,
+  PRE_REGISTER_CHECK_POST,
+  MSISDN_CHECK_GET
 } from 'constants/endpoint'
 
 export const authLoginEpic: Epic = (action$, _, { api }: EpicDependencies) =>
@@ -72,6 +84,55 @@ export const authLoginEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     )
   )
 
+export const authPreRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(AUTH_PRE_REGISTER),
+    mergeMap((action) =>
+      api({
+        endpoint: PRE_REGISTER_POST,
+        host: apiHost,
+        body: {
+          msisdn: action.payload
+        }
+      }).pipe(
+        mergeMap(() => {
+          return of(authPreRegisterSuccess())
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(authPreRegisterFailure(error))
+        })
+      )
+    )
+  )
+
+export const authFirstPinCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(AUTH_FIRST_PIN_CHECK),
+    mergeMap((action) =>
+      api({
+        endpoint: PRE_REGISTER_CHECK_POST,
+        host: apiHost,
+        body: {
+          msisdn: action.payload.msisdn,
+          pin: action.payload.pin
+        }
+      }).pipe(
+        mergeMap(() => {
+          return of(authFirstPinCheckSuccess())
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(authFirstPinCheckFailure(error))
+        })
+      )
+    )
+  )
+
 export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(AUTH_REGISTER),
@@ -80,7 +141,8 @@ export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
         endpoint: REGISTER_POST,
         host: apiHost,
         body: {
-          msisdn: action.payload
+          msisdn: action.payload.msisdn,
+          pin: action.payload.pin
         }
       }).pipe(
         mergeMap(({ response }: any) => {
@@ -249,6 +311,31 @@ export const authDataUpdateEpic: Epic = (action$, state$, { api }: EpicDependenc
             message: err?.response?.message || 'Gagal mendapatkan data'
           }
           return of(authDataUpdateFailure(error))
+        })
+      )
+    )
+  )
+
+export const authMsisdnCheckEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(AUTH_MSISDN_CHECK),
+    mergeMap((action) =>
+      api({
+        endpoint: MSISDN_CHECK_GET,
+        host: apiHost,
+        params: {
+          msisdn: action.payload
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          return of(authMsisdnCheckSuccess(data?.id))
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(authMsisdnCheckFailure())
         })
       )
     )

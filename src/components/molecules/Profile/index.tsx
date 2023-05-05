@@ -190,7 +190,7 @@ const Profile = () => {
                 <Typography>Masukan PIN lama kamu</Typography>
                 <div className={classes.inputPin}>
                   <PinInput
-                    length={6}
+                    length={4}
                     type="numeric"
                     inputMode="number"
                     focus
@@ -211,7 +211,7 @@ const Profile = () => {
                 <Typography>Masukan PIN baru kamu</Typography>
                 <div className={classes.inputPin}>
                   <PinInput
-                    length={6}
+                    length={4}
                     onChange={(value, index) => setNewPin(value)}
                     type="numeric"
                     inputMode="number"
