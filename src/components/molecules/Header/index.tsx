@@ -330,14 +330,15 @@ const Header = () => {
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          <Typography>Nomor HP anda:</Typography>
+          <Typography>Silahkan masukan nomer HP anda:</Typography>
           <TextField
+            variant="outlined"
             margin="dense"
             placeholder="081234567890"
+            onChange={(e) => setMsisdn(e.target.value)}
             value={msisdn}
             fullWidth
             type="tel"
-            disabled
           />
           <div className={classes.checkboxWrapper}>
             <Checkbox
@@ -345,13 +346,12 @@ const Header = () => {
               checked={isTermChecked}
               onClick={handleCheckTerm}
               className={classes.checkbox}
+              size="small"
             />
             <Typography variant="caption">
-              Saya menyetujui&nbsp;
-              <a style={{ color: '#30cfa2', fontWeight: 600 }} onClick={handleToTerms}>
-                syarat dan ketentuan
+              <a style={{ color: '#000', fontSize: '10px' }} onClick={handleToTerms}>
+                Saya menyetujui syarat dan ketentuan yang berlaku
               </a>
-              &nbsp;yang berlaku.
             </Typography>
           </div>
         </DialogContent>

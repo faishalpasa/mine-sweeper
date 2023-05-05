@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => {
       display: 'flex',
       gap: '4px',
       marginTop: '8px',
-      alignItems: 'flex-start'
+      alignItems: 'center'
     },
     checkbox: {
       padding: 0
