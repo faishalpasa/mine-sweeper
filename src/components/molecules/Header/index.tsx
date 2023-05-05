@@ -54,7 +54,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
 })
 
 const token = localStorage.getItem('token')
-const TIMER_SMS_RESEND = 30000
+const TIMER_SMS_RESEND = 60000
 
 const Header = () => {
   const dispatch = useDispatch()
