@@ -611,7 +611,6 @@ const Header = () => {
             onClick={handleSubmitRegister}
             disabled={headerState.isLoading || newPin.length < 4}
             fullWidth
-            style={{ maxWidth: '50%' }}
           >
             Ubah PIN
           </Button>
