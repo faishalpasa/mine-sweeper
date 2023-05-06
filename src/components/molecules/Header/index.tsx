@@ -571,9 +571,9 @@ const Header = () => {
               disabled={headerState.isLoading || isButtonResendSMSDisabled}
               fullWidth
             >
-              {isButtonResendSMSDisabled
-                ? millisToMinutesAndSeconds(countdownSMS)
-                : 'Kirim Ulang SMS'}
+              {`Kirim Ulang ${
+                isButtonResendSMSDisabled ? millisToMinutesAndSeconds(countdownSMS) : ''
+              }`}
             </Button>
           )}
         </DialogActions>
