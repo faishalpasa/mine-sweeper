@@ -65,12 +65,13 @@ const Header = () => {
   const [isDialogFirstTimePinOpen, setIsDialogFirstTimePinOpen] = useState(false)
   const [isDialogPinOpen, setIsDialogPinOpen] = useState(false)
   const [isDialogChangePinOpen, setIsDialogChangePinOpen] = useState(false)
+  const [isDialogRegisterSuccessOpen, setIsDialogRegisterSuccessOpen] = useState(false)
   const [isMsisdnCheck, setIsMsisdnCheck] = useState(false)
   const [isMsisdnSubmitted, setIsMsisdnSubmitted] = useState(false)
   const [isPinSubmitted, setIsPinSubmitted] = useState(false)
   const [isRegister, setIsRegister] = useState(false)
   const [isTermChecked, setIsTermChecked] = useState(false)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [localErrorMessage, setLocalErrorMessage] = useState('')
   const [msisdn, setMsisdn] = useState('')
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
@@ -96,11 +97,12 @@ const Header = () => {
   } = headerState
 
   const isButtonResendSMSDisabled = countdownSMS > 0
+  const errorMessage = error.message || localErrorMessage
 
   const handleCloseAllDialog = () => {
-    // location.href = '/'
-    setErrorMessage('')
+    dispatch(authErrorReset())
     dispatch(appDialogLoginSet(false))
+    setLocalErrorMessage('')
     setIsDialogLoginOpen(false)
     setIsDialogRegisterOpen(false)
     setIsDialogFirstTimePinOpen(false)
@@ -116,18 +118,12 @@ const Header = () => {
     dispatch(appDialogLoginSet(true))
   }
 
-  const handleCloseDialogLogin = () => {
-    setErrorMessage('')
-    dispatch(appDialogLoginSet(false))
-  }
-
   const handleSubmitLogin = () => {
     if (msisdn) {
       dispatch(authLogin(msisdn))
       setIsMsisdnSubmitted(true)
-      setErrorMessage('')
     } else {
-      setErrorMessage('Silahkan masukan nomer HP anda.')
+      setLocalErrorMessage('Silahkan masukan nomer HP anda.')
     }
   }
 
@@ -135,12 +131,10 @@ const Header = () => {
     if (msisdn) {
       setIsMsisdnCheck(true)
       dispatch(authMsisdnCheck(msisdn))
-      setErrorMessage('')
     } else {
       setIsDialogRegisterOpen(true)
       setIsDialogLoginOpen(false)
       dispatch(authErrorReset())
-      setErrorMessage('')
     }
   }
 
@@ -150,7 +144,7 @@ const Header = () => {
     setIsTermChecked(false)
     setIsMsisdnCheck(false)
     dispatch(authErrorReset())
-    setErrorMessage('')
+    setLocalErrorMessage('')
   }
 
   const handleSubmitPreRegister = () => {
@@ -158,9 +152,8 @@ const Header = () => {
       dispatch(authPreRegister(msisdn))
       setIsMsisdnSubmitted(true)
       setIsRegister(true)
-      setErrorMessage('')
     } else {
-      setErrorMessage('Silahkan masukan nomer HP anda.')
+      setLocalErrorMessage('Silahkan masukan nomer HP anda.')
     }
   }
 
@@ -174,6 +167,7 @@ const Header = () => {
   }
 
   const handleSubmitRegister = () => {
+    setIsMsisdnSubmitted(false)
     dispatch(authRegister({ msisdn, pin: newPin }))
   }
 
@@ -213,6 +207,12 @@ const Header = () => {
     dispatch(navigationTabSelectedSet(3))
   }
 
+  const handleRegisterSuccess = () => {
+    localStorage.setItem('token', headerState.data.token)
+    setIsDialogChangePinOpen(false)
+    location.href = '/'
+  }
+
   useEffect(() => {
     setIsDialogLoginOpen(isLoginOpen)
   }, [isLoginOpen])
@@ -246,9 +246,10 @@ const Header = () => {
 
   useEffect(() => {
     if (isRegisterSuccess && headerState.data.token) {
-      localStorage.setItem('token', headerState.data.token)
+      setIsMsisdnSubmitted(false)
+      setIsDialogPinOpen(false)
       setIsDialogChangePinOpen(false)
-      location.href = '/'
+      setIsDialogRegisterSuccessOpen(true)
     }
   }, [isRegisterSuccess, headerState.data.token])
 
@@ -269,7 +270,7 @@ const Header = () => {
   }, [headerState.data, isMsisdnSubmitted])
 
   useEffect(() => {
-    if (headerState.data.token && isMsisdnSubmitted && !isPinReset) {
+    if (headerState.data.token && isPinSubmitted && !isPinReset) {
       setIsDialogPinOpen(false)
       localStorage.setItem('auth', '1')
       localStorage.setItem('token', headerState.data.token)
@@ -322,10 +323,6 @@ const Header = () => {
     }
   }, [isDialogFirstTimePinOpen, isDialogPinOpen, countdownSMS])
 
-  useEffect(() => {
-    setErrorMessage(error.message)
-  }, [error.message])
-
   return (
     <>
       <div className={classes.header}>
@@ -370,7 +367,6 @@ const Header = () => {
 
       <Dialog
         open={isDialogLoginOpen}
-        onClose={handleCloseDialogLogin}
         fullWidth
         maxWidth="xs"
         PaperProps={{ className: classes.dialogPaper }}
@@ -580,6 +576,29 @@ const Header = () => {
                 : 'Kirim Ulang SMS'}
             </Button>
           )}
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={isDialogRegisterSuccessOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
+          <Typography>Selamat anda mendapat gratis 5 koin!</Typography>
+        </DialogContent>
+        <DialogActions style={{ justifyContent: 'flex-end', padding: '0px 16px 16px' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleRegisterSuccess}
+            disabled={headerState.isLoading}
+            fullWidth
+          >
+            Main
+          </Button>
         </DialogActions>
       </Dialog>
 

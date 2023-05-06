@@ -477,34 +477,45 @@ const Home = () => {
         <CircularProgress />
       </Backdrop>
 
-      <Dialog open={isDialogBombOpen} fullWidth maxWidth="xs">
-        <DialogContent>
-          {isBombAnimateShow ? (
-            <div className={classes.bombAnimate}>
-              <img src="/images/bomb.gif" alt="bomb" />
-            </div>
-          ) : currentCoins > 0 ? (
-            <Typography>
-              Boom! Kamu membuka kotak berisi bom. Kamu masih memiliki <b>{currentCoins}</b> koin,
-              gunakan 1 untuk melanjutkan?
-            </Typography>
-          ) : (
-            <Typography>
-              Boom! Kamu membuka kotak berisi bom. Kamu memiliki <b>{currentCoins}</b> koin, beli
-              koin untuk melanjutkan?
-            </Typography>
-          )}
-        </DialogContent>
-        {!isBombAnimateShow && (
-          <DialogActions>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
-            >
-              Ok
-            </Button>
-          </DialogActions>
+      <Dialog
+        open={isDialogBombOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          className: isBombAnimateShow ? classes.dialogPaperBomb : classes.dialogPaper
+        }}
+      >
+        {isBombAnimateShow ? (
+          <div className={classes.bombAnimate}>
+            <img src="/images/bomb.gif" alt="bomb" />
+          </div>
+        ) : (
+          <>
+            <DialogContent className={classes.dialogContent}>
+              <img src="/images/explode.png" alt="bomb" className={classes.imageBombExplode} />
+              {currentCoins > 0 ? (
+                <Typography>
+                  Boom! Anda membuka kotak berisi bom. Anda masih memiliki <b>{currentCoins}</b>{' '}
+                  koin, gunakan 1 untuk melanjutkan?
+                </Typography>
+              ) : (
+                <Typography>
+                  Boom! Anda membuka kotak berisi bom. Anda memiliki <b>{currentCoins}</b> koin,
+                  beli koin untuk melanjutkan?
+                </Typography>
+              )}
+            </DialogContent>
+            <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={currentCoins > 0 ? handleClickPlayAgain : handleDialogPurchaseCoinOpen}
+                fullWidth
+              >
+                Ok
+              </Button>
+            </DialogActions>
+          </>
         )}
       </Dialog>
 

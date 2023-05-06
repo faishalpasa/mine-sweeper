@@ -9,6 +9,7 @@ import {
   TextField,
   InputAdornment
 } from '@material-ui/core'
+import { Close as CloseIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons'
 
 import { appPayOvo, appPayGopay } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
@@ -123,7 +124,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogSuccessOpen(true)
 
     if (selectedCoin && selectedPayment?.label === 'OVO') {
-      dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn }))
+      const ovoNumber = authData.msisdn.replace(/^0+/, '')
+      dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
     }
   }
 
@@ -142,6 +144,16 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     }
   }
 
+  const handleCloseDialogCoinPurchase = () => {
+    setIsDialogPaymentOpen(false)
+    setIsDialogPhoneOpen(false)
+    setSelectedCoinItem(0)
+    setSelectedPaymentItem(0)
+    if (isClosable && onClose) {
+      onClose()
+    }
+  }
+
   useEffect(() => {
     setIsDialogCoinOpen(open)
   }, [open])
@@ -155,9 +167,16 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   return (
     <>
-      <Dialog open={isDialogCoinOpen} onClose={handleCloseDialog} fullWidth maxWidth="xs">
-        <DialogContent>
-          <Typography>Pilih jumlah koin</Typography>
+      <Dialog
+        open={isDialogCoinOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
+          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
+          <Typography>Pilih jumlah koin:</Typography>
           <div className={classes.coinItems}>
             {coinItems.map((item) => (
               <div
@@ -174,20 +193,29 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
             ))}
           </div>
         </DialogContent>
-        <DialogActions>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           <Button
             variant="contained"
             color="primary"
             disabled={!selectedCoinItem}
             onClick={handleContinueToPayment}
+            fullWidth
           >
             Lanjutkan
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPaymentOpen} onClose={handleCancelPayement} fullWidth maxWidth="xs">
-        <DialogContent>
+      <Dialog
+        open={isDialogPaymentOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
+          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCancelPayement} />
+          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogCoinPurchase} />
           <Typography>Pilih metode pembayaran</Typography>
           <div className={classes.coinItems}>
             {paymentMethods.map((item) => (
@@ -204,41 +232,44 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
             ))}
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button color="primary" onClick={handleCancelPayement}>
-            Kembali
-          </Button>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           <Button
             variant="contained"
             color="primary"
             disabled={!selectedPaymentItem}
             onClick={handleContinueToPhone}
+            fullWidth
           >
             Lanjutkan
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogPhoneOpen} onClose={handleCancelPhoneNo} fullWidth maxWidth="xs">
-        <DialogContent>
+      <Dialog
+        open={isDialogPhoneOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
+          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCancelPhoneNo} />
+          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogCoinPurchase} />
           <Typography>
-            Silakan masukan nomor handphone kamu. Pastikan nomor kamu terdaftar di aplikasi&nbsp;
-            {selectedPayment?.label}
+            Silahkan masukan nomer HP anda. Pastikan nomer anda terdaftar di aplikasi&nbsp;
+            {selectedPayment?.label}:
           </Typography>
           <div className={classes.coinItems}>
             <TextField
               value={msisdn}
               variant="outlined"
               onChange={(e) => handleChangeMsisdn(e.target.value)}
-              InputProps={{ startAdornment: <InputAdornment position="start">+62</InputAdornment> }}
             />
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button color="primary" onClick={handleCancelPhoneNo}>
-            Kembali
-          </Button>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           <Button
+            fullWidth
             variant="contained"
             color="primary"
             disabled={!selectedPaymentItem || !msisdn}
@@ -249,21 +280,27 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogSuccessOpen}>
-        <DialogContent>
+      <Dialog
+        open={isDialogSuccessOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{ className: classes.dialogPaper }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
           {coinPurchaseState.isLoadinPay ? (
             <Typography>
-              Sedang memproses pembayaran, check aplikasi {selectedPayment?.label} mu.
+              Cek aplikasi {selectedPayment?.label} anda untuk melanjutkan pembayaran...
             </Typography>
           ) : (
             <Typography>
-              Pembayaran berhasil, {selectedCoin?.label} telah ditambahkan ke akun kamu.
+              Pembayaran berhasil, {selectedCoin?.label} koin telah ditambahkan ke akun anda.
             </Typography>
           )}
         </DialogContent>
         {!coinPurchaseState.isLoadinPay && (
-          <DialogActions>
-            <Button variant="contained" color="primary" onClick={handleSuccessPurchase}>
+          <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+            <Button variant="contained" color="primary" onClick={handleSuccessPurchase} fullWidth>
               Ok
             </Button>
           </DialogActions>

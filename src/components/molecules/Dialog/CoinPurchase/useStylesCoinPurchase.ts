@@ -44,6 +44,33 @@ const useStyles = makeStyles((theme) => {
     },
     coinIcon: {
       width: '25px'
+    },
+    dialogPaper: {
+      overflow: 'unset'
+    },
+    dialogContent: {
+      background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
+      paddingTop: '64px !important',
+      position: 'relative',
+      overflow: 'unset'
+    },
+    dialogCloseIcon: {
+      position: 'absolute',
+      top: '8px',
+      right: '8px'
+    },
+    dialogBackIcon: {
+      position: 'absolute',
+      top: '8px',
+      left: '8px'
+    },
+    imageCoins: {
+      position: 'absolute',
+      left: '50%',
+      top: '-100',
+      transform: 'translate(-50%, 0)',
+      width: '150px',
+      height: '150px'
     }
   }
 })

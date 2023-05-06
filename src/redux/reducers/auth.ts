@@ -139,6 +139,7 @@ export default createReducer(INITIAL_STATE, {
     state.isLoading = false
     state.data = action.payload
     state.isRegisterSuccess = true
+    state.isPreRegisterRequested = false
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_LOGIN_PIN]: (state, action) => {

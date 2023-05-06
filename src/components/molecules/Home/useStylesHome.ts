@@ -179,7 +179,15 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
     },
     bombAnimate: {
       textAlign: 'center',
-      width: '100%'
+      width: '100%',
+      position: 'relative',
+      '& img': {
+        width: '100%',
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+      }
     },
 
     periodBlocker: {
@@ -199,6 +207,36 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       background: theme.palette.common.white,
       padding: '16px',
       borderRadius: '8px'
+    },
+    dialogContent: {
+      background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
+      paddingTop: '64px !important',
+      position: 'relative',
+      overflow: 'unset'
+    },
+    imageBomb: {
+      position: 'absolute',
+      left: '50%',
+      top: '-100',
+      transform: 'translate(-50%, 0)',
+      width: '150px',
+      height: '150px'
+    },
+    imageBombExplode: {
+      position: 'absolute',
+      left: '50%',
+      top: '-140',
+      transform: 'translate(-50%, 0)',
+      width: '200px',
+      height: '200px'
+    },
+    dialogPaper: {
+      overflow: 'unset'
+    },
+    dialogPaperBomb: {
+      overflow: 'unset',
+      background: 'transparent',
+      boxShadow: 'none'
     }
   }
 })
