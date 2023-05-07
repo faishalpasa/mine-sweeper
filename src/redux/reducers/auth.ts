@@ -51,6 +51,9 @@ export interface AuthInitialState {
     token: string
   }
   isLoading: boolean
+  isLoadingLogin: boolean
+  isLoadingCheckMsisdn: boolean
+  isLoadingPreRegister: boolean
   isAuthenticated: boolean
   isPinChanged: boolean
   isPinReset: boolean
@@ -78,6 +81,9 @@ const INITIAL_STATE: AuthInitialState = {
     token: ''
   },
   isLoading: false,
+  isLoadingLogin: false,
+  isLoadingPreRegister: false,
+  isLoadingCheckMsisdn: false,
   isAuthenticated: false,
   isPinChanged: false,
   isPinReset: false,
@@ -93,26 +99,26 @@ const INITIAL_STATE: AuthInitialState = {
 
 export default createReducer(INITIAL_STATE, {
   [AUTH_LOGIN]: (state) => {
-    state.isLoading = true
+    state.isLoadingLogin = true
   },
   [AUTH_LOGIN_FAILURE]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingLogin = false
     state.error = action.payload
   },
   [AUTH_LOGIN_SUCCESS]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingLogin = false
     state.data = action.payload
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_PRE_REGISTER]: (state) => {
-    state.isLoading = true
+    state.isLoadingPreRegister = true
   },
   [AUTH_PRE_REGISTER_FAILURE]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingPreRegister = false
     state.error = action.payload
   },
   [AUTH_PRE_REGISTER_SUCCESS]: (state) => {
-    state.isLoading = false
+    state.isLoadingPreRegister = false
     state.isPreRegisterRequested = true
     state.error = { ...INITIAL_STATE.error }
   },
@@ -250,10 +256,10 @@ export default createReducer(INITIAL_STATE, {
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_MSISDN_CHECK]: (state) => {
-    state.isLoading = true
+    state.isLoadingCheckMsisdn = true
   },
   [AUTH_MSISDN_CHECK_SUCCESS]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingCheckMsisdn = false
     state.isEligibleToRegister = !action.payload
     state.error = {
       ...INITIAL_STATE.error,
@@ -261,7 +267,7 @@ export default createReducer(INITIAL_STATE, {
     }
   },
   [AUTH_MSISDN_CHECK_FAILURE]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingCheckMsisdn = false
     state.error = action.payload
   }
 })

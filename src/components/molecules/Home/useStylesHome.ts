@@ -237,6 +237,14 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       overflow: 'unset',
       background: 'transparent',
       boxShadow: 'none'
+    },
+    loadingBoard: {
+      background: '#fff',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center'
     }
   }
 })

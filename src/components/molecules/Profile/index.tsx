@@ -187,7 +187,7 @@ const Profile = () => {
           <>
             {!profileState.isPinChecked && (
               <div className={classes.formInput}>
-                <Typography>Masukan PIN lama kamu</Typography>
+                <Typography>Masukan PIN lama anda:</Typography>
                 <div className={classes.inputPin}>
                   <PinInput
                     length={4}
@@ -241,7 +241,7 @@ const Profile = () => {
 
       <Dialog fullWidth maxWidth="xs" open={isDialogLogoutOpen} onClose={handleCloseDialogLogout}>
         <DialogContent>
-          <Typography>Apa kamu yakin ingin keluar?</Typography>
+          <Typography>Apakah anda yakin ingin keluar?</Typography>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
           <Button color="primary" onClick={handleSubmitLogout} fullWidth>

@@ -7,7 +7,8 @@ import {
   DialogContent,
   Typography,
   TextField,
-  Checkbox
+  Checkbox,
+  CircularProgress
 } from '@material-ui/core'
 import {
   Timer as TimerIcon,
@@ -38,6 +39,9 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   data: auth.data,
   appData: app.data,
   isLoading: auth.isLoading,
+  isLoadingLogin: auth.isLoadingLogin,
+  isLoadingCheckMsisdn: auth.isLoadingCheckMsisdn,
+  isLoadingPreRegister: auth.isLoadingPreRegister,
   isAuthenticated: auth.isAuthenticated,
   isGameOver: app.isGameOver,
   isGameWin: app.isGameWin,
@@ -93,7 +97,9 @@ const Header = () => {
     isPreRegisterRequested,
     isFirstPinChecked,
     isRegisterSuccess,
-    isEligibleToRegister
+    isEligibleToRegister,
+    isLoadingLogin,
+    isLoadingCheckMsisdn
   } = headerState
 
   const isButtonResendSMSDisabled = countdownSMS > 0
@@ -389,11 +395,25 @@ const Header = () => {
           />
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          <Button variant="contained" color="primary" onClick={handleSubmitLogin} fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmitLogin}
+            fullWidth
+            disabled={isLoadingLogin}
+          >
             Masuk
+            {isLoadingLogin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
           </Button>
-          <Button variant="contained" color="primary" onClick={handleClickRegister} fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickRegister}
+            fullWidth
+            disabled={isLoadingCheckMsisdn}
+          >
             Daftar
+            {isLoadingCheckMsisdn && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
           </Button>
         </DialogActions>
       </Dialog>

@@ -82,8 +82,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   const handleChangeMsisdn = (value: string) => {
     const accept = /^[0-9\b]+$/
     if (value === '' || accept.test(value)) {
-      const newValue = value.replace(/^0+/, '')
-      setMsisdn(newValue)
+      setMsisdn(value)
     }
   }
 
@@ -140,7 +139,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   }
 
   const handleCloseDialog = () => {
-    if (isClosable && onClose) {
+    if (onClose) {
       onClose()
     }
   }
@@ -150,7 +149,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogPhoneOpen(false)
     setSelectedCoinItem(0)
     setSelectedPaymentItem(0)
-    if (isClosable && onClose) {
+    if (onClose) {
       onClose()
     }
   }
@@ -176,12 +175,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
-          {isClosable && (
-            <>
-              <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCloseDialog} />
-              <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
-            </>
-          )}
+          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCloseDialog} />
+          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
           <Typography>Pilih jumlah koin:</Typography>
           <div className={classes.coinItems}>
             {coinItems.map((item) => (

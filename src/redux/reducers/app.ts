@@ -66,6 +66,7 @@ export interface AppInitialState {
   isLoading: boolean
   isLoadingLog: boolean
   isLoadingPay: boolean
+  isLoadingBoard: boolean
   isGameOver: boolean
   isGameWin: boolean
   isPeriodActive: boolean
@@ -95,6 +96,7 @@ const INITIAL_STATE: AppInitialState = {
   isLoading: false,
   isLoadingLog: false,
   isLoadingPay: false,
+  isLoadingBoard: false,
   isGameOver: false,
   isGameWin: false,
   isPeriodActive: false,
@@ -107,15 +109,15 @@ export default createReducer(INITIAL_STATE, {
     state.theme = action.payload
   },
   [APP_BOARD_FETCH]: (state) => {
-    state.isLoading = true
+    state.isLoadingBoard = true
   },
   [APP_BOARD_FETCH_SUCCESS]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingBoard = false
     state.error = { ...INITIAL_STATE.error }
     state.board = action.payload
   },
   [APP_BOARD_FETCH_FAILURE]: (state, action) => {
-    state.isLoading = true
+    state.isLoadingBoard = false
     state.error = action.payload
   },
   [APP_BOARD_LOG_SAVE]: (state) => {

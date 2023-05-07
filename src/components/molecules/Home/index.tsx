@@ -53,6 +53,7 @@ const homeSelector = ({ app, auth }: RootState) => ({
   prizes: app.prizes,
   isToggleFlag: app.isToggleFlag,
   isLoading: app.isLoading,
+  isLoadingBoard: app.isLoadingBoard,
   isLoadingLog: app.isLoadingLog,
   isGameOver: app.isGameOver,
   isGameWin: app.isGameWin,
@@ -102,7 +103,7 @@ const Home = () => {
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
-  const { isAuthenticated, isPeriodActive, isDialogLoginOpen } = boardState
+  const { isAuthenticated, isPeriodActive, isDialogLoginOpen, isLoadingBoard } = boardState
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -139,6 +140,7 @@ const Home = () => {
   const handleDialogPurchaseCoinClose = () => {
     setIsDialogPurchaseCoinOpen(false)
     if (boardState.isGameOver) {
+      console.log('here')
       setIsDialogBombOpen(true)
     }
   }
@@ -376,6 +378,14 @@ const Home = () => {
     }
   }, [boardState.authData.is_game_over])
 
+  if (isLoadingBoard) {
+    return (
+      <div className={classes.loadingBoard}>
+        <CircularProgress />
+      </div>
+    )
+  }
+
   return (
     <>
       <div className={classes.boardContent}>
@@ -484,10 +494,11 @@ const Home = () => {
         fullWidth
         maxWidth="xs"
         PaperProps={{
-          className: isBombAnimateShow ? classes.dialogPaperBomb : classes.dialogPaper
+          className:
+            isBombAnimateShow && isGamePlayed ? classes.dialogPaperBomb : classes.dialogPaper
         }}
       >
-        {isBombAnimateShow ? (
+        {isBombAnimateShow && isGamePlayed ? (
           <div className={classes.bombAnimate}>
             <img src="/images/bomb.gif" alt="bomb" />
           </div>
