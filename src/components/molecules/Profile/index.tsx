@@ -239,7 +239,7 @@ const Profile = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={isDialogLogoutOpen} onClose={handleCloseDialogLogout}>
+      <Dialog fullWidth maxWidth="xs" open={isDialogLogoutOpen} onClose={handleCloseDialogLogout}>
         <DialogContent>
           <Typography>Apa kamu yakin ingin keluar?</Typography>
         </DialogContent>

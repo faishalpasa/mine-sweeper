@@ -135,6 +135,7 @@ const Header = () => {
       setIsDialogRegisterOpen(true)
       setIsDialogLoginOpen(false)
       dispatch(authErrorReset())
+      setLocalErrorMessage('')
     }
   }
 
@@ -388,22 +389,10 @@ const Header = () => {
           />
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmitLogin}
-            disabled={headerState.isLoading}
-            fullWidth
-          >
+          <Button variant="contained" color="primary" onClick={handleSubmitLogin} fullWidth>
             Masuk
           </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleClickRegister}
-            disabled={headerState.isLoading}
-            fullWidth
-          >
+          <Button variant="contained" color="primary" onClick={handleClickRegister} fullWidth>
             Daftar
           </Button>
         </DialogActions>

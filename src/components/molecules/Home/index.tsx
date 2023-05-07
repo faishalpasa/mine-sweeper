@@ -95,6 +95,7 @@ const Home = () => {
   const [isDialogPurchaseCoinOpen, setIsDialogPurchaseCoinOpen] = useState(false)
   const [isDialogPurchaseCoinClosable, setIsDialogPurchaseCoinClosable] = useState(false)
   const [isDialogWinOpen, setIsDialogWinOpen] = useState(false)
+  const [isGamePlayed, setIsGamePlayed] = useState(false)
   const [currentStep, setCurrentStep] = useState('')
   const [time, setTime] = useState(0)
 
@@ -143,6 +144,7 @@ const Home = () => {
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
+    setIsGamePlayed(true)
     const newCells = [...cells]
     const isBomb = newCells[position.y][position.x].isBomb
     const isRevealed = newCells[position.y][position.x].isRevealed
@@ -492,7 +494,12 @@ const Home = () => {
         ) : (
           <>
             <DialogContent className={classes.dialogContent}>
-              <img src="/images/explode.png" alt="bomb" className={classes.imageBombExplode} />
+              {currentCoins === 0 && !isGamePlayed ? (
+                <img src="/images/coins.png" alt="bomb" className={classes.imageBombExplode} />
+              ) : (
+                <img src="/images/explode.png" alt="bomb" className={classes.imageBombExplode} />
+              )}
+
               {currentCoins > 0 ? (
                 <Typography>
                   Boom! Anda membuka kotak berisi bom. Anda masih memiliki <b>{currentCoins}</b>{' '}
@@ -500,8 +507,17 @@ const Home = () => {
                 </Typography>
               ) : (
                 <Typography>
-                  Boom! Anda membuka kotak berisi bom. Anda memiliki <b>{currentCoins}</b> koin,
-                  beli koin untuk melanjutkan?
+                  {isGamePlayed ? (
+                    <>
+                      Boom! Anda membuka kotak berisi bom. Anda memiliki <b>{currentCoins}</b> koin,
+                      beli koin untuk melanjutkan?
+                    </>
+                  ) : (
+                    <>
+                      Koin yang anda miliki <b>{currentCoins}</b>. Beli koin untuk melanjutkan
+                      permainan?
+                    </>
+                  )}
                 </Typography>
               )}
             </DialogContent>
@@ -525,12 +541,22 @@ const Home = () => {
         isClosable={isDialogPurchaseCoinClosable}
       />
 
-      <Dialog open={isDialogWinOpen}>
-        <DialogContent>
-          <Typography>Hore! Kamu berhasil menyelesaikan level {currentLevel}.</Typography>
+      <Dialog
+        open={isDialogWinOpen}
+        fullWidth
+        maxWidth="xs"
+        PaperProps={{
+          className: isBombAnimateShow ? classes.dialogPaperBomb : classes.dialogPaper
+        }}
+      >
+        <DialogContent className={classes.dialogContent}>
+          <img src="/images/levelup.png" alt="bomb" className={classes.imageBomb} />
+          <Typography>
+            Selamat anda berhasil menyelesaikan level <b>{currentLevel}</b>!
+          </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button color="primary" variant="contained" onClick={handleClickNextLevel}>
+        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
+          <Button color="primary" variant="contained" onClick={handleClickNextLevel} fullWidth>
             Level berikutnya
           </Button>
         </DialogActions>

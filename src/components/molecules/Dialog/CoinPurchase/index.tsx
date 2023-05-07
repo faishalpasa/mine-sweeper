@@ -49,6 +49,7 @@ const paymentMethods = [
 const coinPurchaseSelector = ({ app, auth }: RootState) => ({
   coins: app.data.coins,
   isLoadinPay: app.isLoadingPay,
+  isGameOver: app.isGameOver,
   authData: auth.data
 })
 
@@ -175,7 +176,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
-          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
+          {isClosable && (
+            <>
+              <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCloseDialog} />
+              <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
+            </>
+          )}
           <Typography>Pilih jumlah koin:</Typography>
           <div className={classes.coinItems}>
             {coinItems.map((item) => (
@@ -216,7 +222,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
           <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
           <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCancelPayement} />
           <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogCoinPurchase} />
-          <Typography>Pilih metode pembayaran</Typography>
+          <Typography>Pilih metode pembayaran:</Typography>
           <div className={classes.coinItems}>
             {paymentMethods.map((item) => (
               <div
@@ -264,6 +270,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
               value={msisdn}
               variant="outlined"
               onChange={(e) => handleChangeMsisdn(e.target.value)}
+              placeholder="081234567890"
             />
           </div>
         </DialogContent>
