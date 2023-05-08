@@ -183,6 +183,7 @@ const Header = () => {
     setIsDialogLoginOpen(true)
     setIsDialogRegisterOpen(false)
     setIsDialogPinOpen(false)
+    dispatch(authErrorReset())
   }
 
   const handleSubmitPin = () => {
