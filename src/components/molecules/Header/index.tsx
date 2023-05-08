@@ -115,6 +115,7 @@ const Header = () => {
     setIsDialogLoginOpen(false)
     setIsDialogPinOpen(false)
     setIsDialogChangePinOpen(false)
+    setIsMsisdnCheck(false)
     setPin('')
     setNewPin('')
     setMsisdn('')
