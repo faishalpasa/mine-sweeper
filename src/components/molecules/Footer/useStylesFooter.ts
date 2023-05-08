@@ -10,10 +10,10 @@ const useStyles = makeStyles((theme) => {
       background: '#ffffff',
       boxShadow: theme.shadows[4],
       maxWidth: '425px',
-      zIndex: 999,
-      '@media screen and (max-height: 400px)': {
-        position: 'static'
-      }
+      zIndex: 999
+      // '@media screen and (max-height: 400px)': {
+      //   position: 'static'
+      // }
     },
     footerItem: {
       flex: '1',

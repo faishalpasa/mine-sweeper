@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Typography } from '@material-ui/core'
 import {
   Home as HomeIcon,
@@ -9,6 +9,7 @@ import {
 } from '@material-ui/icons'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
+import useWindowSize from 'hooks/useWindowSize'
 import { navigationTabSelectedSet } from 'redux/reducers/navigationTab'
 import type { RootState } from 'redux/rootReducer'
 
@@ -24,6 +25,8 @@ const Footer = () => {
   const dispatch = useDispatch()
   const footerState = useSelector(footerSelector, shallowEqual)
   const classes = useStyles()
+  const windowSize = useWindowSize()
+  const [windowHeight, setWindowHeight] = useState(0)
 
   const { selectedTab, isAuthenticated } = footerState
 
@@ -31,8 +34,14 @@ const Footer = () => {
     dispatch(navigationTabSelectedSet(position))
   }
 
+  useEffect(() => {
+    setWindowHeight(windowSize.height)
+  }, [])
+
+  const isNumpadShow = windowSize.height < windowHeight
+
   return (
-    <div className={classes.footer}>
+    <div className={classes.footer} style={{ position: isNumpadShow ? 'static' : 'fixed' }}>
       <Button
         className={classes.footerItem}
         color={selectedTab === 0 ? 'primary' : 'default'}
