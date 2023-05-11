@@ -45,7 +45,8 @@ import {
   appPayGopayCheck,
   appPayGopayCheckFailure,
   appPayGopayCheckSuccess,
-  appGamePeriodSet
+  appGamePeriodSet,
+  appGopayActionsSet
 } from 'redux/reducers/app'
 
 import {
@@ -313,16 +314,16 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
         mergeMap(({ response }: any) => {
           const { data } = response
           const [actionQRCode, actionDeeplink] = data.actions
-          console.log(data)
           if (actionDeeplink?.url && isMobile) {
             window.open(actionDeeplink.url)
           }
-          if (actionQRCode?.url && isDesktop) {
-            window.open(actionQRCode.url)
-          }
           fetchCountGopayCheck = 1
 
-          return of(appPayGopaySuccess(), appPayGopayCheck(data.transaction_id))
+          return of(
+            appPayGopaySuccess(),
+            appPayGopayCheck(data.transaction_id),
+            appGopayActionsSet([actionQRCode, actionDeeplink])
+          )
         }),
         catchError((err) => {
           const error = {

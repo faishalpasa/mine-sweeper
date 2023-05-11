@@ -56,7 +56,8 @@ const coinPurchaseSelector = ({ app, auth }: RootState) => ({
   isLoadingPay: app.isLoadingPay,
   isGameOver: app.isGameOver,
   authData: auth.data,
-  error: app.error
+  error: app.error,
+  gopayActions: app.gopayActions
 })
 
 interface CoinPurchaseProps {
@@ -81,7 +82,10 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   const selectedCoin = coinItems.find((item) => item.id === selectedCoinItem)
   const selectedPayment = paymentMethods.find((item) => item.id === selectedPaymentItem)
-  const { authData, error, isLoadingPay } = coinPurchaseState
+  const { authData, error, isLoadingPay, gopayActions } = coinPurchaseState
+  const [actionQRCode] = gopayActions
+
+  console.log(actionQRCode)
 
   const timerPayment = selectedPayment?.label === 'OVO' ? TIMER_PAYMENT_OVO : TIMER_PAYMENT_GOPAY
 
@@ -386,6 +390,17 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
                   ? handleWordingPayment(selectedPayment)
                   : 'Pembayaran anda gagal.'}
               </Typography>
+
+              {isDesktop && actionQRCode && (
+                <Box width="100%" marginTop="16px" display="flex" justifyContent="center">
+                  <img src={actionQRCode.url} alt="qrcode" width="300px" />
+                  {/* <img
+                    src="https://api.midtrans.com/v2/gopay/c8ce92c4-99e5-4d5c-b725-2b5086cb0dfc/qr-code"
+                    alt="qrcode"
+                    width="300px"
+                  /> */}
+                </Box>
+              )}
 
               <Box marginTop="16px">
                 <Typography>Selesaikan pembayaran dalam waktu:</Typography>
