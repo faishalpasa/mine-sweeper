@@ -347,7 +347,6 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          console.log({ fetchCountGopayCheck })
           if (data.transaction_status === 'pending' && fetchCountGopayCheck < 30) {
             fetchCountGopayCheck += 1
             return of(appPayGopayCheck(data.transaction_id))
