@@ -1,5 +1,5 @@
 import { of } from 'rxjs'
-import { catchError, mergeMap, debounceTime } from 'rxjs/operators'
+import { catchError, mergeMap, debounceTime, switchMap } from 'rxjs/operators'
 import { ofType } from 'redux-observable'
 
 import type { Epic } from 'redux-observable'
@@ -259,7 +259,7 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
   action$.pipe(
     ofType(APP_PAY_OVO_CHECK),
     debounceTime(1000),
-    mergeMap((action) => {
+    switchMap((action) => {
       const trxId = localStorage.getItem('trx_id')
       return api({
         endpoint: PAY_OVO_CHECK_GET,
@@ -333,7 +333,7 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
   action$.pipe(
     ofType(APP_PAY_GOPAY_CHECK),
     debounceTime(2000),
-    mergeMap((action) => {
+    switchMap((action) => {
       const trxId = localStorage.getItem('trx_id')
       return api({
         endpoint: PAY_GOPAY_CHECK_GET,
