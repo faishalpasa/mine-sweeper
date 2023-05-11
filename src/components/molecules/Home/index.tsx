@@ -349,10 +349,10 @@ const Home = () => {
   }, [cells, boardState.board])
 
   useEffect(() => {
-    if (boardState.isGameOver && !!currentCoins) {
+    if (boardState.isGameOver && !!currentCoins && !isDialogPurchaseCoinOpen) {
       setTimeout(() => handleDialogBombOpen(), 1000)
     }
-  }, [boardState.isGameOver, currentCoins])
+  }, [boardState.isGameOver, currentCoins, isDialogPurchaseCoinOpen])
 
   useEffect(() => {
     if (boardState.isGameOver && isGamePlayed) {
