@@ -130,6 +130,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       } else {
         setIsDialogPaymentOpen(false)
         setIsDialogSuccessOpen(true)
+        setCountdownPayment(TIMER_PAYMENT_GOPAY)
         setIsCountdownPaymentStart(true)
         const gopayNumber = authData.msisdn.replace(/^0+/, '')
         dispatch(appPayGopay({ amount: selectedCoin?.amount, msisdn: gopayNumber }))
@@ -141,6 +142,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogPhoneOpen(false)
     setIsDialogSuccessOpen(true)
     if (selectedCoin && selectedPayment?.label === 'OVO') {
+      setCountdownPayment(TIMER_PAYMENT_OVO)
       setIsCountdownPaymentStart(true)
       const ovoNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
@@ -227,6 +229,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       clearInterval(intervalPayment)
     }
   }, [countdownPayment, isCountdownPaymentStart, isLoadingPay])
+
+  console.log({ countdownPayment, timerPayment })
 
   return (
     <>
