@@ -394,11 +394,6 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
               {isDesktop && actionQRCode && (
                 <Box width="100%" marginTop="16px" display="flex" justifyContent="center">
                   <img src={actionQRCode.url} alt="qrcode" width="300px" />
-                  {/* <img
-                    src="https://api.midtrans.com/v2/gopay/c8ce92c4-99e5-4d5c-b725-2b5086cb0dfc/qr-code"
-                    alt="qrcode"
-                    width="300px"
-                  /> */}
                 </Box>
               )}
 
