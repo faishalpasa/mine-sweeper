@@ -92,7 +92,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   const handleWordingPayment = (payment: typeof selectedPayment) => {
     if (payment?.label === 'GoPay') {
       if (isDesktop) {
-        return `Scan kode QR menggunakan aplikasi gojek di HP anda untuk melanjutkan pembayaran dan pastikan saldo anda cukup...`
+        return `Scan kode QR menggunakan aplikasi Gojek di HP anda untuk melanjutkan pembayaran dan pastikan saldo anda cukup...`
       } else if (isMobile) {
         return `Menunggu pembayaran anda, pastikan saldo anda cukup...`
       } else {
