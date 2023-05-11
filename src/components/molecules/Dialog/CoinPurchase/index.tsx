@@ -47,8 +47,7 @@ const paymentMethods = [
   }
 ]
 
-const TIMER_PAYMENT_GOPAY = 60000
-const TIMER_PAYMENT_OVO = 90000
+const TIMER_PAYMENT = 60000
 
 const coinPurchaseSelector = ({ app, auth }: RootState) => ({
   coins: app.data.coins,
@@ -76,13 +75,11 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   const [isDialogSuccessOpen, setIsDialogSuccessOpen] = useState(false)
   const [isCountdownPaymentStart, setIsCountdownPaymentStart] = useState(false)
   const [msisdn, setMsisdn] = useState('')
-  const [countdownPayment, setCountdownPayment] = useState(TIMER_PAYMENT_GOPAY)
+  const [countdownPayment, setCountdownPayment] = useState(TIMER_PAYMENT)
 
   const selectedCoin = coinItems.find((item) => item.id === selectedCoinItem)
   const selectedPayment = paymentMethods.find((item) => item.id === selectedPaymentItem)
   const { authData, error, isLoadingPay } = coinPurchaseState
-
-  const timerPayment = selectedPayment?.label === 'OVO' ? TIMER_PAYMENT_OVO : TIMER_PAYMENT_GOPAY
 
   const handleWordingPayment = (payment: typeof selectedPayment) => {
     if (payment?.label === 'GoPay') {
@@ -130,7 +127,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       } else {
         setIsDialogPaymentOpen(false)
         setIsDialogSuccessOpen(true)
-        setCountdownPayment(TIMER_PAYMENT_GOPAY)
+        setCountdownPayment(TIMER_PAYMENT)
         setIsCountdownPaymentStart(true)
         const gopayNumber = authData.msisdn.replace(/^0+/, '')
         dispatch(appPayGopay({ amount: selectedCoin?.amount, msisdn: gopayNumber }))
@@ -142,7 +139,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogPhoneOpen(false)
     setIsDialogSuccessOpen(true)
     if (selectedCoin && selectedPayment?.label === 'OVO') {
-      setCountdownPayment(TIMER_PAYMENT_OVO)
+      setCountdownPayment(TIMER_PAYMENT)
       setIsCountdownPaymentStart(true)
       const ovoNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
@@ -151,13 +148,13 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   const handleResendPayment = () => {
     if (selectedCoin && selectedPayment?.label === 'OVO') {
-      setCountdownPayment(TIMER_PAYMENT_OVO)
+      setCountdownPayment(TIMER_PAYMENT)
       setIsCountdownPaymentStart(true)
       const ovoNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appErrorReset())
       dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
     } else if (selectedCoin && selectedPayment?.label === 'GoPay') {
-      setCountdownPayment(TIMER_PAYMENT_GOPAY)
+      setCountdownPayment(TIMER_PAYMENT)
       setIsCountdownPaymentStart(true)
       const gopayNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appErrorReset())
@@ -168,7 +165,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
   const handleBackToPaymentMethod = () => {
     dispatch(appErrorReset())
     setIsCountdownPaymentStart(false)
-    setCountdownPayment(TIMER_PAYMENT_GOPAY)
+    setCountdownPayment(TIMER_PAYMENT)
     setIsDialogSuccessOpen(false)
     setIsDialogPaymentOpen(true)
     setSelectedPaymentItem(0)
@@ -179,7 +176,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setSelectedCoinItem(0)
     setSelectedPaymentItem(0)
     setIsCountdownPaymentStart(false)
-    setCountdownPayment(TIMER_PAYMENT_GOPAY)
+    setCountdownPayment(TIMER_PAYMENT)
     if (onClose) {
       onClose()
     }
@@ -197,7 +194,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     setIsDialogPhoneOpen(false)
     setIsDialogSuccessOpen(false)
     setIsCountdownPaymentStart(false)
-    setCountdownPayment(TIMER_PAYMENT_GOPAY)
+    setCountdownPayment(TIMER_PAYMENT)
     setSelectedCoinItem(0)
     setSelectedPaymentItem(0)
     if (onClose) {
@@ -380,15 +377,17 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
                   : 'Pembayaran anda gagal.'}
               </Typography>
 
-              <Box marginTop="16px">
-                <Typography>Selesaikan pembayaran dalam waktu:</Typography>
-              </Box>
+              {isCountdownPaymentStart && (
+                <Box marginTop="16px">
+                  <Typography>Selesaikan pembayaran dalam waktu:</Typography>
+                </Box>
+              )}
               <Box marginTop="16px" marginBottom="16px" display="flex" justifyContent="center">
                 {isCountdownPaymentStart ? (
                   <Box position="relative" display="inline-flex">
                     <CircularProgress
                       variant="determinate"
-                      value={(countdownPayment / timerPayment) * 100}
+                      value={(countdownPayment / TIMER_PAYMENT) * 100}
                       size={50}
                       thickness={5}
                     />
