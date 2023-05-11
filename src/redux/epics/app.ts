@@ -1,6 +1,7 @@
 import { of } from 'rxjs'
 import { catchError, mergeMap, debounceTime, switchMap } from 'rxjs/operators'
 import { ofType } from 'redux-observable'
+import { isMobile, isDesktop } from 'react-device-detect'
 
 import type { Epic } from 'redux-observable'
 import type { EpicDependencies } from 'redux/store'
@@ -311,9 +312,13 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          const action = data.actions[1]
-          if (action?.url) {
-            window.open(action.url)
+          const [actionQRCode, actionDeeplink] = data.actions
+          console.log(data)
+          if (actionDeeplink?.url && isMobile) {
+            window.open(actionDeeplink.url)
+          }
+          if (actionQRCode?.url && isDesktop) {
+            window.open(actionQRCode.url)
           }
           fetchCountGopayCheck = 1
 
