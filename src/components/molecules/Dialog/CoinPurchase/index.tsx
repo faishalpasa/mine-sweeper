@@ -13,7 +13,7 @@ import {
 import { Close as CloseIcon, ArrowBack as ArrowBackIcon } from '@material-ui/icons'
 import { isMobile, isDesktop } from 'react-device-detect'
 
-import { appPayOvo, appPayGopay, appErrorReset } from 'redux/reducers/app'
+import { appPayOvo, appPayGopay, appErrorReset, appCheckingPaymentSet } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesCoinPurchase'
@@ -57,7 +57,8 @@ const coinPurchaseSelector = ({ app, auth }: RootState) => ({
   isGameOver: app.isGameOver,
   authData: auth.data,
   error: app.error,
-  gopayActions: app.gopayActions
+  gopayActions: app.gopayActions,
+  isCheckingPayment: app.isCheckingPayment
 })
 
 interface CoinPurchaseProps {
@@ -82,10 +83,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   const selectedCoin = coinItems.find((item) => item.id === selectedCoinItem)
   const selectedPayment = paymentMethods.find((item) => item.id === selectedPaymentItem)
-  const { authData, error, isLoadingPay, gopayActions } = coinPurchaseState
+  const { authData, error, isLoadingPay, gopayActions, isCheckingPayment } = coinPurchaseState
   const [actionQRCode] = gopayActions
-
-  console.log(actionQRCode)
 
   const timerPayment = selectedPayment?.label === 'OVO' ? TIMER_PAYMENT_OVO : TIMER_PAYMENT_GOPAY
 
@@ -143,6 +142,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
         setIsDialogSuccessOpen(true)
         setCountdownPayment(TIMER_PAYMENT_GOPAY)
         setIsCountdownPaymentStart(true)
+        dispatch(appCheckingPaymentSet(true))
         const gopayNumber = authData.msisdn.replace(/^0+/, '')
         dispatch(appPayGopay({ amount: selectedCoin?.amount, msisdn: gopayNumber }))
       }
@@ -155,6 +155,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     if (selectedCoin && selectedPayment?.label === 'OVO') {
       setCountdownPayment(TIMER_PAYMENT_OVO)
       setIsCountdownPaymentStart(true)
+      dispatch(appCheckingPaymentSet(true))
       const ovoNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
     }
@@ -164,12 +165,14 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     if (selectedCoin && selectedPayment?.label === 'OVO') {
       setCountdownPayment(TIMER_PAYMENT_OVO)
       setIsCountdownPaymentStart(true)
+      dispatch(appCheckingPaymentSet(true))
       const ovoNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appErrorReset())
       dispatch(appPayOvo({ amount: selectedCoin?.amount, msisdn: ovoNumber }))
     } else if (selectedCoin && selectedPayment?.label === 'GoPay') {
       setCountdownPayment(TIMER_PAYMENT_GOPAY)
       setIsCountdownPaymentStart(true)
+      dispatch(appCheckingPaymentSet(true))
       const gopayNumber = authData.msisdn.replace(/^0+/, '')
       dispatch(appErrorReset())
       dispatch(appPayGopay({ amount: selectedCoin?.amount, msisdn: gopayNumber }))
@@ -236,6 +239,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
       return () => clearInterval(intervalPayment)
     } else {
+      dispatch(appCheckingPaymentSet(false))
       setIsCountdownPaymentStart(false)
       clearInterval(intervalPayment)
     }
@@ -386,12 +390,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
           ) : (
             <>
               <Typography>
-                {countdownPayment > 0
+                {countdownPayment
                   ? handleWordingPayment(selectedPayment)
                   : 'Pembayaran anda gagal.'}
               </Typography>
 
-              {isDesktop && actionQRCode && (
+              {isDesktop && actionQRCode && !!countdownPayment && (
                 <Box width="100%" marginTop="16px" display="flex" justifyContent="center">
                   <img
                     src={actionQRCode.url}
@@ -402,9 +406,11 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
                 </Box>
               )}
 
-              <Box marginTop="16px">
-                <Typography>Selesaikan pembayaran dalam waktu:</Typography>
-              </Box>
+              {!!countdownPayment && (
+                <Box marginTop="16px">
+                  <Typography>Selesaikan pembayaran dalam waktu:</Typography>
+                </Box>
+              )}
               <Box marginTop="16px" marginBottom="16px" display="flex" justifyContent="center">
                 {isCountdownPaymentStart ? (
                   <Box position="relative" display="inline-flex">

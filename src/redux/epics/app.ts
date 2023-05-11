@@ -229,7 +229,6 @@ export const appContinuePlayEpic: Epic = (action$, _, { api }: EpicDependencies)
     )
   )
 
-let fetchCountOvoCheck = 0
 export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_OVO),
@@ -244,7 +243,6 @@ export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          fetchCountOvoCheck = 1
           return of(appPayOvoSuccess(), appPayOvoCheck(data.id))
         }),
         catchError((err) => {
@@ -257,7 +255,7 @@ export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     })
   )
 
-export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+export const appPayOvoCheckEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_OVO_CHECK),
     debounceTime(1000),
@@ -274,10 +272,9 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
         }
       }).pipe(
         mergeMap(({ response }: any) => {
+          const { isCheckingPayment } = state$.value.app
           const { data } = response
-
-          if (data.status === 'PENDING' && fetchCountOvoCheck < 30) {
-            fetchCountOvoCheck += 1
+          if (data.status === 'PENDING' && isCheckingPayment) {
             return of(appPayOvoCheck(data.id))
           } else if (data.status === 'SUCCEEDED') {
             return of(appPayOvoCheckSuccess(), appDataFetch())
@@ -298,7 +295,6 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
     })
   )
 
-let fetchCountGopayCheck = 0
 export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_GOPAY),
@@ -317,7 +313,6 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           if (actionDeeplink?.url && isMobile) {
             window.open(actionDeeplink.url)
           }
-          fetchCountGopayCheck = 1
 
           return of(
             appPayGopaySuccess(),
@@ -335,7 +330,7 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     })
   )
 
-export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+export const appPayGopayCheckEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_GOPAY_CHECK),
     debounceTime(2000),
@@ -352,9 +347,9 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
         }
       }).pipe(
         mergeMap(({ response }: any) => {
+          const { isCheckingPayment } = state$.value.app
           const { data } = response
-          if (data.transaction_status === 'pending' && fetchCountGopayCheck < 30) {
-            fetchCountGopayCheck += 1
+          if (data.transaction_status === 'pending' && isCheckingPayment) {
             return of(appPayGopayCheck(data.transaction_id))
           } else if (data.transaction_status === 'settlement') {
             return of(appPayGopayCheckSuccess(), appDataFetch())
