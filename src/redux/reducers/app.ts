@@ -38,6 +38,7 @@ export const APP_PAY_GOPAY_CHECK = 'app/PAY_GOPAY_CHECK'
 export const APP_PAY_GOPAY_CHECK_SUCCESS = 'app/PAY_GOPAY_CHECK_SUCCESS'
 export const APP_PAY_GOPAY_CHECK_FAILURE = 'app/PAY_GOPAY_CHECK_FAILURE'
 export const APP_DIALOG_LOGIN_SET = 'app/DIALOG_LOGIN_SET'
+export const APP_ERROR_RESET = 'app/ERROR_RESET'
 
 export interface AppInitialState {
   theme: 'dark' | 'light'
@@ -205,7 +206,7 @@ export default createReducer(INITIAL_STATE, {
     state.isLoadingPay = false
   },
   [APP_PAY_OVO_CHECK_FAILURE]: (state, action) => {
-    state.isLoadingPay = true
+    state.isLoadingPay = false
     state.error = action.payload
   },
   [APP_PAY_GOPAY]: (state) => {
@@ -222,11 +223,14 @@ export default createReducer(INITIAL_STATE, {
     state.isLoadingPay = false
   },
   [APP_PAY_GOPAY_CHECK_FAILURE]: (state, action) => {
-    state.isLoadingPay = true
+    state.isLoadingPay = false
     state.error = action.payload
   },
   [APP_DIALOG_LOGIN_SET]: (state, action) => {
     state.isDialogLoginOpen = action.payload
+  },
+  [APP_ERROR_RESET]: (state) => {
+    state.error = { ...INITIAL_STATE.error }
   }
 })
 
@@ -414,4 +418,8 @@ export const appPayGopayCheckFailure = (payload: AppInitialState['error']) => ({
 export const appDialogLoginSet = (payload: AppInitialState['isDialogLoginOpen']) => ({
   type: APP_DIALOG_LOGIN_SET,
   payload
+})
+
+export const appErrorReset = () => ({
+  type: APP_ERROR_RESET
 })

@@ -227,6 +227,7 @@ export const appContinuePlayEpic: Epic = (action$, _, { api }: EpicDependencies)
     )
   )
 
+let fetchCountOvoCheck = 0
 export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_OVO),
@@ -241,6 +242,7 @@ export const appPayOvoEpic: Epic = (action$, _, { api }: EpicDependencies) =>
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
+          fetchCountOvoCheck = 1
           return of(appPayOvoSuccess(), appPayOvoCheck(data.id))
         }),
         catchError((err) => {
@@ -271,10 +273,17 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          if (data.status === 'PENDING') {
+
+          if (data.status === 'PENDING' && fetchCountOvoCheck < 30) {
+            fetchCountOvoCheck += 1
             return of(appPayOvoCheck(data.id))
-          } else {
+          } else if (data.status === 'SUCCEEDED') {
             return of(appPayOvoCheckSuccess(), appDataFetch())
+          } else {
+            const error = {
+              message: 'Pembayaran anda gagal.'
+            }
+            return of(appPayOvoCheckFailure(error))
           }
         }),
         catchError((err) => {
@@ -287,6 +296,7 @@ export const appPayOvoCheckEpic: Epic = (action$, _, { api }: EpicDependencies) 
     })
   )
 
+let fetchCountGopayCheck = 0
 export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_GOPAY),
@@ -305,6 +315,7 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           if (action?.url) {
             window.open(action.url)
           }
+          fetchCountGopayCheck = 1
 
           return of(appPayGopaySuccess(), appPayGopayCheck(data.transaction_id))
         }),
@@ -321,7 +332,7 @@ export const appPayGopayEpic: Epic = (action$, _, { api }: EpicDependencies) =>
 export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(APP_PAY_GOPAY_CHECK),
-    debounceTime(1000),
+    debounceTime(2000),
     mergeMap((action) => {
       const trxId = localStorage.getItem('trx_id')
       return api({
@@ -336,10 +347,17 @@ export const appPayGopayCheckEpic: Epic = (action$, _, { api }: EpicDependencies
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          if (data.transaction_status === 'pending') {
+          console.log({ fetchCountGopayCheck })
+          if (data.transaction_status === 'pending' && fetchCountGopayCheck < 30) {
+            fetchCountGopayCheck += 1
             return of(appPayGopayCheck(data.transaction_id))
-          } else {
+          } else if (data.transaction_status === 'settlement') {
             return of(appPayGopayCheckSuccess(), appDataFetch())
+          } else {
+            const error = {
+              message: 'Pembayaran anda gagal.'
+            }
+            return of(appPayGopayCheckFailure(error))
           }
         }),
         catchError((err) => {

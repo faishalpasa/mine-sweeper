@@ -145,6 +145,13 @@ const Home = () => {
     }
   }
 
+  const handleCloseDialogBomb = () => {
+    setIsDialogBombOpen(false)
+    if (currentCoins === 0) {
+      setIsGamePlayed(false)
+    }
+  }
+
   const handleClickCell = (position: { x: number; y: number }) => {
     if (!isGameOver && isPeriodActive) {
       setIsGamePlayed(true)
@@ -381,13 +388,6 @@ const Home = () => {
     }
   }, [currentStep, temporaryPoints])
 
-  // useEffect(() => {
-  //   const isGameOver = boardState.authData.is_game_over && +boardState.authData.is_game_over
-  //   if (isGameOver && isGamePlayed) {
-  //     dispatch(appGameOverSet(true))
-  //   }
-  // }, [boardState.authData.is_game_over, isGamePlayed])
-
   if (isLoadingBoard) {
     return (
       <div className={classes.loadingBoard}>
@@ -515,11 +515,8 @@ const Home = () => {
         ) : (
           <>
             <DialogContent className={classes.dialogContent}>
-              {currentCoins === 0 && !isGamePlayed && (
-                <CloseIcon
-                  className={classes.dialogCloseIcon}
-                  onClick={() => setIsDialogBombOpen(false)}
-                />
+              {currentCoins === 0 && (
+                <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogBomb} />
               )}
               {currentCoins === 0 && !isGamePlayed ? (
                 <img src="/images/coins.png" alt="bomb" className={classes.imageBombExplode} />
