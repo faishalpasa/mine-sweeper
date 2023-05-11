@@ -230,8 +230,6 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     }
   }, [countdownPayment, isCountdownPaymentStart, isLoadingPay])
 
-  console.log({ countdownPayment, timerPayment })
-
   return (
     <>
       <Dialog
