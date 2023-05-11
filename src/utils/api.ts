@@ -48,10 +48,10 @@ const api = (options: Options) => {
   return ajax({
     method,
     headers: {
-      ...headers,
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
-      'x-token': token
+      'x-token': token,
+      ...headers
     },
     url,
     body

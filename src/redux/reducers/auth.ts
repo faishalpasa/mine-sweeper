@@ -36,6 +36,7 @@ export const AUTH_ERROR_RESET = 'auth/ERROR_RESET'
 export const AUTH_MSISDN_CHECK = 'auth/MSISDN_CHECK'
 export const AUTH_MSISDN_CHECK_SUCCESS = 'auth/MSISDN_CHECK_SUCCESS'
 export const AUTH_MSISDN_CHECK_FAILURE = 'auth/MSISDN_CHECK_FAILURE'
+export const AUTH_LOGIN_WITH_RANDOM_PIN_SET = 'auth/LOGIN_WITH_RANDOM_PIN_SET'
 
 export interface AuthInitialState {
   data: {
@@ -54,9 +55,11 @@ export interface AuthInitialState {
   isLoadingLogin: boolean
   isLoadingCheckMsisdn: boolean
   isLoadingPreRegister: boolean
+  isLoadingResetPin: boolean
   isAuthenticated: boolean
   isPinChanged: boolean
   isPinReset: boolean
+  isLoginWithRandomPin: boolean
   isPinChecked: boolean
   isPreRegisterRequested: boolean
   isFirstPinChecked: boolean
@@ -84,6 +87,8 @@ const INITIAL_STATE: AuthInitialState = {
   isLoadingLogin: false,
   isLoadingPreRegister: false,
   isLoadingCheckMsisdn: false,
+  isLoadingResetPin: false,
+  isLoginWithRandomPin: false,
   isAuthenticated: false,
   isPinChanged: false,
   isPinReset: false,
@@ -170,14 +175,14 @@ export default createReducer(INITIAL_STATE, {
     state.error = { ...INITIAL_STATE.error }
   },
   [AUTH_RESET_PIN]: (state) => {
-    state.isLoading = true
+    state.isLoadingResetPin = true
   },
   [AUTH_RESET_PIN_FAILURE]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingResetPin = false
     state.error = action.payload
   },
   [AUTH_RESET_PIN_SUCCESS]: (state, action) => {
-    state.isLoading = false
+    state.isLoadingResetPin = false
     state.data = {
       ...state.data,
       token: action.payload
@@ -269,6 +274,9 @@ export default createReducer(INITIAL_STATE, {
   [AUTH_MSISDN_CHECK_FAILURE]: (state, action) => {
     state.isLoadingCheckMsisdn = false
     state.error = action.payload
+  },
+  [AUTH_LOGIN_WITH_RANDOM_PIN_SET]: (state, action) => {
+    state.isLoginWithRandomPin = action.payload
   }
 })
 
@@ -444,4 +452,9 @@ export const authMsisdnCheckSuccess = (id: number) => ({
 
 export const authMsisdnCheckFailure = () => ({
   type: AUTH_MSISDN_CHECK_FAILURE
+})
+
+export const authLoginWithRandomPinSet = (payload: AuthInitialState['isLoginWithRandomPin']) => ({
+  type: AUTH_LOGIN_WITH_RANDOM_PIN_SET,
+  payload
 })

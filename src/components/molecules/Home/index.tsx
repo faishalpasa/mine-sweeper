@@ -10,7 +10,7 @@ import {
   DialogActions,
   IconButton
 } from '@material-ui/core'
-import { AddBox as AddIcon } from '@material-ui/icons'
+import { Close as CloseIcon } from '@material-ui/icons'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
@@ -103,7 +103,8 @@ const Home = () => {
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
-  const { isAuthenticated, isPeriodActive, isDialogLoginOpen, isLoadingBoard } = boardState
+  const { isAuthenticated, isPeriodActive, isDialogLoginOpen, isLoadingBoard, isGameOver } =
+    boardState
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -140,54 +141,57 @@ const Home = () => {
   const handleDialogPurchaseCoinClose = () => {
     setIsDialogPurchaseCoinOpen(false)
     if (boardState.isGameOver) {
-      console.log('here')
       setIsDialogBombOpen(true)
     }
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
-    setIsGamePlayed(true)
-    const newCells = [...cells]
-    const isBomb = newCells[position.y][position.x].isBomb
-    const isRevealed = newCells[position.y][position.x].isRevealed
+    if (!isGameOver && isPeriodActive) {
+      setIsGamePlayed(true)
+      const newCells = [...cells]
+      const isBomb = newCells[position.y][position.x].isBomb
+      const isRevealed = newCells[position.y][position.x].isRevealed
 
-    if (boardState.isToggleFlag) {
-      if (flaggedCells < boardState.board.mines) {
+      if (boardState.isToggleFlag) {
+        if (flaggedCells < boardState.board.mines) {
+          newCells[position.y][position.x] = {
+            ...newCells[position.y][position.x],
+            isFlagged: !newCells[position.y][position.x].isFlagged,
+            isRevealed: !newCells[position.y][position.x].isRevealed
+          }
+          setFlaggedCells((prevState) =>
+            newCells[position.y][position.x].isFlagged ? prevState + 1 : prevState - 1
+          )
+
+          setCells(newCells)
+        }
+      } else if (!isRevealed) {
         newCells[position.y][position.x] = {
           ...newCells[position.y][position.x],
-          isFlagged: !newCells[position.y][position.x].isFlagged,
-          isRevealed: !newCells[position.y][position.x].isRevealed
+          isRevealed: true
         }
-        setFlaggedCells((prevState) =>
-          newCells[position.y][position.x].isFlagged ? prevState + 1 : prevState - 1
-        )
+        if (!isBomb) {
+          handleRevealOtherCells(newCells, { x: position.x, y: position.y })
+        } else {
+          // Commented: disable reveal all bombs
+          // newCells.forEach((cellRows, indexRow) => {
+          //   cellRows.forEach((cellColumn, indexColumn) => {
+          //     if (cellColumn.isBomb) {
+          //       newCells[indexRow][indexColumn].isRevealed = true
+          //     }
+          //   })
+          // })
 
-        setCells(newCells)
-      }
-    } else if (!isRevealed) {
-      newCells[position.y][position.x] = {
-        ...newCells[position.y][position.x],
-        isRevealed: true
-      }
-      if (!isBomb) {
-        handleRevealOtherCells(newCells, { x: position.x, y: position.y })
-      } else {
-        // Commented: disable reveal all bombs
-        // newCells.forEach((cellRows, indexRow) => {
-        //   cellRows.forEach((cellColumn, indexColumn) => {
-        //     if (cellColumn.isBomb) {
-        //       newCells[indexRow][indexColumn].isRevealed = true
-        //     }
-        //   })
-        // })
+          setCells(newCells)
 
-        setCells(newCells)
-
-        const stringifyCells = JSON.stringify(cells)
-        setCurrentStep(stringifyCells)
-        setTemporaryPoints(0)
-        dispatch(appGameOverSet(true))
+          const stringifyCells = JSON.stringify(cells)
+          setCurrentStep(stringifyCells)
+          setTemporaryPoints(0)
+          dispatch(appGameOverSet(true))
+        }
       }
+    } else if (isGameOver && isPeriodActive) {
+      handleDialogBombOpen()
     }
   }
 
@@ -345,10 +349,16 @@ const Home = () => {
   }, [cells, boardState.board])
 
   useEffect(() => {
-    if (boardState.isGameOver) {
+    if (boardState.isGameOver && !!currentCoins) {
       setTimeout(() => handleDialogBombOpen(), 1000)
     }
-  }, [boardState.isGameOver])
+  }, [boardState.isGameOver, currentCoins])
+
+  useEffect(() => {
+    if (boardState.isGameOver && isGamePlayed) {
+      setTimeout(() => handleDialogBombOpen(), 1000)
+    }
+  }, [boardState.isGameOver, currentCoins, isGamePlayed])
 
   useEffect(() => {
     if (boardState.isGameWin) {
@@ -371,12 +381,12 @@ const Home = () => {
     }
   }, [currentStep, temporaryPoints])
 
-  useEffect(() => {
-    const isGameOver = boardState.authData.is_game_over && +boardState.authData.is_game_over
-    if (isGameOver) {
-      dispatch(appGameOverSet(true))
-    }
-  }, [boardState.authData.is_game_over])
+  // useEffect(() => {
+  //   const isGameOver = boardState.authData.is_game_over && +boardState.authData.is_game_over
+  //   if (isGameOver && isGamePlayed) {
+  //     dispatch(appGameOverSet(true))
+  //   }
+  // }, [boardState.authData.is_game_over, isGamePlayed])
 
   if (isLoadingBoard) {
     return (
@@ -505,6 +515,12 @@ const Home = () => {
         ) : (
           <>
             <DialogContent className={classes.dialogContent}>
+              {currentCoins === 0 && !isGamePlayed && (
+                <CloseIcon
+                  className={classes.dialogCloseIcon}
+                  onClick={() => setIsDialogBombOpen(false)}
+                />
+              )}
               {currentCoins === 0 && !isGamePlayed ? (
                 <img src="/images/coins.png" alt="bomb" className={classes.imageBombExplode} />
               ) : (

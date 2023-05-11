@@ -30,7 +30,8 @@ import {
   authErrorReset,
   authPreRegister,
   authFirstPinCheck,
-  authMsisdnCheck
+  authMsisdnCheck,
+  authChangePin
 } from 'redux/reducers/auth'
 import { appDialogLoginSet } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
@@ -42,6 +43,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   isLoadingLogin: auth.isLoadingLogin,
   isLoadingCheckMsisdn: auth.isLoadingCheckMsisdn,
   isLoadingPreRegister: auth.isLoadingPreRegister,
+  isLoadingResetPin: auth.isLoadingResetPin,
   isAuthenticated: auth.isAuthenticated,
   isGameOver: app.isGameOver,
   isGameWin: app.isGameWin,
@@ -54,7 +56,8 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   isPreRegisterRequested: auth.isPreRegisterRequested,
   isFirstPinChecked: auth.isFirstPinChecked,
   isRegisterSuccess: auth.isRegisterSuccess,
-  isEligibleToRegister: auth.isEligibleToRegister
+  isEligibleToRegister: auth.isEligibleToRegister,
+  isLoginWithRandomPin: auth.isLoginWithRandomPin
 })
 
 const token = localStorage.getItem('token')
@@ -99,7 +102,9 @@ const Header = () => {
     isRegisterSuccess,
     isEligibleToRegister,
     isLoadingLogin,
-    isLoadingCheckMsisdn
+    isLoadingCheckMsisdn,
+    isLoadingResetPin,
+    isLoginWithRandomPin
   } = headerState
 
   const isButtonResendSMSDisabled = countdownSMS > 0
@@ -177,6 +182,10 @@ const Header = () => {
   const handleSubmitRegister = () => {
     setIsMsisdnSubmitted(false)
     dispatch(authRegister({ msisdn, pin: newPin }))
+  }
+
+  const handleSubmitChangePin = () => {
+    dispatch(authChangePin(pin, newPin))
   }
 
   const handleBackFromDialogPin = () => {
@@ -280,13 +289,11 @@ const Header = () => {
   }, [headerState.data, isMsisdnSubmitted])
 
   useEffect(() => {
-    if (headerState.data.token && isPinSubmitted && !isPinReset) {
+    if (isLoginWithRandomPin) {
       setIsDialogPinOpen(false)
-      localStorage.setItem('auth', '1')
-      localStorage.setItem('token', headerState.data.token)
-      location.href = '/'
+      setIsDialogChangePinOpen(true)
     }
-  }, [headerState.data, isPinSubmitted, isPinReset])
+  }, [isLoginWithRandomPin])
 
   useEffect(() => {
     if (headerState.selectedTab === 0) {
@@ -322,7 +329,7 @@ const Header = () => {
 
   useEffect(() => {
     let intervalSMS: any = null
-    if ((isDialogFirstTimePinOpen || isDialogPinOpen) && countdownSMS > 0) {
+    if ((isDialogFirstTimePinOpen || isPinReset) && countdownSMS > 0) {
       intervalSMS = setInterval(() => {
         setCountdownSMS((prevState) => prevState - 1000)
       }, 1000)
@@ -331,7 +338,7 @@ const Header = () => {
     } else {
       clearInterval(intervalSMS)
     }
-  }, [isDialogFirstTimePinOpen, isDialogPinOpen, countdownSMS])
+  }, [isDialogFirstTimePinOpen, isPinReset, countdownSMS])
 
   return (
     <>
@@ -570,10 +577,11 @@ const Header = () => {
               variant="contained"
               color="primary"
               onClick={handleResetPin}
-              disabled={headerState.isLoading}
+              disabled={isLoadingResetPin}
               fullWidth
             >
-              Reset PIN
+              Lupa PIN
+              {isLoadingResetPin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
             </Button>
           ) : (
             <Button
@@ -621,7 +629,9 @@ const Header = () => {
         PaperProps={{ className: classes.dialogPaper }}
       >
         <DialogContent className={classes.dialogContent}>
-          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
+          {!isLoginWithRandomPin && (
+            <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
+          )}
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           <Typography>Masukan nomor PIN baru anda:</Typography>
           <div className={classes.inputPin}>
@@ -639,7 +649,7 @@ const Header = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmitRegister}
+            onClick={isLoginWithRandomPin ? handleSubmitChangePin : handleSubmitRegister}
             disabled={headerState.isLoading || newPin.length < 4}
             fullWidth
           >

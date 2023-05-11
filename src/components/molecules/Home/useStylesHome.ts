@@ -245,6 +245,11 @@ const useStyles = makeStyles<Theme, StyleProps>((theme) => {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    dialogCloseIcon: {
+      position: 'absolute',
+      top: '8px',
+      right: '8px'
     }
   }
 })

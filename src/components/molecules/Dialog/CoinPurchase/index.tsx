@@ -160,7 +160,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
   useEffect(() => {
     if (authData.msisdn) {
-      const phoneNumber = authData.msisdn.replace(/^0+/, '')
+      const phoneNumber = authData.msisdn
       setMsisdn(phoneNumber)
     }
   }, [authData.msisdn])

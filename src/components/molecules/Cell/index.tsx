@@ -55,9 +55,9 @@ const Cell = ({
   }
 
   const handleClickBlock = () => {
-    if (!isGameOver && isPeriodActive) {
-      onClick({ x: positionX, y: positionY })
-    }
+    // if (!isGameOver && isPeriodActive) {
+    onClick({ x: positionX, y: positionY })
+    // }
   }
 
   useEffect(() => {

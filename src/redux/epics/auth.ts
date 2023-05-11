@@ -42,8 +42,10 @@ import {
   authResetPinSuccess,
   AUTH_MSISDN_CHECK,
   authMsisdnCheckFailure,
-  authMsisdnCheckSuccess
+  authMsisdnCheckSuccess,
+  authLoginWithRandomPinSet
 } from 'redux/reducers/auth'
+import { appGameOverSet } from 'redux/reducers/app'
 import { snackbarOpen } from 'redux/reducers/snackbar'
 
 import {
@@ -159,7 +161,7 @@ export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
     )
   )
 
-export const authLoginPinEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+export const authLoginPinEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(AUTH_LOGIN_PIN),
     mergeMap((action) =>
@@ -172,8 +174,16 @@ export const authLoginPinEpic: Epic = (action$, _, { api }: EpicDependencies) =>
         }
       }).pipe(
         mergeMap(({ response }: any) => {
+          const { isPinReset } = state$.value.auth
           const { data } = response
-          return of(authLoginPinSuccess(data.token))
+          if (isPinReset) {
+            return of(authLoginPinSuccess(data.token), authLoginWithRandomPinSet(true))
+          } else {
+            localStorage.setItem('auth', '1')
+            localStorage.setItem('token', data.token)
+            location.href = '/'
+            return of(authLoginPinSuccess(data.token), authLoginWithRandomPinSet(false))
+          }
         }),
         catchError((err) => {
           const error = {
@@ -238,19 +248,30 @@ export const authResetPinEpic: Epic = (action$, state$, { api }: EpicDependencie
 export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(AUTH_CHANGE_PIN),
-    mergeMap((action) =>
-      api({
+    mergeMap((action) => {
+      const { isLoginWithRandomPin, data } = state$.value.auth
+      return api({
         endpoint: CHANGE_PIN_PUT,
         host: apiHost,
         body: {
           msisdn: state$.value.auth.data.msisdn,
           pin: action.payload.pin,
           new_pin: action.payload.newPin
+        },
+        headers: {
+          'x-token': data.token
         }
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          return of(authChangePinSuccess(data.token), snackbarOpen('Berhasil merubah PIN.'))
+          if (isLoginWithRandomPin) {
+            localStorage.setItem('auth', '1')
+            localStorage.setItem('token', data.token)
+            location.href = '/'
+            return of(authChangePinSuccess(data.token))
+          } else {
+            return of(authChangePinSuccess(data.token), snackbarOpen('Berhasil merubah PIN.'))
+          }
         }),
         catchError((err) => {
           const error = {
@@ -259,7 +280,7 @@ export const authChangePinEpic: Epic = (action$, state$, { api }: EpicDependenci
           return of(authChangePinFailure(error))
         })
       )
-    )
+    })
   )
 
 export const authFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
@@ -272,7 +293,12 @@ export const authFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          return of(authFetchSuccess(data))
+          const isGameOver = data.is_game_over && +data.is_game_over
+          if (isGameOver) {
+            return of(authFetchSuccess(data), appGameOverSet(true))
+          } else {
+            return of(authFetchSuccess(data))
+          }
         }),
         catchError((err) => {
           const error = {
