@@ -393,7 +393,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
 
               {isDesktop && actionQRCode && (
                 <Box width="100%" marginTop="16px" display="flex" justifyContent="center">
-                  <img src={actionQRCode.url} alt="qrcode" width="300px" />
+                  <img
+                    src={actionQRCode.url}
+                    alt="qrcode"
+                    width="300px"
+                    style={{ borderRadius: '16px' }}
+                  />
                 </Box>
               )}
 
