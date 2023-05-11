@@ -212,6 +212,7 @@ const Header = () => {
 
   const handleToTerms = () => {
     setIsDialogRegisterOpen(false)
+    setIsMsisdnCheck(false)
     dispatch(appDialogLoginSet(false))
     dispatch(navigationTabSelectedSet(3))
   }
