@@ -140,9 +140,9 @@ const Home = () => {
 
   const handleDialogPurchaseCoinClose = () => {
     setIsDialogPurchaseCoinOpen(false)
-    if (boardState.isGameOver) {
-      setIsDialogBombOpen(true)
-    }
+    // if (boardState.isGameOver) {
+    //   setIsDialogBombOpen(true)
+    // }
   }
 
   const handleCloseDialogBomb = () => {
