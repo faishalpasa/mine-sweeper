@@ -1,8 +1,10 @@
-import React, { lazy, Suspense, memo } from 'react'
+import React, { lazy, Suspense, memo, useEffect } from 'react'
 import { createTheme, ThemeProvider } from '@material-ui/core'
 import { Provider } from 'react-redux'
+import TagManager from 'react-gtm-module'
 
 import { store } from 'redux/store'
+import config from 'config'
 
 const Layout = lazy(() => import('./components/organisms/Layout'))
 
@@ -50,7 +52,16 @@ const theme = createTheme({
   }
 })
 
+const tagManagerArgs = {
+  gtmId: config.googleAnalyticId as string
+  // gtmId: 'G-13PXCSFENW'
+}
+
 const App = () => {
+  useEffect(() => {
+    TagManager.initialize(tagManagerArgs)
+  }, [])
+
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
