@@ -279,10 +279,7 @@ export const appPayOvoCheckEpic: Epic = (action$, state$, { api }: EpicDependenc
           } else if (data.status === 'SUCCEEDED') {
             return of(appPayOvoCheckSuccess(), appDataFetch())
           } else {
-            const error = {
-              message: 'Pembayaran anda gagal.'
-            }
-            return of(appPayOvoCheckFailure(error))
+            return of()
           }
         }),
         catchError((err) => {
@@ -354,10 +351,7 @@ export const appPayGopayCheckEpic: Epic = (action$, state$, { api }: EpicDepende
           } else if (data.transaction_status === 'settlement') {
             return of(appPayGopayCheckSuccess(), appDataFetch())
           } else {
-            const error = {
-              message: 'Pembayaran anda gagal.'
-            }
-            return of(appPayGopayCheckFailure(error))
+            return of()
           }
         }),
         catchError((err) => {
