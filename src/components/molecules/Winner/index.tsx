@@ -17,6 +17,7 @@ import type { RootState } from 'redux/rootReducer'
 
 import { maskPhoneNumber } from 'utils/string'
 import useStyles from './useStylesWinner'
+import { pageTracking } from 'utils/analytics'
 
 const winnerSelector = ({ winner }: RootState) => ({
   data: winner.data,
@@ -43,6 +44,8 @@ const Winner = () => {
   const { data, isLoading } = termsState
 
   useEffect(() => {
+    pageTracking('Pemenang Periode Sebelumnya')
+
     if (!termsState.data.length) {
       dispatch(winnerDataFetch())
     }

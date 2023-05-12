@@ -18,6 +18,7 @@ import type { RootState } from 'redux/rootReducer'
 
 import { maskPhoneNumber } from 'utils/string'
 import useStyles from './useStylesTopScore'
+import { pageTracking } from 'utils/analytics'
 
 const winnerSelector = ({ topScore }: RootState) => ({
   data: topScore.data,
@@ -44,6 +45,8 @@ const TopScore = () => {
   const { data, isLoading } = termsState
 
   useEffect(() => {
+    pageTracking('Top Skor')
+
     if (!termsState.data.length) {
       dispatch(topScoreDataFetch())
     }

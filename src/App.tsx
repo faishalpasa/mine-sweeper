@@ -54,7 +54,6 @@ const theme = createTheme({
 
 const tagManagerArgs = {
   gtmId: config.googleAnalyticId as string
-  // gtmId: 'G-13PXCSFENW'
 }
 
 const App = () => {

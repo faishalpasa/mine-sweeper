@@ -24,6 +24,7 @@ import {
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesProfile'
+import { pageTracking } from 'utils/analytics'
 
 const profileSelector = ({ auth }: RootState) => ({
   data: auth.data,
@@ -101,6 +102,8 @@ const Profile = () => {
   }, [profileState.data.msisdn])
 
   useEffect(() => {
+    pageTracking('Data Diri')
+
     if (!profileState.data.msisdn) {
       dispatch(authFetch())
     }

@@ -31,6 +31,7 @@ import {
 } from 'redux/reducers/app'
 import { isJsonStringValid } from 'utils/string'
 import DialogCoinPurchase from 'components/molecules/Dialog/CoinPurchase'
+import { pageTracking } from 'utils/analytics'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesHome'
@@ -273,6 +274,8 @@ const Home = () => {
   }
 
   useEffect(() => {
+    pageTracking('Home')
+
     const { rows, columns } = boardState.board
     if (rows === 0 && columns === 0) {
       dispatch(appBoardFetch())

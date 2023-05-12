@@ -6,6 +6,7 @@ import { termsDataFetch } from 'redux/reducers/terms'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesTerms'
+import { pageTracking } from 'utils/analytics'
 
 const termsSelector = ({ terms }: RootState) => ({
   data: terms.data,
@@ -20,6 +21,8 @@ const Terms = () => {
   const { data, isLoading } = termsState
 
   useEffect(() => {
+    pageTracking('Syarat dan Ketentuan')
+
     if (!termsState.data.length) {
       dispatch(termsDataFetch())
     }

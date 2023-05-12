@@ -11,6 +11,7 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 
 import useWindowSize from 'hooks/useWindowSize'
 import { navigationTabSelectedSet } from 'redux/reducers/navigationTab'
+import { eventTracking } from 'utils/analytics'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesFooter'
@@ -32,6 +33,26 @@ const Footer = () => {
 
   const handleSelectTab = (position: number) => {
     dispatch(navigationTabSelectedSet(position))
+
+    if (position === 0) {
+      eventTracking('click_home_menu')
+    }
+
+    if (position === 1) {
+      eventTracking('click_top_score_menu')
+    }
+
+    if (position === 2) {
+      eventTracking('click_winner_menu')
+    }
+
+    if (position === 3) {
+      eventTracking('click_terms_menu')
+    }
+
+    if (position === 4) {
+      eventTracking('click_profile_menu')
+    }
   }
 
   useEffect(() => {
