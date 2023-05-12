@@ -448,10 +448,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchase
                     color="primary"
                     fullWidth
                     onClick={handleResendPayment}
-                    disabled={isLoadingPay}
                   >
                     Coba Lagi
-                    {isLoadingPay && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
                   </Button>
                 )}
               </Box>
