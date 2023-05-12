@@ -140,9 +140,13 @@ const Home = () => {
 
   const handleDialogPurchaseCoinClose = () => {
     setIsDialogPurchaseCoinOpen(false)
-    // if (boardState.isGameOver) {
-    //   setIsDialogBombOpen(true)
-    // }
+  }
+
+  const handleDialogPurchaseCoinBack = () => {
+    setIsDialogPurchaseCoinOpen(false)
+    if (boardState.isGameOver) {
+      setIsDialogBombOpen(true)
+    }
   }
 
   const handleCloseDialogBomb = () => {
@@ -562,6 +566,7 @@ const Home = () => {
       <DialogCoinPurchase
         open={isDialogPurchaseCoinOpen}
         onClose={handleDialogPurchaseCoinClose}
+        onBack={handleDialogPurchaseCoinBack}
         isClosable={isDialogPurchaseCoinClosable}
       />
 

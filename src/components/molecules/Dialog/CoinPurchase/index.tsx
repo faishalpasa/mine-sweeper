@@ -64,10 +64,11 @@ const coinPurchaseSelector = ({ app, auth }: RootState) => ({
 interface CoinPurchaseProps {
   open: boolean
   onClose?: () => void
+  onBack?: () => void
   isClosable?: boolean
 }
 
-const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) => {
+const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchaseProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const coinPurchaseState = useSelector(coinPurchaseSelector, shallowEqual)
@@ -205,6 +206,12 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
     }
   }
 
+  const handleBackFromDialog = () => {
+    if (onBack) {
+      onBack()
+    }
+  }
+
   const handleCloseDialogCoinPurchase = () => {
     dispatch(appErrorReset())
     setIsDialogPaymentOpen(false)
@@ -255,7 +262,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true }: CoinPurchaseProps) =
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/coins.png" alt="coins" className={classes.imageCoins} />
-          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCloseDialog} />
+          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleBackFromDialog} />
           <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialog} />
           <Typography>Pilih jumlah koin:</Typography>
           <div className={classes.coinItems}>
