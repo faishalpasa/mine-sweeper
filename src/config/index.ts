@@ -4,6 +4,7 @@ const appName = process.env.REACT_APP_NAME
 const nodeEnv = process.env.NODE_ENV
 const mediaUrl = process.env.REACT_APP_MEDIA_URL
 const googleAnalyticId = process.env.REACT_APP_GA_ID
+const csWhatsApp = process.env.REACT_CS_WHATSAPP
 
 export default {
   apiHost,
@@ -11,5 +12,6 @@ export default {
   appName,
   nodeEnv,
   mediaUrl,
-  googleAnalyticId
+  googleAnalyticId,
+  csWhatsApp
 }

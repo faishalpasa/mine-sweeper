@@ -29,6 +29,8 @@ import type { RootState } from 'redux/rootReducer'
 import useStyles from './useStylesProfile'
 import { pageTracking } from 'utils/analytics'
 
+import config from 'config'
+
 const MAX_MESSAGE = 500
 
 const profileSelector = ({ auth, profile }: RootState) => ({
@@ -124,7 +126,9 @@ const Profile = () => {
   }
 
   const handleWhatsAppButton = () => {
-    window.open('https://api.whatsapp.com/send?phone=085219008000&text=Halo Admin RanjauDarat.com')
+    window.open(
+      `https://api.whatsapp.com/send?phone=${config.csWhatsApp}&text=Halo Admin RanjauDarat.com`
+    )
   }
 
   const isButtonUpdateDisabled =
