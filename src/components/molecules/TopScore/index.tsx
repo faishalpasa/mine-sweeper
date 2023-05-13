@@ -55,14 +55,14 @@ const TopScore = () => {
   return (
     <>
       <div className={classes.content}>
-        <Typography className={classes.contentTitle}>Top Skor Periode Ini</Typography>
+        <Typography className={classes.contentTitle}>Top Skor Periode Ini:</Typography>
         <TableContainer className={classes.tableContainer} component={Paper}>
           <Table size="small" stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell
                   className={classes.tableHeaderCell}
-                  style={{ padding: '6px 6px 6px 16px' }}
+                  style={{ padding: '8px 16px' }}
                 ></TableCell>
                 <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
                 <TableCell className={classes.tableHeaderCell}>Level</TableCell>
@@ -72,10 +72,14 @@ const TopScore = () => {
             <TableBody>
               {data.map((winner, index) => (
                 <TableRow key={winner.id} style={{ ...winnerStyles(index + 1) }}>
-                  <TableCell style={{ padding: '6px 6px 6px 16px' }}>{index + 1}</TableCell>
-                  <TableCell>{maskPhoneNumber(winner.msisdn, 'x', 4)}</TableCell>
-                  <TableCell>{winner.level}</TableCell>
-                  <TableCell>{winner.points}</TableCell>
+                  <TableCell style={{ padding: '8px 16px', textAlign: 'center' }}>
+                    {index + 1}
+                  </TableCell>
+                  <TableCell style={{ textAlign: 'center' }}>
+                    {maskPhoneNumber(winner.msisdn, 'x', 4)}
+                  </TableCell>
+                  <TableCell style={{ textAlign: 'center' }}>{winner.level}</TableCell>
+                  <TableCell style={{ textAlign: 'center' }}>{winner.points}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => {
     },
     tableHeaderCell: {
       background: theme.palette.primary.main,
-      color: theme.palette.common.white
+      color: theme.palette.common.white,
+      textAlign: 'center'
     }
   }
 })
