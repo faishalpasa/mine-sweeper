@@ -129,6 +129,7 @@ const Home = () => {
   }
 
   const handleDialogPurchaseCoinOpen = () => {
+    setIsGamePlayed(false)
     setIsDialogPurchaseCoinClosable(false)
     setIsDialogBombOpen(false)
     setIsDialogPurchaseCoinOpen(true)
@@ -143,6 +144,11 @@ const Home = () => {
     setIsDialogPurchaseCoinOpen(false)
   }
 
+  const handleSuccessPurchaseCoin = () => {
+    setIsDialogPurchaseCoinOpen(false)
+    console.log('kesini')
+  }
+
   const handleDialogPurchaseCoinBack = () => {
     setIsDialogPurchaseCoinOpen(false)
     if (boardState.isGameOver) {
@@ -152,6 +158,7 @@ const Home = () => {
 
   const handleCloseDialogBomb = () => {
     setIsDialogBombOpen(false)
+    setIsGamePlayed(false)
     if (currentCoins === 0) {
       setIsGamePlayed(false)
     }
@@ -363,12 +370,6 @@ const Home = () => {
   }, [cells, boardState.board])
 
   useEffect(() => {
-    if (boardState.isGameOver && !!currentCoins && !isDialogPurchaseCoinOpen) {
-      setTimeout(() => handleDialogBombOpen(), 1000)
-    }
-  }, [boardState.isGameOver, currentCoins, isDialogPurchaseCoinOpen])
-
-  useEffect(() => {
     if (boardState.isGameOver && isGamePlayed) {
       setTimeout(() => handleDialogBombOpen(), 1000)
     }
@@ -522,35 +523,32 @@ const Home = () => {
         ) : (
           <>
             <DialogContent className={classes.dialogContent}>
-              {currentCoins === 0 && (
-                <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogBomb} />
-              )}
-              {currentCoins === 0 && !isGamePlayed ? (
-                <img src="/images/coins.png" alt="bomb" className={classes.imageBombExplode} />
-              ) : (
+              <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseDialogBomb} />
+
+              {isGamePlayed ? (
                 <img src="/images/explode.png" alt="bomb" className={classes.imageBombExplode} />
+              ) : (
+                <img src="/images/coins.png" alt="bomb" className={classes.imageBombExplode} />
               )}
 
-              {currentCoins > 0 ? (
-                <Typography>
-                  Boom! Anda membuka kotak berisi bom. Anda masih memiliki <b>{currentCoins}</b>{' '}
-                  koin, gunakan 1 untuk melanjutkan?
-                </Typography>
-              ) : (
-                <Typography>
-                  {isGamePlayed ? (
-                    <>
-                      Boom! Anda membuka kotak berisi bom. Anda memiliki <b>{currentCoins}</b> koin,
-                      beli koin untuk melanjutkan?
-                    </>
-                  ) : (
-                    <>
-                      Koin yang anda miliki <b>{currentCoins}</b>. Beli koin untuk melanjutkan
-                      permainan?
-                    </>
-                  )}
-                </Typography>
-              )}
+              <Typography>
+                {isGamePlayed ? (
+                  <>
+                    Boom! Anda membuka kotak berisi bom. Anda memiliki <b>{currentCoins}</b>{' '}
+                    koin.&nbsp;
+                    {currentCoins > 0
+                      ? 'Gunakan 1 koin untuk melanjutkan permainan?'
+                      : 'Beli koin untuk melanjutkan permainan?'}
+                  </>
+                ) : (
+                  <>
+                    Koin yang anda miliki <b>{currentCoins}</b>.&nbsp;
+                    {currentCoins > 0
+                      ? 'Gunakan 1 koin untuk melanjutkan permainan?'
+                      : 'Beli koin untuk melanjutkan permainan?'}
+                  </>
+                )}
+              </Typography>
             </DialogContent>
             <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
               <Button
@@ -570,6 +568,7 @@ const Home = () => {
         open={isDialogPurchaseCoinOpen}
         onClose={handleDialogPurchaseCoinClose}
         onBack={handleDialogPurchaseCoinBack}
+        onSuccess={handleSuccessPurchaseCoin}
         isClosable={isDialogPurchaseCoinClosable}
       />
 

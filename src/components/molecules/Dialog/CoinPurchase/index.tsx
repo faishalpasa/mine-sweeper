@@ -64,11 +64,18 @@ const coinPurchaseSelector = ({ app, auth }: RootState) => ({
 interface CoinPurchaseProps {
   open: boolean
   onClose?: () => void
+  onSuccess?: () => void
   onBack?: () => void
   isClosable?: boolean
 }
 
-const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchaseProps) => {
+const CoinPurchase = ({
+  open,
+  onClose,
+  isClosable = true,
+  onBack,
+  onSuccess
+}: CoinPurchaseProps) => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const coinPurchaseState = useSelector(coinPurchaseSelector, shallowEqual)
@@ -84,7 +91,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchase
 
   const selectedCoin = coinItems.find((item) => item.id === selectedCoinItem)
   const selectedPayment = paymentMethods.find((item) => item.id === selectedPaymentItem)
-  const { authData, error, isLoadingPay, gopayActions, isCheckingPayment } = coinPurchaseState
+  const { authData, error, isLoadingPay, gopayActions, isGameOver } = coinPurchaseState
   const [actionQRCode] = gopayActions
 
   const timerPayment = selectedPayment?.label === 'OVO' ? TIMER_PAYMENT_OVO : TIMER_PAYMENT_GOPAY
@@ -195,8 +202,8 @@ const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchase
     setSelectedPaymentItem(0)
     setIsCountdownPaymentStart(false)
     setCountdownPayment(TIMER_PAYMENT_GOPAY)
-    if (onClose) {
-      onClose()
+    if (onSuccess) {
+      onSuccess()
     }
   }
 
@@ -392,7 +399,7 @@ const CoinPurchase = ({ open, onClose, isClosable = true, onBack }: CoinPurchase
 
           {!coinPurchaseState.isLoadingPay && !error.message && !!countdownPayment ? (
             <Typography>
-              Pembayaran berhasil, {selectedCoin?.label} koin telah ditambahkan ke akun anda.
+              Pembayaran berhasil, {selectedCoin?.label} telah ditambahkan ke akun anda.
             </Typography>
           ) : (
             <>
