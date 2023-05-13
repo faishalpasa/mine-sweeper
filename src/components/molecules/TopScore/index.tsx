@@ -55,7 +55,7 @@ const TopScore = () => {
   return (
     <>
       <div className={classes.content}>
-        <Typography className={classes.contentTitle}>Top Skor</Typography>
+        <Typography className={classes.contentTitle}>Top Skor Periode Ini</Typography>
         <TableContainer className={classes.tableContainer} component={Paper}>
           <Table size="small" stickyHeader>
             <TableHead>
