@@ -73,7 +73,7 @@ const TopScore = () => {
               {data.map((winner, index) => (
                 <TableRow key={winner.id} style={{ ...winnerStyles(index + 1) }}>
                   <TableCell style={{ padding: '6px 6px 6px 16px' }}>{index + 1}</TableCell>
-                  <TableCell>{maskPhoneNumber(winner.msisdn)}</TableCell>
+                  <TableCell>{maskPhoneNumber(winner.msisdn, 'x', 4)}</TableCell>
                   <TableCell>{winner.level}</TableCell>
                   <TableCell>{winner.points}</TableCell>
                 </TableRow>

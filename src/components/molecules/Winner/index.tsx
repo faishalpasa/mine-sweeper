@@ -68,7 +68,7 @@ const Winner = () => {
                         className={classes.winnerLogo}
                       />
                       <div className={classes.winnerText}>
-                        <Typography>{maskPhoneNumber(winner.msisdn)}</Typography>
+                        <Typography>{maskPhoneNumber(winner.msisdn, 'x', 4)}</Typography>
                         <Typography variant="caption">Point: {winner.points}</Typography>
                       </div>
                     </div>
