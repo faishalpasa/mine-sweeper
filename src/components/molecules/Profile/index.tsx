@@ -8,8 +8,10 @@ import {
   DialogContent,
   TextField,
   Typography,
-  Paper
+  Paper,
+  Box
 } from '@material-ui/core'
+import { WhatsApp as WhatsAppIcon, Chat as ChatIcon, Close as CloseIcon } from '@material-ui/icons'
 import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import PinInput from 'react-pin-input'
 
@@ -21,16 +23,22 @@ import {
   authCheckPinReset,
   authIsPinChangedSet
 } from 'redux/reducers/auth'
+import { profileSendMessage, profileSendMessageSet } from 'redux/reducers/profile'
 import type { RootState } from 'redux/rootReducer'
 
 import useStyles from './useStylesProfile'
 import { pageTracking } from 'utils/analytics'
 
-const profileSelector = ({ auth }: RootState) => ({
+const MAX_MESSAGE = 500
+
+const profileSelector = ({ auth, profile }: RootState) => ({
   data: auth.data,
   isLoading: auth.isLoading,
   isPinChecked: auth.isPinChecked,
   isPinChanged: auth.isPinChanged,
+  isMessageSend: profile.isMessageSend,
+  isLoadingSendMessage: profile.isLoadingSendMessage,
+  profileError: profile.error,
   error: auth.error
 })
 
@@ -38,13 +46,16 @@ const Profile = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
   const profileState = useSelector(profileSelector, shallowEqual)
+  const { isLoadingSendMessage, isMessageSend, profileError } = profileState
 
   const [isDialogPINOpen, setIsDialogPINOpen] = useState(false)
+  const [isDialogMessageOpen, setIsDialogMessageOpen] = useState(false)
   const [profile, setProfile] = useState({
     msisdn: '',
     name: '',
     email: ''
   })
+  const [message, setMessage] = useState('')
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [isDialogLogoutOpen, setIsDialogLogoutOpen] = useState(false)
@@ -64,6 +75,16 @@ const Profile = () => {
       ...prevState,
       [field]: value
     }))
+  }
+
+  const handleChangeMessage = (value: string) => {
+    if (value.length < MAX_MESSAGE) {
+      setMessage(value)
+    }
+  }
+
+  const handleSendMessage = () => {
+    dispatch(profileSendMessage(message))
   }
 
   const handleClickChangePINButton = () => {
@@ -90,6 +111,20 @@ const Profile = () => {
 
   const handleChangePin = () => {
     dispatch(authChangePin(pin, newPin))
+  }
+
+  const handleClickMessageButton = () => {
+    setIsDialogMessageOpen(true)
+  }
+
+  const handleCloseMessageDialog = () => {
+    dispatch(profileSendMessageSet(false))
+    setMessage('')
+    setIsDialogMessageOpen(false)
+  }
+
+  const handleWhatsAppButton = () => {
+    window.open('https://api.whatsapp.com/send?phone=085219008000&text=Halo Admin RanjauDarat.com')
   }
 
   const isButtonUpdateDisabled =
@@ -165,25 +200,123 @@ const Profile = () => {
         </Paper>
 
         <Typography className={classes.contentTitle}>Keamanan</Typography>
-        <Paper className={classes.paper}>
-          <div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClickChangePINButton}
-              fullWidth
-            >
-              Ubah PIN
-            </Button>
-          </div>
+        <Paper
+          className={classes.paper}
+          style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickChangePINButton}
+            fullWidth
+          >
+            Ubah PIN
+          </Button>
 
-          <div style={{ marginTop: '16px' }}>
-            <Button onClick={handleClickLogout} variant="contained" color="primary" fullWidth>
-              Keluar
-            </Button>
-          </div>
+          <Button onClick={handleClickLogout} variant="contained" color="primary" fullWidth>
+            Keluar
+          </Button>
+        </Paper>
+
+        <Typography className={classes.contentTitle}>Hubungi Kami</Typography>
+        <Paper
+          className={classes.paper}
+          style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleClickMessageButton}
+            fullWidth
+            endIcon={<ChatIcon />}
+          >
+            Tulis Pesan
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleWhatsAppButton}
+            fullWidth
+            endIcon={<WhatsAppIcon />}
+          >
+            Via WhatsApp
+          </Button>
         </Paper>
       </div>
+
+      <Dialog open={isDialogMessageOpen} fullWidth maxWidth="xs">
+        <DialogContent className={classes.dialogContent}>
+          <div className={classes.dialogTitle}>
+            <Typography variant="h6">Tulis Pesan</Typography>
+          </div>
+          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseMessageDialog} />
+          {isMessageSend ? (
+            <>
+              <Box marginTop="16px">
+                <Typography>Pesan anda berhasil dikirim.</Typography>
+              </Box>
+              <Box marginTop="16px">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleCloseMessageDialog}
+                >
+                  Tutup
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box>
+                <TextField
+                  label="No. Handphone"
+                  variant="outlined"
+                  margin="dense"
+                  placeholder="081234567890"
+                  fullWidth
+                  type="tel"
+                  InputProps={{ readOnly: true }}
+                  InputLabelProps={{ shrink: true }}
+                  value={profile.msisdn}
+                />
+              </Box>
+              <Box marginTop="16px">
+                <TextField
+                  multiline
+                  minRows={5}
+                  label={`Pesan (${MAX_MESSAGE - message.length})`}
+                  variant="outlined"
+                  margin="dense"
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                  value={message}
+                  onChange={(e) => handleChangeMessage(e.target.value)}
+                />
+              </Box>
+              <Box marginTop="16px">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleSendMessage}
+                  disabled={isLoadingSendMessage}
+                >
+                  Kirim Pesan
+                  {isLoadingSendMessage && (
+                    <CircularProgress size={16} style={{ marginLeft: '4px' }} />
+                  )}
+                </Button>
+                {profileError.message && (
+                  <Box color="red" marginTop="8px">
+                    <small>{profileError.message}</small>
+                  </Box>
+                )}
+              </Box>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isDialogPINOpen} onClose={handleClosePINDialog} fullWidth maxWidth="xs">
         <DialogContent>

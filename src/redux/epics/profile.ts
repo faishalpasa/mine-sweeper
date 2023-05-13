@@ -10,38 +10,32 @@ import config from 'config'
 const { apiHost } = config
 
 import {
-  PROFILE_DATA_FETCH,
-  profileDataFetchFailure,
-  profileDataFetchSuccess
+  PROFILE_SEND_MESSAGE,
+  profileSendMessageFailure,
+  profileSendSuccess
 } from 'redux/reducers/profile'
 
-import { COMMENT_GET } from 'constants/endpoint'
+import { MESSAGE_POST } from 'constants/endpoint'
 
-export const profileDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
+export const profileSendMessageEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
-    ofType(PROFILE_DATA_FETCH),
+    ofType(PROFILE_SEND_MESSAGE),
     mergeMap((action) =>
       api({
-        endpoint: COMMENT_GET,
-        host: 'https://jsonplaceholder.typicode.com',
-        query: {
-          postId: action.payload
+        endpoint: MESSAGE_POST,
+        host: apiHost,
+        body: {
+          message: action.payload
         }
       }).pipe(
-        mergeMap(({ response }: any) => {
-          const data = {
-            msisdn: '081234567890',
-            name: '',
-            email: '',
-            pin: '123456'
-          }
-          return of(profileDataFetchSuccess(data))
+        mergeMap(() => {
+          return of(profileSendSuccess())
         }),
         catchError((err) => {
           const error = {
-            message: 'Gagal mendapatkan data'
+            message: err?.response?.message || 'Gagal mendapatkan data'
           }
-          return of(profileDataFetchFailure(error))
+          return of(profileSendMessageFailure(error))
         })
       )
     )

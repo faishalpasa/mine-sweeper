@@ -85,6 +85,28 @@ const useStyles = makeStyles((theme) => {
           borderRadius: '4px'
         }
       }
+    },
+    dialogContent: {
+      // background: 'linear-gradient(0deg, rgba(255,255,255,1) 50%, rgba(48,207,162,1) 100%)',
+      paddingTop: '64px !important',
+      position: 'relative',
+      overflow: 'unset'
+    },
+    dialogCloseIcon: {
+      position: 'absolute',
+      top: '8px',
+      right: '8px'
+    },
+    dialogBackIcon: {
+      position: 'absolute',
+      top: '8px',
+      left: '8px'
+    },
+    dialogTitle: {
+      position: 'absolute',
+      top: '8px',
+      left: '50%',
+      transform: 'translate(-50%, 0)'
     }
   }
 })
