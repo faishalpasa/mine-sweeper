@@ -66,7 +66,7 @@ const TopScore = () => {
                 ></TableCell>
                 <TableCell className={classes.tableHeaderCell}>No. Handphone</TableCell>
                 <TableCell className={classes.tableHeaderCell}>Level</TableCell>
-                <TableCell className={classes.tableHeaderCell}>Poin</TableCell>
+                <TableCell className={classes.tableHeaderCell}>Skor</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
