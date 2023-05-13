@@ -348,7 +348,7 @@ const Profile = () => {
 
             {profileState.isPinChecked && (
               <div className={classes.formInput}>
-                <Typography>Masukan PIN baru kamu</Typography>
+                <Typography>Masukan PIN baru anda:</Typography>
                 <div className={classes.inputPin}>
                   <PinInput
                     length={4}

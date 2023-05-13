@@ -69,7 +69,7 @@ const Winner = () => {
                       />
                       <div className={classes.winnerText}>
                         <Typography>{maskPhoneNumber(winner.msisdn, 'x', 4)}</Typography>
-                        <Typography variant="caption">Point: {winner.points}</Typography>
+                        <Typography variant="caption">Skor: {winner.points}</Typography>
                       </div>
                     </div>
                   </TableCell>
