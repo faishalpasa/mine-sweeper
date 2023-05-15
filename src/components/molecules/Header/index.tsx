@@ -653,7 +653,7 @@ const Header = () => {
             disabled={headerState.isLoading || newPin.length < 4}
             fullWidth
           >
-            Ubah PIN
+            Konfirmasi
           </Button>
         </DialogActions>
       </Dialog>
