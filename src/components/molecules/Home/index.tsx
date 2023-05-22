@@ -106,8 +106,14 @@ const Home = () => {
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
   const isMaxLevel = boardState.data.is_max_level
-  const { isAuthenticated, isPeriodActive, isDialogLoginOpen, isLoadingBoard, isGameOver } =
-    boardState
+  const {
+    isAuthenticated,
+    isPeriodActive,
+    isDialogLoginOpen,
+    isLoadingBoard,
+    isGameOver,
+    isGameWin
+  } = boardState
 
   const handleToggleFlag = () => {
     dispatch(appToggleFlagSet(!boardState.isToggleFlag))
@@ -130,6 +136,10 @@ const Home = () => {
     setIsDialogWinOpen(true)
   }
 
+  const handleDialogWinClose = () => {
+    setIsDialogWinOpen(false)
+  }
+
   const handleDialogPurchaseCoinOpen = () => {
     setIsGamePlayed(false)
     setIsDialogPurchaseCoinClosable(false)
@@ -148,7 +158,6 @@ const Home = () => {
 
   const handleSuccessPurchaseCoin = () => {
     setIsDialogPurchaseCoinOpen(false)
-    console.log('kesini')
   }
 
   const handleDialogPurchaseCoinBack = () => {
@@ -167,7 +176,9 @@ const Home = () => {
   }
 
   const handleClickCell = (position: { x: number; y: number }) => {
-    if (!isGameOver && isPeriodActive) {
+    if (isGameWin) {
+      handleDialogWinOpen()
+    } else if (!isGameOver && isPeriodActive) {
       setIsGamePlayed(true)
       const newCells = [...cells]
       const isBomb = newCells[position.y][position.x].isBomb
@@ -314,7 +325,6 @@ const Home = () => {
 
     if (isJsonValid) {
       const decodedState = JSON.parse(state)
-      console.log(decodedState)
       setCells(decodedState)
     } else {
       for (let indexRow = 0; indexRow < rows; indexRow += 1) {
@@ -595,7 +605,11 @@ const Home = () => {
           )}
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          {!isMaxLevel && (
+          {isMaxLevel ? (
+            <Button color="primary" variant="contained" onClick={handleDialogWinClose} fullWidth>
+              Tutup
+            </Button>
+          ) : (
             <Button color="primary" variant="contained" onClick={handleClickNextLevel} fullWidth>
               Level berikutnya
             </Button>
