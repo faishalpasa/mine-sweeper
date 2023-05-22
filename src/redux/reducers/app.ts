@@ -53,6 +53,7 @@ export interface AppInitialState {
   data: {
     level: number
     level_id: number
+    is_max_level: boolean
     points: number
     coins: number
     time: number
@@ -94,6 +95,7 @@ const INITIAL_STATE: AppInitialState = {
   data: {
     level: 0,
     level_id: 0,
+    is_max_level: false,
     points: 0,
     coins: 0,
     time: 0

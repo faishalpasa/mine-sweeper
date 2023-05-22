@@ -88,7 +88,6 @@ const slickSettings = {
 const Home = () => {
   const dispatch = useDispatch()
   const boardState = useSelector(homeSelector, shallowEqual)
-  const classes = useStyles({ columnsTotal: boardState.board.columns })
   const [cells, setCells] = useState<CellPorps[][]>([])
   const [flaggedCells, setFlaggedCells] = useState(0)
   const [temporaryPoints, setTemporaryPoints] = useState(0)
@@ -101,9 +100,12 @@ const Home = () => {
   const [currentStep, setCurrentStep] = useState('')
   const [time, setTime] = useState(0)
 
+  const classes = useStyles({ columnsTotal: cells.length || boardState.board.columns })
+
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
   const currentLevel = boardState.data.level
+  const isMaxLevel = boardState.data.is_max_level
   const { isAuthenticated, isPeriodActive, isDialogLoginOpen, isLoadingBoard, isGameOver } =
     boardState
 
@@ -312,6 +314,7 @@ const Home = () => {
 
     if (isJsonValid) {
       const decodedState = JSON.parse(state)
+      console.log(decodedState)
       setCells(decodedState)
     } else {
       for (let indexRow = 0; indexRow < rows; indexRow += 1) {
@@ -585,11 +588,18 @@ const Home = () => {
           <Typography>
             Selamat anda berhasil menyelesaikan level <b>{currentLevel}</b>!
           </Typography>
+          {isMaxLevel && (
+            <Typography>
+              Anda telah mencapai level maksimal. Silakan tunggu hasil pengumuman pemenang.
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          <Button color="primary" variant="contained" onClick={handleClickNextLevel} fullWidth>
-            Level berikutnya
-          </Button>
+          {!isMaxLevel && (
+            <Button color="primary" variant="contained" onClick={handleClickNextLevel} fullWidth>
+              Level berikutnya
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </>

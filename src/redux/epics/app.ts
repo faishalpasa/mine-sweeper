@@ -137,6 +137,7 @@ export const appDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           const data = {
             level: +response.data.level,
             level_id: +response.data.level_id,
+            is_max_level: response.data.is_max_level,
             points: +response.data.points,
             coins: +response.data.coins,
             time: +response?.data?.time || 0
