@@ -138,13 +138,17 @@ export const authFirstPinCheckEpic: Epic = (action$, _, { api }: EpicDependencie
 export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
   action$.pipe(
     ofType(AUTH_REGISTER),
-    mergeMap((action) =>
-      api({
+    mergeMap((action) => {
+      const trxId = localStorage.getItem('trx_id')
+      return api({
         endpoint: REGISTER_POST,
         host: apiHost,
         body: {
           msisdn: action.payload.msisdn,
           pin: action.payload.pin
+        },
+        query: {
+          trx_id: trxId
         }
       }).pipe(
         mergeMap(({ response }: any) => {
@@ -158,7 +162,7 @@ export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
           return of(authRegisterFailure(error))
         })
       )
-    )
+    })
   )
 
 export const authLoginPinEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
