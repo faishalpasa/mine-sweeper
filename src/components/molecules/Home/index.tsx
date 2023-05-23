@@ -100,7 +100,8 @@ const Home = () => {
   const [currentStep, setCurrentStep] = useState('')
   const [time, setTime] = useState(0)
 
-  const classes = useStyles({ columnsTotal: cells.length || boardState.board.columns })
+  const columnsTotal = cells.length || boardState.board.columns
+  const classes = useStyles({ columnsTotal })
 
   const currentPoints = boardState.data.points
   const currentCoins = boardState.data.coins
@@ -359,9 +360,10 @@ const Home = () => {
   }, [boardState.board])
 
   useEffect(() => {
-    if (boardState.board.rows && boardState.board.columns) {
-      const totalIsNotBombCells =
-        boardState.board.columns * boardState.board.rows - boardState.board.mines
+    if (cells.length) {
+      const columns = cells.length
+      const rows = cells[0].length
+      let mines = 0
       let totalOpenedCells = 0
 
       for (let indexRow = 0; indexRow < cells.length; indexRow += 1) {
@@ -373,14 +375,18 @@ const Home = () => {
           ) {
             totalOpenedCells += 1
           }
+          if (cells[indexRow][indexColumn].isBomb) {
+            mines += 1
+          }
         }
       }
+      const totalIsNotBombCells = columns * rows - mines
 
       if (totalIsNotBombCells === totalOpenedCells) {
         dispatch(appGameWinSet(true))
       }
     }
-  }, [cells, boardState.board])
+  }, [cells])
 
   useEffect(() => {
     if (boardState.isGameOver && isGamePlayed) {
@@ -490,6 +496,7 @@ const Home = () => {
                 positionX={row.positionX}
                 positionY={row.positionY}
                 bombDetected={row.bombDetected}
+                columnsTotal={columnsTotal}
               />
             ))
           )}

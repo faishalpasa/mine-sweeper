@@ -20,6 +20,7 @@ interface CellProps {
   positionY: number
   bombDetected: number
   onClick: (position: { x: number; y: number }) => void
+  columnsTotal: number
 }
 
 const Cell = ({
@@ -30,12 +31,12 @@ const Cell = ({
   bombDetected,
   positionX,
   positionY,
-  onClick
+  onClick,
+  columnsTotal
 }: CellProps) => {
   const boardState = useSelector(cellSelector, shallowEqual)
-  const { board, isPeriodActive } = boardState
 
-  const classes = useStyles({ hasBomb, columns: board.columns })
+  const classes = useStyles({ hasBomb, columns: columnsTotal })
   const [isActive, setIsActive] = useState(false)
 
   let color = ''
@@ -55,9 +56,7 @@ const Cell = ({
   }
 
   const handleClickBlock = () => {
-    // if (!isGameOver && isPeriodActive) {
     onClick({ x: positionX, y: positionY })
-    // }
   }
 
   useEffect(() => {
