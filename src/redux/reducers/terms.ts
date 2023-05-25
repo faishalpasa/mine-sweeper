@@ -7,6 +7,7 @@ export const TERMS_DATA_FETCH_FAILURE = 'terms/DATA_FETCH_FAILURE'
 export interface TermsInitialState {
   data: {
     id: number
+    title: string
     description: string
   }[]
   isLoading: boolean

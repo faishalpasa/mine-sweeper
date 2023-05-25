@@ -33,13 +33,19 @@ const Terms = () => {
       <div className={classes.content}>
         <Typography className={classes.contentTitle}>Syarat dan Ketentuan</Typography>
         <Paper className={classes.paper}>
-          <ol className={classes.list}>
+          <div className={classes.list}>
             {data.map((termData) => (
-              <li className={classes.listItem} key={termData.id}>
-                <Typography className={classes.listItemText}>{termData.description}</Typography>
-              </li>
+              <div key={termData.id}>
+                <Typography variant="body1" component="h2">
+                  <b>{termData.title}</b>
+                </Typography>
+                <Typography
+                  className={classes.listItemText}
+                  dangerouslySetInnerHTML={{ __html: termData.description }}
+                />
+              </div>
             ))}
-          </ol>
+          </div>
         </Paper>
       </div>
 

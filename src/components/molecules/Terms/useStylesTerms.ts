@@ -63,7 +63,17 @@ const useStyles = makeStyles((theme) => {
     },
     listItemText: {
       fontSize: '14px',
-      lineHeight: '20px'
+      lineHeight: '20px',
+      '& p': {
+        marginTop: '0px',
+        marginBottom: '8px'
+      },
+      '& ol': {
+        paddingInlineStart: '16px'
+      },
+      '& ul': {
+        paddingInlineStart: '16px'
+      }
     },
     paper: {
       marginTop: '8px',
