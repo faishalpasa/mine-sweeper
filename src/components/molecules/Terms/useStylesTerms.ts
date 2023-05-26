@@ -77,7 +77,9 @@ const useStyles = makeStyles((theme) => {
     },
     paper: {
       marginTop: '8px',
-      padding: '16px'
+      padding: '16px',
+      maxHeight: 'calc(100vh - 220px)',
+      overflowX: 'auto'
     }
   }
 })
