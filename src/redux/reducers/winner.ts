@@ -6,11 +6,14 @@ export const WINNER_DATA_FETCH_FAILURE = 'winner/DATA_FETCH_FAILURE'
 
 export interface WinnerInitialState {
   data: {
-    id: number
-    name: string
-    msisdn: string
-    points: number
-    prize: string
+    periode_name: string
+    winners: {
+      id: number
+      name: string
+      msisdn: string
+      points: number
+      prize: string
+    }[]
   }[]
   isLoading: boolean
   error: {
@@ -36,7 +39,7 @@ export default createReducer(INITIAL_STATE, {
     state.data = action.payload
   },
   [WINNER_DATA_FETCH_FAILURE]: (state, action) => {
-    state.isLoading = true
+    state.isLoading = false
     state.error = action.payload
   }
 })

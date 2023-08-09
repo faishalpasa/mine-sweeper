@@ -39,14 +39,14 @@ const backgroundColor = (position: number) => {
 const Winner = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const termsState = useSelector(winnerSelector, shallowEqual)
+  const winnerState = useSelector(winnerSelector, shallowEqual)
 
-  const { data, isLoading } = termsState
+  const { data, isLoading } = winnerState
 
   useEffect(() => {
     pageTracking('Pemenang Periode Sebelumnya')
 
-    if (!termsState.data.length) {
+    if (!winnerState.data.length) {
       dispatch(winnerDataFetch())
     }
   }, [])
@@ -54,31 +54,40 @@ const Winner = () => {
   return (
     <>
       <div className={classes.content}>
-        <Typography className={classes.contentTitle}>Pemenang Periode Sebelumnya:</Typography>
-        <TableContainer className={classes.tableContainer} component={Paper}>
-          <Table>
-            <TableBody>
-              {data.map((winner, index) => (
-                <TableRow key={winner.id} style={{ backgroundColor: backgroundColor(index + 1) }}>
-                  <TableCell>
-                    <div className={classes.winner}>
-                      <img
-                        src={`/images/winner-${index + 1}.png`}
-                        alt={`winner-${index + 1}`}
-                        className={classes.winnerLogo}
-                      />
-                      <div className={classes.winnerText}>
-                        <Typography>{maskPhoneNumber(winner.msisdn, 'x', 4)}</Typography>
-                        <Typography variant="caption">Skor: {winner.points}</Typography>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>{winner.prize}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {data.map((item) => (
+          <div key={item.periode_name} style={{ marginBottom: '16px' }}>
+            <Typography className={classes.contentTitle}>
+              Pemenang Periode {item.periode_name}:
+            </Typography>
+            <TableContainer className={classes.tableContainer} component={Paper}>
+              <Table>
+                <TableBody>
+                  {item.winners.map((winner, index) => (
+                    <TableRow
+                      key={winner.id}
+                      style={{ backgroundColor: backgroundColor(index + 1) }}
+                    >
+                      <TableCell>
+                        <div className={classes.winner}>
+                          <img
+                            src={`/images/winner-${index + 1}.png`}
+                            alt={`winner-${index + 1}`}
+                            className={classes.winnerLogo}
+                          />
+                          <div className={classes.winnerText}>
+                            <Typography>{maskPhoneNumber(winner.msisdn, 'x', 4)}</Typography>
+                            <Typography variant="caption">Skor: {winner.points}</Typography>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>{winner.prize}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        ))}
       </div>
       <Backdrop open={isLoading}>
         <CircularProgress />

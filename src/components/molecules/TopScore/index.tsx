@@ -40,14 +40,14 @@ const winnerStyles = (position: number) => {
 const TopScore = () => {
   const classes = useStyles()
   const dispatch = useDispatch()
-  const termsState = useSelector(winnerSelector, shallowEqual)
+  const topScoreState = useSelector(winnerSelector, shallowEqual)
 
-  const { data, isLoading } = termsState
+  const { data, isLoading } = topScoreState
 
   useEffect(() => {
     pageTracking('Top Skor')
 
-    if (!termsState.data.length) {
+    if (!topScoreState.data.length) {
       dispatch(topScoreDataFetch())
     }
   }, [])

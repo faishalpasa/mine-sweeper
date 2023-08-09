@@ -12,7 +12,7 @@ import {
 } from 'redux/reducers/winner'
 import config from 'config'
 
-import { WINNER_GET } from 'constants/endpoint'
+import { WINNER_GET, WINNER_LIMIT_GET } from 'constants/endpoint'
 
 const { apiHost } = config
 
@@ -21,19 +21,24 @@ export const winnerDataFetchEpic: Epic = (action$, _, { api }: EpicDependencies)
     ofType(WINNER_DATA_FETCH),
     mergeMap(() =>
       api({
-        endpoint: WINNER_GET,
+        endpoint: WINNER_LIMIT_GET,
+        params: {
+          limit: 5
+        },
         host: apiHost
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
           const mappedData = data.map((item: any) => ({
-            id: item.player_id,
-            name: item.player_name,
-            msisdn: item.player_msisdn,
-            prize: item.prize_name,
-            points: item.total_score
+            periode_name: item.periode_name,
+            winners: item.winners.map((winner: any) => ({
+              id: winner.player_id,
+              name: winner.player_name,
+              msisdn: winner.player_msisdn,
+              prize: winner.prize_name,
+              points: winner.total_score
+            }))
           }))
-
           return of(winnerDataFetchSuccess(mappedData))
         }),
         catchError((err) => {
