@@ -439,7 +439,8 @@ const Home = () => {
               variant="contained"
               color="primary"
               onClick={handleClickButtonPurchaseCoin}
-              disabled={!isAuthenticated}
+              // disabled={!isAuthenticated}
+              disabled
             >
               Tambah Koin
             </Button>

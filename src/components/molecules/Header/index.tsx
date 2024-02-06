@@ -35,6 +35,7 @@ import {
 } from 'redux/reducers/auth'
 import { appDialogLoginSet } from 'redux/reducers/app'
 import type { RootState } from 'redux/rootReducer'
+import { getQueryString } from 'utils/url'
 
 const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   data: auth.data,
@@ -84,6 +85,10 @@ const Header = () => {
   const [newPin, setNewPin] = useState('')
   const [timer, setTimer] = useState(0)
   const [countdownSMS, setCountdownSMS] = useState(TIMER_SMS_RESEND)
+  const [isExternalRegistered, setIsExternalRegistered] = useState(false)
+
+  const paramToken = getQueryString('token')
+  const paramReg = getQueryString('reg')
 
   let pinInputRef: PinInput | null
 
@@ -140,15 +145,22 @@ const Header = () => {
   }
 
   const handleClickRegister = () => {
-    if (msisdn) {
-      setIsMsisdnCheck(true)
-      dispatch(authMsisdnCheck(msisdn))
-    } else {
-      setIsDialogRegisterOpen(true)
-      setIsDialogLoginOpen(false)
-      dispatch(authErrorReset())
-      setLocalErrorMessage('')
-    }
+    window.location.href = `${process.env.REACT_APP_EXTERNAL_REGISTER_URL}`
+    // if (msisdn) {
+    //   setIsMsisdnCheck(true)
+    //   dispatch(authMsisdnCheck(msisdn))
+    // } else {
+    //   setIsDialogRegisterOpen(true)
+    //   setIsDialogLoginOpen(false)
+    //   dispatch(authErrorReset())
+    //   setLocalErrorMessage('')
+    // }
+  }
+
+  const handleCheckMsisdn = () => {
+    // Endpoint baru cek msisdn
+    dispatch(authMsisdnCheck(msisdn))
+    console.log({ msisdn, paramToken })
   }
 
   const handleCloseDialogRegister = () => {
@@ -340,6 +352,12 @@ const Header = () => {
     }
   }, [isDialogFirstTimePinOpen, isPinReset, countdownSMS])
 
+  useEffect(() => {
+    if (paramReg && paramToken) {
+      setIsExternalRegistered(true)
+    }
+  }, [])
+
   return (
     <>
       <div className={classes.header}>
@@ -383,13 +401,15 @@ const Header = () => {
       </div>
 
       <Dialog
-        open={isDialogLoginOpen}
+        open={isDialogLoginOpen || isExternalRegistered}
         fullWidth
         maxWidth="xs"
         PaperProps={{ className: classes.dialogPaper }}
       >
         <DialogContent className={classes.dialogContent}>
-          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
+          {!isExternalRegistered && (
+            <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
+          )}
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           <Typography>Silahkan masukan nomer HP anda:</Typography>
           <TextField
@@ -405,26 +425,47 @@ const Header = () => {
           />
         </DialogContent>
         <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmitLogin}
-            fullWidth
-            disabled={isLoadingLogin}
-          >
-            Masuk
-            {isLoadingLogin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleClickRegister}
-            fullWidth
-            disabled={isLoadingCheckMsisdn}
-          >
-            Daftar
-            {isLoadingCheckMsisdn && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
-          </Button>
+          {isExternalRegistered ? (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCheckMsisdn}
+                fullWidth
+                // disabled={isLoadingCheckMsisdn}
+              >
+                Lanjutkan
+                {isLoadingCheckMsisdn && (
+                  <CircularProgress size={16} style={{ marginLeft: '4px' }} />
+                )}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmitLogin}
+                fullWidth
+                disabled={isLoadingLogin}
+              >
+                Masuk
+                {isLoadingLogin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleClickRegister}
+                fullWidth
+                disabled={isLoadingCheckMsisdn}
+              >
+                Daftar
+                {isLoadingCheckMsisdn && (
+                  <CircularProgress size={16} style={{ marginLeft: '4px' }} />
+                )}
+              </Button>
+            </>
+          )}
         </DialogActions>
       </Dialog>
 
