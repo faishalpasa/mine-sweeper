@@ -14,7 +14,7 @@ const dependencies = {
 }
 
 const epicMiddleware = createEpicMiddleware({ dependencies })
-const middleware =
+const middleware: any =
   process.env.NODE_ENV === 'development' ? [thunk, epicMiddleware, logger] : [thunk, epicMiddleware]
 
 export const store = configureStore({ reducer, middleware })
