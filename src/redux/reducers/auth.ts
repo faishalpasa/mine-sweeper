@@ -37,6 +37,9 @@ export const AUTH_MSISDN_CHECK = 'auth/MSISDN_CHECK'
 export const AUTH_MSISDN_CHECK_SUCCESS = 'auth/MSISDN_CHECK_SUCCESS'
 export const AUTH_MSISDN_CHECK_FAILURE = 'auth/MSISDN_CHECK_FAILURE'
 export const AUTH_LOGIN_WITH_RANDOM_PIN_SET = 'auth/LOGIN_WITH_RANDOM_PIN_SET'
+export const AUTH_TOKEN_VALIDATE = 'auth/TOKEN_VALIDATE'
+export const AUTH_TOKEN_VALIDATE_SUCCESS = 'auth/TOKEN_VALIDATE_SUCCESS'
+export const AUTH_TOKEN_VALIDATE_FAILURE = 'auth/TOKEN_VALIDATE_FAILURE'
 
 export interface AuthInitialState {
   data: {
@@ -45,6 +48,7 @@ export interface AuthInitialState {
     email: string
     name: string
     msisdn: string
+    msisdn_enc: string
     pin: string
     new_pin: string
     is_first_time_pin: number | null
@@ -56,6 +60,7 @@ export interface AuthInitialState {
   isLoadingCheckMsisdn: boolean
   isLoadingPreRegister: boolean
   isLoadingResetPin: boolean
+  isLoadingTokenValidate: boolean
   isAuthenticated: boolean
   isPinChanged: boolean
   isPinReset: boolean
@@ -65,6 +70,7 @@ export interface AuthInitialState {
   isFirstPinChecked: boolean
   isRegisterSuccess: boolean
   isEligibleToRegister: boolean
+  isTokenValid: boolean
   error: {
     message: string
   }
@@ -77,6 +83,7 @@ const INITIAL_STATE: AuthInitialState = {
     coin: 0,
     name: '',
     msisdn: '',
+    msisdn_enc: '',
     pin: '',
     new_pin: '',
     is_first_time_pin: null,
@@ -88,6 +95,7 @@ const INITIAL_STATE: AuthInitialState = {
   isLoadingPreRegister: false,
   isLoadingCheckMsisdn: false,
   isLoadingResetPin: false,
+  isLoadingTokenValidate: false,
   isLoginWithRandomPin: false,
   isAuthenticated: false,
   isPinChanged: false,
@@ -96,7 +104,8 @@ const INITIAL_STATE: AuthInitialState = {
   isPreRegisterRequested: false,
   isFirstPinChecked: false,
   isRegisterSuccess: false,
-  isEligibleToRegister: false,
+  isEligibleToRegister: true,
+  isTokenValid: false,
   error: {
     message: ''
   }
@@ -148,7 +157,10 @@ export default createReducer(INITIAL_STATE, {
   },
   [AUTH_REGISTER_SUCCESS]: (state, action) => {
     state.isLoading = false
-    state.data = action.payload
+    state.data = {
+      ...state.data,
+      token: action.payload.token
+    }
     state.isRegisterSuccess = true
     state.isPreRegisterRequested = false
     state.error = { ...INITIAL_STATE.error }
@@ -277,6 +289,21 @@ export default createReducer(INITIAL_STATE, {
   },
   [AUTH_LOGIN_WITH_RANDOM_PIN_SET]: (state, action) => {
     state.isLoginWithRandomPin = action.payload
+  },
+  [AUTH_TOKEN_VALIDATE]: (state) => {
+    state.isLoadingTokenValidate = true
+  },
+  [AUTH_TOKEN_VALIDATE_SUCCESS]: (state, action) => {
+    state.isLoadingTokenValidate = false
+    state.isTokenValid = true
+    state.data = {
+      ...state.data,
+      ...action.payload
+    }
+  },
+  [AUTH_TOKEN_VALIDATE_FAILURE]: (state, action) => {
+    state.isLoadingTokenValidate = false
+    state.error = action.payload
   }
 })
 
@@ -325,14 +352,17 @@ export const authFirstPinCheckSuccess = () => ({
 })
 export const authRegister = ({
   msisdn,
+  msisdn_enc,
   pin
 }: {
   msisdn: AuthInitialState['data']['msisdn']
+  msisdn_enc: AuthInitialState['data']['msisdn_enc']
   pin: AuthInitialState['data']['pin']
 }) => ({
   type: AUTH_REGISTER,
   payload: {
     msisdn,
+    msisdn_enc,
     pin
   }
 })
@@ -440,9 +470,15 @@ export const authErrorReset = () => ({
   type: AUTH_ERROR_RESET
 })
 
-export const authMsisdnCheck = (msisdn: AuthInitialState['data']['msisdn']) => ({
+export const authMsisdnCheck = (
+  msisdn: AuthInitialState['data']['msisdn'],
+  token: string | null
+) => ({
   type: AUTH_MSISDN_CHECK,
-  payload: msisdn
+  payload: {
+    msisdn,
+    token
+  }
 })
 
 export const authMsisdnCheckSuccess = (id: number) => ({
@@ -450,8 +486,34 @@ export const authMsisdnCheckSuccess = (id: number) => ({
   payload: id
 })
 
-export const authMsisdnCheckFailure = () => ({
-  type: AUTH_MSISDN_CHECK_FAILURE
+export const authMsisdnCheckFailure = (payload: AuthInitialState['error']) => ({
+  type: AUTH_MSISDN_CHECK_FAILURE,
+  payload
+})
+
+export const authTokenValidate = (
+  msisdn: AuthInitialState['data']['msisdn'],
+  token: string | null
+) => ({
+  type: AUTH_TOKEN_VALIDATE,
+  payload: {
+    msisdn,
+    token
+  }
+})
+
+export const authTokenValidateSuccess = (payload: {
+  msisdn: string
+  msisdn_enc: string
+  pin: string | null
+}) => ({
+  type: AUTH_TOKEN_VALIDATE_SUCCESS,
+  payload
+})
+
+export const authTokenValidateFailure = (payload: AuthInitialState['error']) => ({
+  type: AUTH_TOKEN_VALIDATE_FAILURE,
+  payload
 })
 
 export const authLoginWithRandomPinSet = (payload: AuthInitialState['isLoginWithRandomPin']) => ({

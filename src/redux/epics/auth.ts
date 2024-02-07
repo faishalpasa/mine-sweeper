@@ -43,7 +43,11 @@ import {
   AUTH_MSISDN_CHECK,
   authMsisdnCheckFailure,
   authMsisdnCheckSuccess,
-  authLoginWithRandomPinSet
+  authLoginWithRandomPinSet,
+  AUTH_TOKEN_VALIDATE,
+  authTokenValidate,
+  authTokenValidateFailure,
+  authTokenValidateSuccess
 } from 'redux/reducers/auth'
 import { appGameOverSet } from 'redux/reducers/app'
 import { snackbarOpen } from 'redux/reducers/snackbar'
@@ -58,7 +62,8 @@ import {
   AUTH_GET,
   PLAYER_PUT,
   PRE_REGISTER_CHECK_POST,
-  MSISDN_CHECK_GET
+  MSISDN_CHECK_GET,
+  VALIDATE_TOKEN_POST
 } from 'constants/endpoint'
 
 export const authLoginEpic: Epic = (action$, _, { api }: EpicDependencies) =>
@@ -145,6 +150,7 @@ export const authRegisterEpic: Epic = (action$, _, { api }: EpicDependencies) =>
         host: apiHost,
         body: {
           msisdn: action.payload.msisdn,
+          msisdn_enc: action.payload.msisdn_enc,
           pin: action.payload.pin
         },
         query: {
@@ -354,18 +360,54 @@ export const authMsisdnCheckEpic: Epic = (action$, state$, { api }: EpicDependen
         endpoint: MSISDN_CHECK_GET,
         host: apiHost,
         params: {
-          msisdn: action.payload
+          msisdn: action.payload.msisdn
         }
       }).pipe(
         mergeMap(({ response }: any) => {
           const { data } = response
-          return of(authMsisdnCheckSuccess(data?.id))
+          const actions: any = [authMsisdnCheckSuccess(data?.id)]
+
+          if (!data?.id) {
+            actions.push(authTokenValidate(action.payload.msisdn, action.payload.token))
+          }
+          return of(...actions)
         }),
         catchError((err) => {
           const error = {
             message: err?.response?.message || 'Gagal mendapatkan data'
           }
-          return of(authMsisdnCheckFailure())
+          return of(authMsisdnCheckFailure(error))
+        })
+      )
+    )
+  )
+
+export const authTokenValidateEpic: Epic = (action$, state$, { api }: EpicDependencies) =>
+  action$.pipe(
+    ofType(AUTH_TOKEN_VALIDATE),
+    mergeMap((action) =>
+      api({
+        endpoint: VALIDATE_TOKEN_POST,
+        host: apiHost,
+        body: {
+          msisdn: action.payload.msisdn,
+          token: action.payload.token
+        }
+      }).pipe(
+        mergeMap(({ response }: any) => {
+          const { data } = response
+          return of(
+            authTokenValidateSuccess({
+              ...data,
+              msisdn: action.payload.msisdn
+            })
+          )
+        }),
+        catchError((err) => {
+          const error = {
+            message: err?.response?.message || 'Gagal mendapatkan data'
+          }
+          return of(authTokenValidateFailure(error))
         })
       )
     )

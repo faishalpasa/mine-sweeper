@@ -7,7 +7,6 @@ import {
   DialogContent,
   Typography,
   TextField,
-  Checkbox,
   CircularProgress
 } from '@material-ui/core'
 import {
@@ -26,10 +25,7 @@ import {
   authLoginPin,
   authFetch,
   authRegister,
-  authResetPin,
   authErrorReset,
-  authPreRegister,
-  authFirstPinCheck,
   authMsisdnCheck,
   authChangePin
 } from 'redux/reducers/auth'
@@ -58,33 +54,29 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   isFirstPinChecked: auth.isFirstPinChecked,
   isRegisterSuccess: auth.isRegisterSuccess,
   isEligibleToRegister: auth.isEligibleToRegister,
-  isLoginWithRandomPin: auth.isLoginWithRandomPin
+  isLoginWithRandomPin: auth.isLoginWithRandomPin,
+  isTokenValid: auth.isTokenValid
 })
 
 const token = localStorage.getItem('token')
-const TIMER_SMS_RESEND = 60000
 
 const Header = () => {
   const dispatch = useDispatch()
   const headerState = useSelector(headerSelector, shallowEqual)
   const classes = useStyles()
   const [isDialogLoginOpen, setIsDialogLoginOpen] = useState(false)
-  const [isDialogRegisterOpen, setIsDialogRegisterOpen] = useState(false)
   const [isDialogFirstTimePinOpen, setIsDialogFirstTimePinOpen] = useState(false)
   const [isDialogPinOpen, setIsDialogPinOpen] = useState(false)
   const [isDialogChangePinOpen, setIsDialogChangePinOpen] = useState(false)
   const [isDialogRegisterSuccessOpen, setIsDialogRegisterSuccessOpen] = useState(false)
   const [isMsisdnCheck, setIsMsisdnCheck] = useState(false)
   const [isMsisdnSubmitted, setIsMsisdnSubmitted] = useState(false)
-  const [isPinSubmitted, setIsPinSubmitted] = useState(false)
-  const [isRegister, setIsRegister] = useState(false)
-  const [isTermChecked, setIsTermChecked] = useState(false)
   const [localErrorMessage, setLocalErrorMessage] = useState('')
   const [msisdn, setMsisdn] = useState('')
   const [pin, setPin] = useState('')
   const [newPin, setNewPin] = useState('')
   const [timer, setTimer] = useState(0)
-  const [countdownSMS, setCountdownSMS] = useState(TIMER_SMS_RESEND)
+
   const [isExternalRegistered, setIsExternalRegistered] = useState(false)
 
   const paramToken = getQueryString('token')
@@ -95,24 +87,20 @@ const Header = () => {
   const {
     error,
     data,
-    isPinReset,
     isAuthenticated,
     appData,
     isLoginOpen,
     isGameOver,
     isGameWin,
     isPeriodActive,
-    isPreRegisterRequested,
-    isFirstPinChecked,
     isRegisterSuccess,
     isEligibleToRegister,
     isLoadingLogin,
     isLoadingCheckMsisdn,
-    isLoadingResetPin,
-    isLoginWithRandomPin
+    isLoginWithRandomPin,
+    isTokenValid
   } = headerState
 
-  const isButtonResendSMSDisabled = countdownSMS > 0
   const errorMessage = error.message || localErrorMessage
 
   const handleCloseAllDialog = () => {
@@ -120,7 +108,6 @@ const Header = () => {
     dispatch(appDialogLoginSet(false))
     setLocalErrorMessage('')
     setIsDialogLoginOpen(false)
-    setIsDialogRegisterOpen(false)
     setIsDialogFirstTimePinOpen(false)
     setIsDialogLoginOpen(false)
     setIsDialogPinOpen(false)
@@ -146,54 +133,16 @@ const Header = () => {
 
   const handleClickRegister = () => {
     window.location.href = `${process.env.REACT_APP_EXTERNAL_REGISTER_URL}`
-    // if (msisdn) {
-    //   setIsMsisdnCheck(true)
-    //   dispatch(authMsisdnCheck(msisdn))
-    // } else {
-    //   setIsDialogRegisterOpen(true)
-    //   setIsDialogLoginOpen(false)
-    //   dispatch(authErrorReset())
-    //   setLocalErrorMessage('')
-    // }
   }
 
   const handleCheckMsisdn = () => {
-    // Endpoint baru cek msisdn
-    dispatch(authMsisdnCheck(msisdn))
-    console.log({ msisdn, paramToken })
-  }
-
-  const handleCloseDialogRegister = () => {
-    setIsDialogRegisterOpen(false)
-    setIsDialogLoginOpen(true)
-    setIsTermChecked(false)
-    setIsMsisdnCheck(false)
-    dispatch(authErrorReset())
-    setLocalErrorMessage('')
-  }
-
-  const handleSubmitPreRegister = () => {
-    if (msisdn) {
-      dispatch(authPreRegister(msisdn))
-      setIsMsisdnSubmitted(true)
-      setIsRegister(true)
-    } else {
-      setLocalErrorMessage('Silahkan masukan nomer HP anda.')
-    }
-  }
-
-  const handleSubmitFirstPin = () => {
-    dispatch(authFirstPinCheck({ msisdn, pin }))
-  }
-
-  const handleResendSMSFirstPin = () => {
-    dispatch(authPreRegister(msisdn))
-    setCountdownSMS(TIMER_SMS_RESEND)
+    dispatch(authMsisdnCheck(msisdn, paramToken))
+    setIsMsisdnCheck(true)
   }
 
   const handleSubmitRegister = () => {
     setIsMsisdnSubmitted(false)
-    dispatch(authRegister({ msisdn, pin: newPin }))
+    dispatch(authRegister({ msisdn, msisdn_enc: data.msisdn_enc, pin }))
   }
 
   const handleSubmitChangePin = () => {
@@ -202,40 +151,16 @@ const Header = () => {
 
   const handleBackFromDialogPin = () => {
     setIsDialogLoginOpen(true)
-    setIsDialogRegisterOpen(false)
     setIsDialogPinOpen(false)
     dispatch(authErrorReset())
   }
 
   const handleSubmitPin = () => {
     dispatch(authLoginPin(msisdn, pin))
-    setIsPinSubmitted(true)
-  }
-
-  const handleResetPin = () => {
-    dispatch(authResetPin())
-    pinInputRef?.clear()
-  }
-
-  const handleResendSMS = () => {
-    dispatch(authResetPin())
-    setCountdownSMS(TIMER_SMS_RESEND)
-    pinInputRef?.clear()
   }
 
   const handleToProfile = () => {
     dispatch(navigationTabSelectedSet(4))
-  }
-
-  const handleCheckTerm = () => {
-    setIsTermChecked((prevState) => !prevState)
-  }
-
-  const handleToTerms = () => {
-    setIsDialogRegisterOpen(false)
-    setIsMsisdnCheck(false)
-    dispatch(appDialogLoginSet(false))
-    dispatch(navigationTabSelectedSet(3))
   }
 
   const handleRegisterSuccess = () => {
@@ -261,51 +186,46 @@ const Header = () => {
   }, [headerState.appData.time, isAuthenticated])
 
   useEffect(() => {
-    if (isPreRegisterRequested) {
-      setIsDialogLoginOpen(false)
-      setIsDialogRegisterOpen(false)
-      setIsDialogFirstTimePinOpen(true)
-    }
-  }, [isPreRegisterRequested])
-
-  useEffect(() => {
-    if (isFirstPinChecked) {
-      setIsDialogFirstTimePinOpen(false)
-      setIsDialogChangePinOpen(true)
-    }
-  }, [isFirstPinChecked])
-
-  useEffect(() => {
     if (isRegisterSuccess && headerState.data.token) {
       setIsMsisdnSubmitted(false)
       setIsDialogPinOpen(false)
       setIsDialogChangePinOpen(false)
       setIsDialogRegisterSuccessOpen(true)
+      setIsDialogFirstTimePinOpen(false)
     }
   }, [isRegisterSuccess, headerState.data.token])
 
   useEffect(() => {
-    if (isEligibleToRegister && isMsisdnCheck) {
-      setIsDialogRegisterOpen(true)
+    if (
+      isTokenValid &&
+      data.msisdn &&
+      data.msisdn_enc &&
+      data.pin &&
+      isMsisdnCheck &&
+      !isAuthenticated
+    ) {
+      dispatch(authRegister({ msisdn: data.msisdn, pin: data.pin, msisdn_enc: data.msisdn_enc }))
       setIsDialogLoginOpen(false)
-      dispatch(authErrorReset())
+    } else if (
+      isTokenValid &&
+      data.msisdn &&
+      data.msisdn_enc &&
+      !data.pin &&
+      isMsisdnCheck &&
+      !isAuthenticated
+    ) {
+      setMsisdn(data.msisdn)
+      setIsDialogLoginOpen(false)
+      setIsDialogFirstTimePinOpen(true)
     }
-  }, [isEligibleToRegister, isMsisdnCheck])
+  }, [isTokenValid, data.msisdn_enc, data.msisdn, data.pin, isMsisdnCheck, isAuthenticated])
 
   useEffect(() => {
     if (headerState.data.id && isMsisdnSubmitted) {
       setIsDialogLoginOpen(false)
-      setIsDialogRegisterOpen(false)
       setIsDialogPinOpen(true)
     }
   }, [headerState.data, isMsisdnSubmitted])
-
-  useEffect(() => {
-    if (isLoginWithRandomPin) {
-      setIsDialogPinOpen(false)
-      setIsDialogChangePinOpen(true)
-    }
-  }, [isLoginWithRandomPin])
 
   useEffect(() => {
     if (headerState.selectedTab === 0) {
@@ -340,23 +260,14 @@ const Header = () => {
   ])
 
   useEffect(() => {
-    let intervalSMS: any = null
-    if ((isDialogFirstTimePinOpen || isPinReset) && countdownSMS > 0) {
-      intervalSMS = setInterval(() => {
-        setCountdownSMS((prevState) => prevState - 1000)
-      }, 1000)
-
-      return () => clearInterval(intervalSMS)
-    } else {
-      clearInterval(intervalSMS)
-    }
-  }, [isDialogFirstTimePinOpen, isPinReset, countdownSMS])
-
-  useEffect(() => {
-    if (paramReg && paramToken) {
+    if (paramReg && paramToken && !isAuthenticated) {
       setIsExternalRegistered(true)
+      setIsDialogLoginOpen(true)
+    } else {
+      setIsExternalRegistered(false)
+      setIsDialogLoginOpen(false)
     }
-  }, [])
+  }, [isAuthenticated])
 
   return (
     <>
@@ -401,7 +312,7 @@ const Header = () => {
       </div>
 
       <Dialog
-        open={isDialogLoginOpen || isExternalRegistered}
+        open={isDialogLoginOpen}
         fullWidth
         maxWidth="xs"
         PaperProps={{ className: classes.dialogPaper }}
@@ -416,7 +327,11 @@ const Header = () => {
             variant="outlined"
             margin="dense"
             placeholder="081234567890"
-            onChange={(e) => setMsisdn(e.target.value)}
+            onChange={(e) => {
+              setMsisdn(e.target.value)
+              setIsMsisdnCheck(false)
+              dispatch(authErrorReset())
+            }}
             value={msisdn}
             error={!!errorMessage}
             helperText={errorMessage}
@@ -432,12 +347,23 @@ const Header = () => {
                 color="primary"
                 onClick={handleCheckMsisdn}
                 fullWidth
-                // disabled={isLoadingCheckMsisdn}
+                disabled={!msisdn}
               >
                 Lanjutkan
                 {isLoadingCheckMsisdn && (
                   <CircularProgress size={16} style={{ marginLeft: '4px' }} />
                 )}
+              </Button>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmitLogin}
+                fullWidth
+                disabled={isEligibleToRegister || !isMsisdnCheck}
+              >
+                Masuk
+                {isLoadingLogin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
               </Button>
             </>
           ) : (
@@ -470,71 +396,29 @@ const Header = () => {
       </Dialog>
 
       <Dialog
-        open={isDialogRegisterOpen}
-        fullWidth
-        maxWidth="xs"
-        PaperProps={{ className: classes.dialogPaper }}
-      >
-        <DialogContent className={classes.dialogContent}>
-          <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleCloseDialogRegister} />
-          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
-          <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          <Typography>Silahkan masukan nomer HP anda:</Typography>
-          <TextField
-            variant="outlined"
-            margin="dense"
-            placeholder="081234567890"
-            onChange={(e) => setMsisdn(e.target.value)}
-            value={msisdn}
-            error={!!errorMessage}
-            helperText={errorMessage}
-            fullWidth
-            type="tel"
-          />
-          <div className={classes.checkboxWrapper}>
-            <Checkbox
-              color="primary"
-              checked={isTermChecked}
-              onClick={handleCheckTerm}
-              className={classes.checkbox}
-              size="small"
-            />
-            <Typography variant="caption">
-              <a style={{ color: '#000', fontSize: '10px' }} onClick={handleToTerms}>
-                Saya menyetujui syarat dan ketentuan yang berlaku
-              </a>
-            </Typography>
-          </div>
-        </DialogContent>
-        <DialogActions style={{ justifyContent: 'space-between', padding: '0px 16px 16px' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmitPreRegister}
-            disabled={headerState.isLoading || !isTermChecked}
-            fullWidth
-          >
-            Lanjutkan
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
         open={isDialogFirstTimePinOpen}
         fullWidth
         maxWidth="xs"
         PaperProps={{ className: classes.dialogPaper }}
       >
         <DialogContent className={classes.dialogContent}>
-          <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
+          <CloseIcon
+            className={classes.dialogCloseIcon}
+            onClick={() => {
+              setIsDialogFirstTimePinOpen(false)
+              setIsDialogLoginOpen(true)
+              setIsMsisdnCheck(false)
+              pinInputRef?.clear()
+            }}
+          />
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
           <Typography>Masukan nomor PIN anda. Cek inbox SMS:</Typography>
           <div className={classes.inputPin}>
             <PinInput
-              length={4}
+              length={6}
               onChange={(value) => setPin(value)}
-              type="numeric"
-              inputMode="number"
+              type="custom"
+              inputMode="string"
               focus
               inputFocusStyle={{ borderColor: '#30cfa2' }}
               ref={(n) => (pinInputRef = n)}
@@ -548,21 +432,11 @@ const Header = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSubmitFirstPin}
-            disabled={headerState.isLoading || pin.length < 4}
+            onClick={handleSubmitRegister}
+            disabled={headerState.isLoading || pin.length < 6}
             fullWidth
           >
             Konfirmasi
-          </Button>
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleResendSMSFirstPin}
-            disabled={headerState.isLoading || isButtonResendSMSDisabled}
-            fullWidth
-          >
-            {isButtonResendSMSDisabled ? millisToMinutesAndSeconds(countdownSMS) : 'Kirim Ulang'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -577,21 +451,13 @@ const Header = () => {
           <ArrowBackIcon className={classes.dialogBackIcon} onClick={handleBackFromDialogPin} />
           <CloseIcon className={classes.dialogCloseIcon} onClick={handleCloseAllDialog} />
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          {isPinReset ? (
-            <Typography>PIN baru telah dikirimkan ke nomer HP anda. Cek inbox SMS:</Typography>
-          ) : (
-            <Typography>
-              {isPreRegisterRequested
-                ? 'Masukan nomor PIN anda. Cek inbox SMS:'
-                : 'Masukan nomor PIN anda:'}
-            </Typography>
-          )}
+          <Typography>Masukan nomor PIN anda:</Typography>
           <div className={classes.inputPin}>
             <PinInput
-              length={4}
+              length={6}
               onChange={(value) => setPin(value)}
-              type="numeric"
-              inputMode="number"
+              type="custom"
+              inputMode="string"
               focus
               inputFocusStyle={{ borderColor: '#30cfa2' }}
               ref={(n) => (pinInputRef = n)}
@@ -611,30 +477,6 @@ const Header = () => {
           >
             Konfirmasi
           </Button>
-          {!isPinReset && !isRegister ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleResetPin}
-              disabled={isLoadingResetPin}
-              fullWidth
-            >
-              Lupa PIN
-              {isLoadingResetPin && <CircularProgress size={16} style={{ marginLeft: '4px' }} />}
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleResendSMS}
-              disabled={headerState.isLoading || isButtonResendSMSDisabled}
-              fullWidth
-            >
-              {`Kirim Ulang ${
-                isButtonResendSMSDisabled ? millisToMinutesAndSeconds(countdownSMS) : ''
-              }`}
-            </Button>
-          )}
         </DialogActions>
       </Dialog>
 
@@ -675,10 +517,10 @@ const Header = () => {
           <Typography>Masukan nomor PIN baru anda:</Typography>
           <div className={classes.inputPin}>
             <PinInput
-              length={4}
+              length={6}
               onChange={(value) => setNewPin(value)}
-              type="numeric"
-              inputMode="number"
+              type="custom"
+              inputMode="string"
               focus
               inputFocusStyle={{ borderColor: '#30cfa2' }}
             />
