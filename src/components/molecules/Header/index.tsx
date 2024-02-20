@@ -55,7 +55,7 @@ const headerSelector = ({ auth, navigationTab, app }: RootState) => ({
   isRegisterSuccess: auth.isRegisterSuccess,
   isEligibleToRegister: auth.isEligibleToRegister,
   isLoginWithRandomPin: auth.isLoginWithRandomPin,
-  isTokenValid: auth.isTokenValid
+  isTokenChecked: auth.isTokenChecked
 })
 
 const token = localStorage.getItem('token')
@@ -98,7 +98,7 @@ const Header = () => {
     isLoadingLogin,
     isLoadingCheckMsisdn,
     isLoginWithRandomPin,
-    isTokenValid
+    isTokenChecked
   } = headerState
 
   const errorMessage = error.message || localErrorMessage
@@ -197,7 +197,7 @@ const Header = () => {
 
   useEffect(() => {
     if (
-      isTokenValid &&
+      isTokenChecked &&
       data.msisdn &&
       data.msisdn_enc &&
       data.pin &&
@@ -207,9 +207,9 @@ const Header = () => {
       dispatch(authRegister({ msisdn: data.msisdn, pin: data.pin, msisdn_enc: data.msisdn_enc }))
       setIsDialogLoginOpen(false)
     } else if (
-      isTokenValid &&
+      isTokenChecked &&
       data.msisdn &&
-      data.msisdn_enc &&
+      !data.msisdn_enc &&
       !data.pin &&
       isMsisdnCheck &&
       !isAuthenticated
@@ -218,7 +218,7 @@ const Header = () => {
       setIsDialogLoginOpen(false)
       setIsDialogFirstTimePinOpen(true)
     }
-  }, [isTokenValid, data.msisdn_enc, data.msisdn, data.pin, isMsisdnCheck, isAuthenticated])
+  }, [isTokenChecked, data.msisdn_enc, data.msisdn, data.pin, isMsisdnCheck, isAuthenticated])
 
   useEffect(() => {
     if (headerState.data.id && isMsisdnSubmitted) {
@@ -472,7 +472,7 @@ const Header = () => {
             variant="contained"
             color="primary"
             onClick={handleSubmitPin}
-            disabled={headerState.isLoading || pin.length < 4}
+            disabled={headerState.isLoading || pin.length < 6}
             fullWidth
           >
             Konfirmasi

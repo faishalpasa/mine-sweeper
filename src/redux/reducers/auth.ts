@@ -54,6 +54,7 @@ export interface AuthInitialState {
     is_first_time_pin: number | null
     is_game_over: number | null
     token: string
+    valid: boolean
   }
   isLoading: boolean
   isLoadingLogin: boolean
@@ -70,7 +71,7 @@ export interface AuthInitialState {
   isFirstPinChecked: boolean
   isRegisterSuccess: boolean
   isEligibleToRegister: boolean
-  isTokenValid: boolean
+  isTokenChecked: boolean
   error: {
     message: string
   }
@@ -88,7 +89,8 @@ const INITIAL_STATE: AuthInitialState = {
     new_pin: '',
     is_first_time_pin: null,
     is_game_over: null,
-    token: ''
+    token: '',
+    valid: false
   },
   isLoading: false,
   isLoadingLogin: false,
@@ -105,7 +107,7 @@ const INITIAL_STATE: AuthInitialState = {
   isFirstPinChecked: false,
   isRegisterSuccess: false,
   isEligibleToRegister: true,
-  isTokenValid: false,
+  isTokenChecked: false,
   error: {
     message: ''
   }
@@ -295,7 +297,7 @@ export default createReducer(INITIAL_STATE, {
   },
   [AUTH_TOKEN_VALIDATE_SUCCESS]: (state, action) => {
     state.isLoadingTokenValidate = false
-    state.isTokenValid = true
+    state.isTokenChecked = true
     state.data = {
       ...state.data,
       ...action.payload
