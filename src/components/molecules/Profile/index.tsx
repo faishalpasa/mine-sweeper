@@ -208,21 +208,21 @@ const Profile = () => {
           className={classes.paper}
           style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
         >
-          <Button
+          {/* <Button
             variant="contained"
             color="primary"
             onClick={handleClickChangePINButton}
             fullWidth
           >
             Ubah PIN
-          </Button>
+          </Button> */}
 
           <Button onClick={handleClickLogout} variant="contained" color="primary" fullWidth>
             Keluar
           </Button>
         </Paper>
 
-        <Typography className={classes.contentTitle}>Hubungi Kami</Typography>
+        {/* <Typography className={classes.contentTitle}>Hubungi Kami</Typography>
         <Paper
           className={classes.paper}
           style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}
@@ -245,7 +245,7 @@ const Profile = () => {
           >
             Via WhatsApp
           </Button>
-        </Paper>
+        </Paper> */}
       </div>
 
       <Dialog open={isDialogMessageOpen} fullWidth maxWidth="xs">
