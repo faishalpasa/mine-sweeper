@@ -488,7 +488,7 @@ const Header = () => {
       >
         <DialogContent className={classes.dialogContent}>
           <img src="/images/bomb.png" alt="bomb" className={classes.imageBomb} />
-          <Typography>Selamat anda mendapat gratis 5 koin!</Typography>
+          <Typography>Selamat anda dapat memainkan ranjau darat.</Typography>
         </DialogContent>
         <DialogActions style={{ justifyContent: 'flex-end', padding: '0px 16px 16px' }}>
           <Button
